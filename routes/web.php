@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProcurementAccountController;
+use App\Http\Controllers\ProcurementItemController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,17 +18,41 @@ use Inertia\Inertia;
 |
 */
 
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', [
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
+// });
+
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('login');
+})->name('home');
+
+Route::group(['middleware' => 'auth'], function (){
+    // Route::get('/', [DashboardController::class, 'cek'])->name('dashboard.TimHPS');
+    
+    Route::group(['middleware' => 'unit', 'prefix' => 'unit'],function(){
+        Route::resource('procurement',          ProcurementAccountController::class)->except('destroy');
+        Route::get('/dashboard',                [DashboardController::class, 'unit'])->name('dashboard.unit');
+    });
+    
+    Route::group(['middleware' => 'headUKPBJ', 'prefix' => 'admin'],function(){
+        Route::resource('procurement',          ProcurementAccountController::class)->only(['index']);
+        Route::get('/dashboard',                [DashboardController::class, 'headUKPBJ'])->name('dashboard.unit');
+    });
+    
+    Route::group(['middleware' => 'hps', 'prefix' => 'hps'],function(){
+        
+    });
+
+    Route::post('/procurement/updatestatus/{id}', [ProcurementAccountController::class, 'updateStatus'])->name('procurement.updatestatus');
+    Route::get('/dashboard/TimHPS', [DashboardController::class, 'TimHPS'])->name('dashboard.TimHPS');
+    Route::resource('item',ProcurementItemController::class);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 require __DIR__.'/auth.php';
