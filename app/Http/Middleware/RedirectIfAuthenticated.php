@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
@@ -23,7 +24,48 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                $route = '';
+                switch (Auth::user()->role) {
+                    # Head UKPBJ
+                    case User::ROLE_Head_UKPBJ:
+                      $route = '/admin/dashboard';
+                    break;
+                
+                    # PPK
+                    case User::ROLE_PPK:
+                      $route = '/ppk/dashboard';
+                    break;
+                
+                    # PP
+                    case User::ROLE_PP:
+                      $route = '/pp/dashboard';
+                    break;
+                
+                    # HPS Team
+                    case User::ROLE_HPS_TEAM:
+                      $route = '/hps/dashboard';
+                    break;
+                
+                    # Contract Team
+                    case User::ROLE_CONTRACT_TEAM:
+                      $route = '/kontrak/dashboard';
+                    break;
+                
+                    # Technical Team
+                    case User::ROLE_TECHNICAL_TEAM:
+                      $route = '/teknis/dashboard';
+                    break;
+                
+                    # unit
+                    case User::ROLE_UNIT:
+                      $route = '/unit/dashboard';
+                    break;
+                
+                
+                    default: break;
+                }
+
+                return redirect($route);
             }
         }
 
