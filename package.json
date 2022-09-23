@@ -21,7 +21,14 @@
     },
     "dependencies": {
         "@heroicons/vue": "^2.0.7",
+        "@vuepic/vue-datepicker": "^3.4.8",
+        "canvg": "^4.0.1",
         "daisyui": "^2.24.0",
+        "html2pdf.js": "^0.10.1",
+        "jsdom": "^20.0.0",
+        "jspdf": "^2.5.1",
+        "moment": "^2.29.4",
+        "vue-html2pdf": "^1.8.0",
         "vue3-easy-data-table": "^1.4.14",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.10/xlsx-0.18.10.tgz"
     }
