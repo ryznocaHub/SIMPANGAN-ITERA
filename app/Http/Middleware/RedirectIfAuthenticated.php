@@ -61,7 +61,10 @@ class RedirectIfAuthenticated
                       $route = '/unit/dashboard';
                     break;
                 
-                
+                    case User::ROLE_VerifAccount:
+                      $route = '/siren/dashboard';
+                    break;
+                    
                     default: break;
                 }
 
