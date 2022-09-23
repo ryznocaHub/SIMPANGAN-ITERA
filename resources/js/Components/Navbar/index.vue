@@ -21,7 +21,8 @@
             <Link :href="route('home')" class="btn btn-ghost normal-case text-xl" >SIMPANGAN</Link>
         </div>
         <div class="flex-none">
-            <div class="dropdown dropdown-end">
+            <div class="normal-case text-xl">{{  user.name }}</div>
+            <!-- <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost btn-circle">
                     <div class="indicator">
                         <svg
@@ -55,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost btn-circle avatar">
                     <div class="w-10 rounded-full">
@@ -68,13 +69,13 @@
                     tabindex="0"
                     class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
                 >
-                    <li>
+                    <!-- <li>
                         <a class="justify-between">
                             Profile
                             <span class="badge">New</span>
                         </a>
                     </li>
-                    <li><a>Settings</a></li>
+                    <li><a>Settings</a></li> -->
                     <li><Link :href="route('logout')" method="post" as="button">Logout</Link></li>
                 </ul>
             </div>
@@ -84,4 +85,8 @@
 
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/inertia-vue3'
+
+const user = computed(() => usePage().props.value.auth.user)
 </script>
