@@ -15,14 +15,19 @@ class ProcurementItem extends Model
         'specification',
         'unit',
         'price',
+        'estimate_price',
         'total',
+        'estimate_total',
         'allocation',
         'source',
+        'estimate_source',
+        'estimate_file',
         'image',
+        'status'
     ];
 
     public function account (){
-        return $this->hasMany(ProcurementAccounts::class);
+        return $this->belongsTo(ProcurementAccounts::class,'procure_acc_id');
     }
     
 }

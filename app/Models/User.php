@@ -18,7 +18,9 @@ class User extends Authenticatable
     const ROLE_CONTRACT_TEAM    = 5;
     const ROLE_TECHNICAL_TEAM   = 6;
     const ROLE_UNIT             = 7;
+    const ROLE_VerifAccount     = 8;
     
+    const StringRole = ['Admin','PPK','Pp', 'Hps', 'Kontrak', 'Teknis', 'Unit', 'Siren'];
     /**
      * The attributes that are mass assignable.
      *
@@ -29,6 +31,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
         'unit_id'
     ];
 
@@ -50,4 +53,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function units() {
+        return $this->belongsTo(Unit::class,'unit_id');
+    }
 }
