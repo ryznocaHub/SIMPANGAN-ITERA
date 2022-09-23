@@ -2,6 +2,11 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Hps;
+use App\Http\Middleware\Kontrak;
+use App\Http\Middleware\PP;
+use App\Http\Middleware\PPK;
+use App\Http\Middleware\Siren;
 use App\Http\Middleware\Unit;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -65,6 +70,11 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'unit' => Unit::class
+        'unit'      => Unit::class,
+        'hps'       => Hps::class,
+        'ppk'       => PPK::class,
+        'pp'        => PP::class,
+        'kontrak'   => Kontrak::class,
+        'siren'     => Siren::class,
     ];
 }
