@@ -18,9 +18,12 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('supplier_id')->nullable()->references('id')->on('suppliers')->onDelete('cascade');
             $table->string('name');
+            $table->string('account');
+            $table->string('rup_code')->nullable();
             $table->integer('year');
-            $table->integer('unit');
+            $table->string('unit');
             $table->string('category');
+            $table->foreignId('hps_executor')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->string('executor');
             $table->string('executor_id');
             $table->string('person_responsible');
@@ -32,10 +35,14 @@ return new class extends Migration
             $table->integer('PPN');
             $table->integer('sub_total');
             $table->integer('total');
+            $table->integer('provit')->default(10);
             $table->integer('status');
-            $table->string('rab_file')->nullable();
-            $table->string('boq_file')->nullable();
             $table->string('comment')->nullable();
+            $table->timestamp('procurement_start', 6);
+            $table->timestamp('rab_submitted', 6)->nullable();
+            $table->timestamp('hps_submitted', 6)->nullable();
+            $table->timestamp('supplier_submitted', 6)->nullable();
+            $table->timestamp('procurement_end', 6)->nullable();
             $table->timestamps();
         });
     }

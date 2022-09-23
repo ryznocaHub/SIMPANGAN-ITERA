@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->tinyInteger('role');
+            $table->tinyInteger('status')->default(1);
             $table->foreignId('unit_id')->references('id')->on('units')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();

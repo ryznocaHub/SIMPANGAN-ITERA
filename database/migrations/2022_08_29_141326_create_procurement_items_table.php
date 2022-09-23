@@ -17,13 +17,18 @@ return new class extends Migration
             $table->id();
             $table->foreignId('procure_acc_id')->references('id')->on('procurement_accounts')->onDelete('cascade');
             $table->string('name');
-            $table->longText('specification');
+            $table->longText('specification')->nullable();
             $table->integer('unit');
             $table->integer('price');
+            $table->integer('estimate_price')->nullable();
             $table->integer('total');
+            $table->integer('estimate_total')->nullable();
             $table->string('allocation');
             $table->string('source');
+            $table->string('estimate_source')->nullable();
+            $table->string('estimate_file')->nullable();
             $table->string('image')->nullable();
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
