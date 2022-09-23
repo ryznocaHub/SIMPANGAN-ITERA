@@ -1,13 +1,13 @@
 <template>
     <Master>
         <Container >
-            <Header1 title="Daftar Pengadaan" widthSize="10" />
+            <Header1 title="Daftar Pengadaan" widthSize="100" />
             <EasyDataTable :headers="headers" :items="procurements" buttons-pagination>
                 <template #item-status="{ status }">
                     <StatusButton :status=status />
                 </template>
                 <template #item-aksi="{ id }">
-                    <Link :href="route('procurement.show', id)" class="btn btn-first btn-xs" >Lihat</Link>
+                    <Link :href="route('unit.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
                 </template>
             </EasyDataTable>
         </Container>
@@ -16,7 +16,6 @@
 
 <script setup>
 import Master from "@/Layouts/Master.vue";
-import { useForm } from "@inertiajs/inertia-vue3";
 import { Link } from '@inertiajs/inertia-vue3'
 import Container from "@/Components/utils/Container.vue";
 import Header1 from "@/Components/utils/Header1.vue";

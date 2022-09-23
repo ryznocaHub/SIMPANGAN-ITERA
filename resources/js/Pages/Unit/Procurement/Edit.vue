@@ -1,7 +1,7 @@
 <template>
     <Master>
         <div v-if="x.items.length == 0">
-            <StatusRedirect text="Anda sudah mengunggah semua gambar, silahkan klik tombol untuk mengajukan RAB">
+            <StatusRedirect text="Anda sudah mengunggah semua gambar. Silahkan ajukan RAB">
                 <button
                     class="btn gap-2 bg-first border-none"
                     @click="confirm()"       
@@ -12,20 +12,20 @@
         </div>
 
         <div v-else>
-            <Container >
+            <div >
             <!-- <h3 class="h3 text-xl font-extrabold tracking-wider">
                 {{ info.name }}
             </h3> -->
             <div class="flex max-h-96 mb-10">
-                <div class="flex-1 max-w-[50%] p-5 flex place-content-center bg-green-100">
+                <div class="flex-1 max-w-[50%] p-5 flex place-content-center">
                     <!-- <ImgLogin class="object-contain" /> -->
                     <!-- <img src="/storage/cek.svg" alt="" /> -->
                     <div class="grid place-items-center" v-if="x.itemPreview['image'] != null">
                         <img class="max-w-full min-h-80 max-h-80" :src="x.itemPreview['image']" />
                     </div>
-                    <DropZoneImage @verifikasi="getImage" :files=files @addFiles="addFiles" @removeFile="removeFile" v-else/>
+                    <DropZoneImage  :files=files  @addFiles="insertImage" :info=info @removeFile="deleteImage" v-else/>
                 </div>
-                <div class="flex-1 flex flex-col">
+                <Container class="flex-1 flex flex-col">
                     <h3 class="h3 text-xl font-extrabold tracking-wider">
                         {{ x.itemPreview['name'] }}
                     </h3>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="flex justify-between mt-10">
                         <button
-                            class="btn gap-2 bg-first border-none"
+                            class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
                             :disabled="x.orderArr[0] == x.itemPreview['id'] ? true : false"
                             @click="prevItemPreview(x.itemPreview['id'])"
                         >
@@ -43,22 +43,22 @@
                         </button>
                         <button
                             v-show="data.image"
-                            class="btn gap-2 bg-first border-none"
+                            class="btn text-white bg-first border-none font-bold"
                             @click="verifikasi()"
                         >
                         verifikasi
                         </button>
                         <button
-                            class="btn gap-2 bg-first border-none"
+                            class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
                             :disabled="x.orderArr[x.orderArr.length-1]==(x.itemPreview['id']) ? true : false"
                             @click="nextItemPreview(x.itemPreview['id'])"       
                         >
                             Selanjutnya &gt;
                         </button>
                     </div>
-                </div>
+                </Container>
             </div>
-            <div
+            <Container
                 class="card border-2 bg-grey-50 border-dashed border-gray-600 p-5 w-1/3"
             >
                 <h3 class="h3 text-xl font-extrabold tracking-wider">
@@ -93,29 +93,26 @@
                     :value="x.itemPreview['source']"
                 />
                 <div class="flex justify-between">
-                    <a class="btn btn-xs bg-first border-none" id="visit" :href=x.itemPreview[8] target="_blank">
+                    <a class="hover:bg-none text-xs text-first underline underline-offset-8 " id="visit" :href=x.itemPreview[8] target="_blank">
                         Kunjungi Laman
                     </a>
-                    <button
-                        class="btn btn-xs bg-first border-none"
-                        id="use"
-                        @click="cek()"
-                    >
-                        Gunakan Laman
-                    </button>
+                    <!-- <button @click="cek()">cek</button> -->
                 </div>
-            </div>
             </Container>
-            <EasyDataTable :headers="headers" :items="x.items" buttons-pagination>
-                <template #item-aksi="{ id }">
-                <!-- <a :href="teamUrl">{{ teamName }}</a> -->
-                    <button @click="changePreview(id)">Lihat</button>
-                </template>
-                <template #item-status="{ image }">
-                    <div v-if="image"> terverifikasi </div>
-                    <div v-else> tertunda </div>
-                </template>
-            </EasyDataTable>
+            </div>
+            <Container class="mt-10">
+                <Header1 title="Daftar Item" widthSize="60" />
+                <EasyDataTable :headers="headers" :items="x.items" buttons-pagination>
+                    <template #item-aksi="{ id }">
+                    <!-- <a :href="teamUrl">{{ teamName }}</a> -->
+                        <button @click="changePreview(id)">Lihat</button>
+                    </template>
+                    <template #item-status="{ image }">
+                        <div v-if="image"> terverifikasi </div>
+                        <div v-else> tertunda </div>
+                    </template>
+                </EasyDataTable>
+            </Container>
         </div>
     </Master>
 </template>
@@ -124,8 +121,8 @@
 import Master from "@/Layouts/Master.vue";
 import Container from "@/Components/utils/Container.vue";
 import Label from "@/Components/utils/Label.vue";
+import Header1 from "@/Components/utils/Header1.vue";
 import Input from "@/Components/utils/Input.vue";
-import { ref } from "vue";
 import { useForm } from "@inertiajs/inertia-vue3";
 import FilePreview from "@/Components/DropZone/File-Preview.vue";
 import DropZoneImage from "@/Components/DropZoneImage/index.vue";
@@ -135,7 +132,7 @@ import useFileList from '@/Components/composables/Dropzone-Image'
 import ImgComplete from "@/Components/icons/imgComplete.vue";
 import { Inertia } from "@inertiajs/inertia";
 
-const { files, addFiles, removeFile } = useFileList()
+const { files, info, addFiles, removeFile } = useFileList()
 
 const props = defineProps({
 	items: { type: Object },
@@ -150,17 +147,18 @@ const x = useForm({
 
 const data = useForm({
     forceFormData: true,
-    _method: 'put',
+    _method: 'patch',
     image: null
 });
 
 const verifikasi = () =>{
-    data.post(route("item.update",x.itemPreview['id']),{
-        onSuccess:  () => {
+    data.post(route("unit.item.update",parseInt(x.itemPreview['id'])),{
+        onSuccess:  () => { 
             const id = x.itemPreview['id'];
             if(x.itemPreview['id'] == x.orderArr[x.orderArr.length - 1]){
                 prevItemPreview(x.itemPreview['id']);
-            }else if(x.itemPreview['id'] == x.orderArr[0]){
+            }else{
+            // }else if(x.itemPreview['id'] == x.orderArr[0]){
                 nextItemPreview(x.itemPreview['id']);
             }
 
@@ -176,20 +174,32 @@ const verifikasi = () =>{
 }
 
 const dataConfirmation = useForm({
+    _method: 'patch',
     status: 2,
 })
 
 const confirm = () => {
-    dataConfirmation.post(route('procurement.updatestatus',props.id));
+    console.log("props",props.id)
+    dataConfirmation.post(route('unit.procurement.update',props.id),{
+        onSuccess : () => {
+            console.log("sukses ajukan RAB")
+        },
+        onError: () => {
+            console.log("gagal ajukan RAB")
+        }
+    });
 }
 
 const cek = () => {
-    console.log("image",x.itemPreview['image'])
-    console.log("image",x.itemPreview)
+    console.log("image",data.image)
 }
 
-const getImage = (image) =>{
-    data.image = image;
+const insertImage = (file) => {
+    addFiles(file);
+
+    if(info.value.status != 9){
+        data.image = file[0];   
+    }
 }
 
 const deleteImage = () => {
