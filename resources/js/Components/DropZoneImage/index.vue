@@ -3,16 +3,17 @@
 		<FilePreview v-for="file of files" :key="file.id" :file="file" tag="span" @remove="removeImage" />
 		<!-- <button @click.prevent="uploadFiles(files)" class="upload-button">Upload</button> -->
 	</div>
-	<DropZone class="drop-area border-2 border-slate-300 border-dashed text-center flex place-items-center w-full h-full" @files-dropped="addImage" #default="{ dropZoneActive }" @verifikasi="verifikasi" v-else>
+	<DropZone class="drop-area border-4 border-first border-dashed text-center flex flex-col align-center justify-center w-full h-full" @files-dropped="addImage" #default="{ dropZoneActive }" v-else>
+		<div v-show="info.status == 9" class="text-secondary">{{ info.message }}</div>
 		<label for="file-input " class="">
 			<span v-if="dropZoneActive">
-				<span>Drop Them Here</span>
-				<span class="smaller">to add them</span>
+				<span>Letakkan Gambar disini</span>
+				<!-- <span class="smaller">to add them</span> -->
 			</span>
 			<span v-else>
-				<span>Drag Your Files Here</span>
+				<span c>Seret Gambar disini</span>
 				<span class="smaller">
-					or <strong><em>click here</em></strong> to select files
+					atau <strong><em>klik disini</em></strong> untuk memilih file
 				</span>
 			</span>
 
@@ -27,9 +28,10 @@ import DropZone from '@/Components/DropZoneImage/Dropzone.vue'
 import FilePreview from '@/Components/DropZone/File-Preview.vue'
 
 
-const emit = defineEmits(['verifikasiItem','addFiles','removeFile'])
+const emit = defineEmits(['addFiles','removeFile'])
 const props = defineProps({
 	files: { default: null },
+	info : { default: null}
 })
 
 const addImage = (Image) => {
@@ -40,13 +42,9 @@ const removeImage = (Image) => {
 	emit('removeFile',Image)
 }
 
-const verifikasi = (imageFile) => {
-	emit('verifikasiItem',imageFile)
-}
-
 function onInputChange(e) {
 	emit('addFiles',e.target.files);
-	emit('verifikasiItem',e.target.files[0])
+	// emit('verifikasiItem',e.target.files[0])
 	e.target.value = null // reset so that selecting the same file again will still cause it to fire this change
 }
 

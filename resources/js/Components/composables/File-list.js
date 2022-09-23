@@ -10,21 +10,27 @@ export default function () {
         //     .map((file) => new UploadableFile(file))
         // files.value = newUploadableFiles;
         // files.value = newFiles;
+        const availableType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        if(newFiles[0].type != availableType){
+            info.value = new Fail("Tidak sesuai format RAB. File harus berformat xlxs.");
 
+            return;
+        }
         //read file RAB
         const file_read = read(await newFiles[0].arrayBuffer());
+        console.log("ss");
         //get Data RAB
         var dataRow = utils.sheet_to_json(file_read.Sheets[file_read.SheetNames[0]], { header: 1 });
         //hapus row xlxs yaang kosong
         dataRow = dataRow.filter(x => x.length > 0);
         //simpan data umum ke info
-        info.value = new DataDetail(dataRow,dataRow[0]);
+        info.value = new DataDetail(dataRow,newFiles[0].name);
         //hanya mengambil data item
         data.value = dataRow.slice(5,-7)
         // console.log("file_read",file_read)
         // console.log("datarow",dataRow)
         // console.log("data",data.value)
-        // console.log("info in file list",info.value);
+        console.log("info in file list",info.value);
     }
 
     function fileExists(otherId) {
@@ -36,6 +42,13 @@ export default function () {
     }
 
     return { info, data, addFiles, removeFile };
+}
+
+class Fail {
+    constructor(data){
+        this.status = 9;
+        this.message = data;
+    }
 }
 
 class DataDetail {
@@ -57,7 +70,7 @@ class DataDetail {
         this.treasurer              = `${data[data.length-2][6]}`;
         this.treasurer_id           = `${data[data.length-1][6]}`;
         // this.url = URL.createObjectURL(file);
-        this.status = null;
+        this.status = 1;
     }
     // constructor(file) {
     //     this.file = file;

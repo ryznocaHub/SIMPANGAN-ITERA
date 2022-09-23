@@ -9,7 +9,16 @@
                 v-model="formRAB.judul"
                 placeholder="Judul Pengadaan"
                 required
-                autocomplete="judul"
+            />
+
+            <Label for="account" value="Akun Pengadaan" />
+            <Input
+                id="account"
+                type="text"
+                class="mt-1 block w-full"
+                v-model="formRAB.account"
+                placeholder="Akun Pengadaan"
+                required
             />
 
             <Label for="category" value="Kategori Pengadaan" />
@@ -35,7 +44,7 @@
                 class="drop-area"
                 @files-dropped="addFiles"
                 #default="{ dropZoneActive }"
-                v-if="!info.name"
+                v-if="!info.file_name"
             >
                 <label for="file-input">
                     <span v-if="dropZoneActive">
@@ -67,7 +76,7 @@
                 </ul> -->
             </DropZone>
             <div v-else>
-                <p>{{ info.name }}</p>
+                <p>{{ info.file_name }}</p>
                 <!-- @click.prevent="uploadFiles(info)" -->
                     <!-- @click="emit('convert',data,info)" -->
                 <button
@@ -93,6 +102,7 @@ import FilePreview from "../DropZone/File-Preview.vue";
 const formRAB = useForm({
     judul: "",
     category: "",
+    account: "",
     terms: false,
     dataList: null,
     dataInfo: null
@@ -112,7 +122,7 @@ const storeDataXlxs = () => {
     formRAB.dataList = data.value
     formRAB.dataInfo = info.value
     // emit('convert',data,info);
-    formRAB.post(route("procurement.store"),{
+    formRAB.post(route("unit.procurement.store"),{
         onSuccess:  () => {emit('convert',data,info);},
         onError:    () => {console.log("error")}
     
