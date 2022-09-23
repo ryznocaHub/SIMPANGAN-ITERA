@@ -4,19 +4,46 @@ namespace App\Http\Controllers;
 
 use App\Models\ProcurementAccounts;
 use App\Models\ProcurementItem;
+use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class ProcurementAccountController extends Controller
 {
     public function index (){
         // dd(Auth::id());
-        $procurements = ProcurementAccounts::where('user_id',Auth::id())->get();
-        // dd($procurements);
-        return Inertia::render('Unit/Procurement/Index',[
-            'procurements' => $procurements,
+        if(Auth::user()->role == User::ROLE_UNIT){
+            $procurements = ProcurementAccounts::where('user_id',Auth::id())->get();
+            // dd($procurements);
+            return Inertia::render('Unit/Procurement/Index',[
+                'procurements' => $procurements,
+            ]);
+        }
+
+        $status = ProcurementAccounts::status[Auth::user()->role -1];
+        
+        if(Auth::user()->role == User::ROLE_PPK)
+        {
+            $procurements = ProcurementAccounts::where('status','>=', $status)->with('hpsexecutor')->get();
+            // dd($procurements);
+            $hpsTeams = User::where('role',User::ROLE_HPS_TEAM)->get();
+            $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Index';
+            // dd($procurements);
+            return Inertia::render($url, [
+                'procurements'  => $procurements,
+                'hpsteams'      => $hpsTeams
+            ]);
+        }
+        $procurements = ProcurementAccounts::where('status','>=', $status)->with('suppliers')->get();
+        $suppliers = Supplier::all();
+        $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Index';
+        return Inertia::render($url, [
+            'procurements'  => $procurements,
+            'suppliers'      => $suppliers
         ]);
     }
 
@@ -24,21 +51,35 @@ class ProcurementAccountController extends Controller
         $procurement = ProcurementAccounts::with('items')
                                             -> find($id);
         // $items = ProcurementAccounts::find($id)->items;
-        return Inertia::render('Unit/Procurement/Show',[
+        $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Show';
+
+        return Inertia::render($url,[
             'procurement' => $procurement,
         ]);
     }
 
+    public function create (){
+        return Inertia::render('Unit/Procurement/Create');
+    }
+
     public function store (Request $request){
+        $validated = $request->validate([
+            'category'  => 'required|String|',
+            'judul'     => 'required|String|',
+            'account'   => 'required|String'
+        ]);
+
+        // dd("s");
         $data = $request->all();
         $info = $request->dataInfo;
         // $items = $request->dataList;
-        // dd($items);
+        // dd($data);
         
         $newProcurement_Account = ProcurementAccounts::create([
             'name'                   => $info['name'],
+            'account'                => $request->account,
             'user_id'                => Auth::id(),
-            'unit'                   => Auth::user()->unit_id,
+            'unit'                   => Auth::user()->units->full_name,
             // 'user_id'                => 1,
             // 'unit'                   => 1,
             'category'               => $request->category,
@@ -54,7 +95,8 @@ class ProcurementAccountController extends Controller
             'PPN'                    => $info['PPN'],
             'sub_total'              => $info['sub_total'],
             'total'                  => $info['total'],
-            'status'                 => 1
+            'status'                 => 1,
+            'procurement_start'      => Carbon::now('Asia/Jakarta')
         ]);
 
         $items=[];
@@ -72,33 +114,165 @@ class ProcurementAccountController extends Controller
         }
         ProcurementItem::Insert($items);
 
-        return Redirect::route('procurement.edit');
+        return Redirect::route('unit.procurement.edit',$newProcurement_Account->id);
     }
 
     public function edit ($id){
-        $items = ProcurementItem::where('procure_acc_id',$id)
-                        -> whereNull('image')
-                        -> get();
+        if(Auth::user()->role == User::ROLE_UNIT){
+            $items = ProcurementItem::where('procure_acc_id',$id)
+                            -> whereNull('image')
+                            -> get();
+            // dd($items);
+            return Inertia::render('Unit/Procurement/Edit',[
+                'items' => $items,
+                'id'    => $id
+            ]); 
+        }else{
+            $items = ProcurementItem::where('procure_acc_id',$id)
+                                    ->where('estimate_price',null)
+                                    ->get();
+            // dd($items);
+            return Inertia::render('Hps/Procurement/Edit',[
+                'items' => $items,
+                'id'    => $id
+            ]);
+        }
 
-        // dd($items);
-        return Inertia::render('Unit/Procurement/Edit',[
-            'items' => $items,
-            'id'    => $id
-        ]);
     }
 
-    public function updateStatus (Request $request, $id) {
-        $validated = $request->validate([
-            'status' => 'required|integer|min:2|max:2|'
-        ]);
+    public function update (Request $request, $id) {
+        if(Auth::user()->role == User::ROLE_UNIT){
+            $validated = $request->validate([
+                'status' => 'required|integer|min:2|max:2|'
+            ]);
+            $procurement = ProcurementAccounts::find($id);
+            // if($procurement->status == ProcurementAccounts::is_UploadImageItem){
+                $procurement->status = $request->status;
+                $procurement->rab_submitted = Carbon::now('Asia/Jakarta');
+                $procurement->save();
 
-        $procurement = ProcurementAccounts::find($id)->first();
+                return Redirect::route('unit.procurement.show',$id);
+            // }
+        }
+        else if(Auth::user()->role == User::ROLE_VerifAccount){
+            $validated = $request->validate([
+                'status'    => 'required|integer|min:3|max:4',
+            ]);
 
-        if($procurement->status == ProcurementAccounts::is_UploadImageItem){
+            $procurement = ProcurementAccounts::find($id);
+
+            if($request->status == ProcurementAccounts::is_RABReject){
+                $validated = $request->validate([
+                    'comment'    => 'required|string',
+                ]);
+                $procurement->comment = $request->comment;
+
+            }else if($request->status == ProcurementAccounts::is_ChoosingHpsExecutor){
+                $validated = $request->validate([
+                    'rup_code'    => 'required|string',
+                ]);
+                $procurement->rup_code = $request->rup_code;
+                $procurement->comment = null;
+            }
+
             $procurement->status = $request->status;
             $procurement->save();
-
-            return Redirect::route('procurement.show',$id);
+            // dd("done");
+            return Redirect::route('siren.procurement.index');
         }
+        else if(Auth::user()->role == User::ROLE_PPK ){
+            $validated = $request->validate([
+                'status'    => 'required|integer|min:5|max:8',
+            ]);
+
+            $procurement = ProcurementAccounts::find($id);
+
+            if($request->status==ProcurementAccounts::is_CreateHPS)
+            {
+                $validated = $request->validate([
+                    'hps'       => 'required|string'
+                ]);
+                $hps_executor = User::where('name', $request->hps)->firstOrFail();
+                $procurement->hps_executor = $hps_executor->id;
+            }
+            else if($request->status==ProcurementAccounts::is_HPSReject)
+            {
+                $validated = $request->validate([
+                    'comment'    => 'required|string',
+                ]);
+                $procurement->comment = $request->comment;
+            }
+            else if($request->status==ProcurementAccounts::is_ChoosingSupplier)
+            {
+                $procurement->comment = null;
+                $procurement->hps_submitted = Carbon::now('Asia/Jakarta');
+            }
+
+            $procurement->status = $request->status;
+            $procurement->save();
+            return Redirect::route('ppk.procurement.index');
+            // if($procurement->status == ProcurementAccounts::is_ChoosingHpsExecutor){
+
+            // }
+        }
+        else if(Auth::user()->role == User::ROLE_HPS_TEAM){
+            $validated = $request->validate([
+                'status'    => 'required|integer|min:6|max:6',
+            ]);
+
+            $procurement = ProcurementAccounts::find($id);
+
+            // if($procurement->status == ProcurementAccounts::is_CreateHPS){
+                $procurement->status = $request->status;
+                $procurement->save();
+
+                return Redirect::route('hps.procurement.index');
+            // }
+        }
+        else if(Auth::user()->role == User::ROLE_PP){
+            $validated = $request->validate([
+                'status'    => 'required|integer|min:9|max:9',
+                'supplier'  => 'required|string'
+            ]);
+            $supplier = Supplier::firstOrCreate(['name' => $request->supplier]);
+
+            $procurement = ProcurementAccounts::find($id);
+            if($procurement->status == ProcurementAccounts::is_ChoosingSupplier){
+                $procurement->status = $request->status;
+                $procurement->supplier_id = $supplier->id;
+                $procurement->supplier_submitted = Carbon::now('Asia/Jakarta');
+                $procurement->save();
+                // dd($procurement);
+                return Redirect::route('pp.procurement.index');
+            }
+        }
+        
     }
+
+    
 }
+
+// else if(Auth::user()->role == User::ROLE_PPK && $request->status >= 6){
+//     $validated = $request->validate([
+//         'status'    => 'required|integer|min:3|max:4',
+//     ]);
+
+//     $procurement = ProcurementAccounts::find($id);
+
+//     if($request->status == ProcurementAccounts::is_HPSReject){
+//         $validated = $request->validate([
+//             'comment'    => 'required|string',
+//         ]);
+//         $procurement->comment = $request->comment;
+
+//     }else if($request->status == ProcurementAccounts::is_ChoosingSupplier){
+//         if($procurement->status == ProcurementAccounts::is_ApprovalHPS){
+//             $procurement->comment = null;
+//             $procurement->hps_submitted = Carbon::now('Asia/Jakarta');
+//         }
+//     }
+
+//     $procurement->status = $request->status;
+//     $procurement->save();
+//     return Redirect::route('hps.procurement.index');
+// }
