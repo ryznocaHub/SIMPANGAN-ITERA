@@ -1,7 +1,7 @@
 <template>
   <div class="drawer">
   <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content bg-gray-100 snap-none">
+  <div class="drawer-content bg-gray-100 ">
     <!-- Page content here -->
     <slot/>
   </div> 

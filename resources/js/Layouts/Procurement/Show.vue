@@ -2,7 +2,7 @@
     <Master>
         <Container class="w-10/12">
             <div class="flex">
-                <div class=" flex-initial justify-between ">
+                <div class="justify-between ">
                     <div class="flex justify-between">
                         <div>
                             <div class="flex">
@@ -18,23 +18,17 @@
                                 <Label :value='"Unit " + props.procurement.unit' />
                             </div>
                             <div class="flex">
-                                <Label :value='"Nomor Akun .........." ' />
+                                <Label :value='"Nomor Akun " + props.procurement.account' />
                                 <div class="mx-3 text-first">I</div>
-                                <Label :value='"diajukan pada " + getNowDate()' />
+                                <Label v-if="props.procurement.rup_code" :value='"Kode RUP " + props.procurement.rup_code' />
                             </div>
+                            <Label :value='"diajukan pada " + getNowDate()' />
                         </div>
                         <Link v-show="props.procurement.status == 1" :href="route('unit.procurement.edit', props.procurement.id)" class="btn bg-first border-first" >Unggah Gambar</Link>
                         <Link v-if="props.procurement.status == 5 && user.role == 4" :href="route('hps.procurement.edit', props.procurement.id)" class="btn bg-first border-first" >Buat HPS</Link>
                         <Link v-else-if="props.procurement.status >= 2" :href="route('item.show', props.procurement.id)" class="btn bg-first border-first" >Lihat Item</Link>
                     </div>
                     
-
-                    <!-- <div class="flex">
-                        <Label :value='"Diunggah pada " + props.procurement.created_at' />
-                        <div class="mx-3 text-first">I</div>
-                        <Label :value='"Oleh " + props.procurement.user_id' />
-                    </div> -->
-
                     <div class="divider"></div>
                     
                     <div class="flex flex-wrap">
@@ -79,14 +73,6 @@
                             <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(props.procurement.total) }}</p>
                         </div>
                     </div>
-                    <!-- <div>
-                        <Label value="File RAB" />
-                        <a href="#" download class="font-bold text-lg tracking-wider">download</a>
-                    </div> -->
-                    <!-- <div>
-                        <Label value="File BOQ" />
-                        <a href="#" download class="font-bold text-lg tracking-wider">donwload</a>
-                    </div> -->
                 </div>
                 <slot/>
             </div>

@@ -85,5 +85,10 @@ class ProcurementItemController extends Controller
                                     'estimate_source'   => $source,
                                     'estimate_file'     => $file
                                 ]);
+
+        $procurement = ProcurementAccounts::find($item->procure_acc_id);
+        $total = $procurement->estimate_sub_total + $request->total;
+        $procurement->estimate_sub_total = $total;
+        $procurement->save();
     }
 }

@@ -11,7 +11,7 @@
     <div v-show="status == 4" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">
         RAB Disetujui
     </div>
-    <div v-show="status >= 5 && status <= 8" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">
+    <div v-show="status >= 5 && status < 8" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">
         Pembuatan HPS
     </div>
     <div v-show="status == 8" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">

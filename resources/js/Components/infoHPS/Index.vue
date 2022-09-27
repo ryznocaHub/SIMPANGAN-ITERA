@@ -90,7 +90,7 @@ const props = defineProps({
 	items: { type: Object },
 })
 
-const emit = defineEmits(['successVerification'])
+const emit = defineEmits(['successVerification','editTotal'])
 
 function convertToRupiah(angka) {
     var rupiah = "";
@@ -132,6 +132,7 @@ const useRAB = () => {
 const verifikasi = () => {
     hps.post(route('hps.item.updateHPS', props.items['id']),{
         onSuccess : () =>{
+            emit('editTotal',hps.total);
             console.log("sukses",props.items['id'])
             emit('successVerification', props.items['id'])
             hps.reset()
