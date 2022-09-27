@@ -10,7 +10,7 @@ class DocumentsController extends Controller
 {
     public function boq ($id) {
         
-        $procurement = ProcurementAccounts::find($id)->with('items')->first();
+        $procurement = ProcurementAccounts::with('items')->find($id);
         // dd($id,$procurement);    
         return Inertia::render('Document/Boq',[
             'procurement' => $procurement
