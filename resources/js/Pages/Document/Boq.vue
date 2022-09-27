@@ -23,7 +23,7 @@
                                 <div>Unit Kerja {{procurement.unit}}</div>
                             </div>
                             <div>
-                                <div class="text-lg font-bold">Total : {{convertToRupiah(procurement.total)}}</div>
+                                <div class="text-lg font-bold">Total : {{convertToRupiah(procurement.estimate_total)}}</div>
                             </div>
                         </div>
     
