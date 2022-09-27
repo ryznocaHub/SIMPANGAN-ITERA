@@ -2,8 +2,20 @@
     <Master>
         <Container >
             <Header1 title="Daftar Supplier" widthSize="100" />
-            <button class="btn-sm mb-10 rounded-lg text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Tambah Data Supplier</button>
+            <Link :href="route('kontrak.supplier.create')" class="btn btn-sm mt-5 mb-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first  font-bold" >Tambah Data Supplier</Link>
             <EasyDataTable :headers="headers" :items="suppliers" buttons-pagination>
+                <template #item-province="{ province }">
+                    <div v-if="province">{{province}}</div>
+                    <div v-else class="text-secondary">---</div>
+                </template>
+                <template #item-regency="{ regency }">
+                    <div v-if="regency">{{regency}}</div>
+                    <div v-else class="text-secondary">---</div>
+                </template>
+                <template #item-npwp="{ npwp }">
+                    <div v-if="npwp">{{npwp}}</div>
+                    <div v-else class="text-secondary">---</div>
+                </template>
                 <template #item-status="{ status }">
                     <StatusButton :status=status />
                 </template>

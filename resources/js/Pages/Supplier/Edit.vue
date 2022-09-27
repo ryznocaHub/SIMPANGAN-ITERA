@@ -26,7 +26,7 @@
                         id="nama"
                         class="w-full"
                         type="text"
-                        v-model.number="data.name"
+                        v-model="data.name"
                         placeholder="Nama Perusahaan"
                         :value="data.name"
                         required
@@ -38,7 +38,7 @@
                 id="npwp"
                 type="text"
                 class="mt-1 block w-full"
-                v-model.number="data.npwp"
+                v-model="data.npwp"
                 :value="data.npwp"
                 required
             />
@@ -47,7 +47,7 @@
                 id="alamat"
                 type="text"
                 class="mt-1 block w-full"
-                v-model.number="data.address"
+                v-model="data.address"
                 :value="data.address"
                 required
             />
@@ -58,7 +58,7 @@
                         id="Province"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model.number="data.province"
+                        v-model="data.province"
                         :value="data.province"
                         required
                     />
@@ -69,7 +69,7 @@
                         id="regency"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model.number="data.regency"
+                        v-model="data.regency"
                         :value="data.regency"
                         required
                     />
@@ -82,7 +82,7 @@
                         id="bank"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model.number="data.bank"
+                        v-model="data.bank"
                         :value="data.bank"
                         required
                     />
@@ -93,7 +93,7 @@
                         id="account"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model.number="data.account"
+                        v-model="data.account"
                         :value="data.account"
                         required
                     />
@@ -128,6 +128,7 @@ const data = useForm({
     regency:    props.supplier.regency,
     bank:       props.supplier.bank,
     account:    props.supplier.account,
+    _method: 'patch',
 })
 
 const edit = (id) =>{

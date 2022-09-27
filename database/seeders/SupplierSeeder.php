@@ -17,7 +17,7 @@ class SupplierSeeder extends Seeder
     public function run()
     {
         DB::table('suppliers')->insert([
-            'name'=> 'PT. Ranggkot'
+            'name'=> 'Ranggkot'
         ]);
         Supplier::create([
             'name' => 'Bumi Persada'
