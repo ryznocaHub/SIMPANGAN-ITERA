@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('supplier_id')->nullable()->references('id')->on('suppliers')->onDelete('cascade');
+            $table->foreignId('contract_id')->nullable()->references('id')->on('contracts')->onDelete('cascade');
             $table->string('name');
             $table->string('account');
             $table->string('rup_code')->nullable();
@@ -34,8 +35,10 @@ return new class extends Migration
             $table->string('treasurer_id');
             $table->integer('PPN');
             $table->integer('sub_total');
+            $table->integer('estimate_sub_total')->default(0);
             $table->integer('total');
-            $table->integer('provit')->default(10);
+            $table->integer('estimate_total')->default(0);
+            $table->integer('provit')->default(0);
             $table->integer('status');
             $table->string('comment')->nullable();
             $table->timestamp('procurement_start', 6);
