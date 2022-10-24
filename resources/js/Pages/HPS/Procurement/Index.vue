@@ -28,12 +28,12 @@ import StatusButton from "@/Components/statusButton/index.vue"
 
 const headers = [
     { text: "Nama",             value: "name", sortable: true },
+    { text: "Kode RUP",         value: "rup_code", sortable: true },
+    { text: "Nomor Akun",         value: "account", sortable: true },
+    { text: "Unit",             value: "unit", sortable: true },
     { text: "Tahun Anggaran",   value: "year", sortable: true },
     { text: "Kategori",         value: "category", sortable: true },
     { text: "Status",           value: "status", sortable: true },
-    { text: "Sub Total",        value: "sub_total", sortable: true },
-    { text: "PPN",              value: "PPN", sortable: true },
-    { text: "Total",            value: "total", sortable: true },
     { text: "aksi",             value: "aksi", sortable: true },
 ];
 </script>
