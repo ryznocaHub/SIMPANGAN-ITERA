@@ -2,26 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Estimate;
 use App\Models\ProcurementAccounts;
 use App\Models\ProcurementItem;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProcurementItemController extends Controller
 {
-    public function store (Request $request) {
-        
-
-    }
-
-    public function edit () {
-
-        
-    }
-
     public function show ($id) {
         $items = ProcurementItem::where("procure_acc_id", $id)->get();
         // dd($items);
@@ -60,35 +52,65 @@ class ProcurementItemController extends Controller
         $validated = $request->validate([
             'price' => 'required|integer|min:1000',
             'total' => 'required|integer|min:1000',
+            'status'=> 'required'
         ]);
-        
-        if($request->source){
-            $source = $request->source;
-            $file   = null;
-        }else if($request->file){
-            $item = ProcurementItem::find($id);
-            $file = $request->file('file');
-            $path = 'public/file/' . $item->procure_acc_id . '/' ;
-            $file_name = $item->name . '.' . $file[0]->clientExtension();
-            $store = $file[0]->storeAs($path, $file_name);
-            $link = $request->root() . '/storage/file/' . $item->procure_acc_id . '/' . $file_name;
-            $file = Storage::url($store);
-            $file = $request->root() . $file;
 
-            $source= null;
-            $file = $link;
-        }
-        $item = ProcurementItem::find($id)
-                                ->update([
-                                    'estimate_price'    => $request->price,
-                                    'estimate_total'    => $request->total,
-                                    'estimate_source'   => $source,
-                                    'estimate_file'     => $file
-                                ]);
+        if($request->status == 1) return 0;
+        // dd($request->status);
+        $item = ProcurementItem::find($id);
 
-        $procurement = ProcurementAccounts::find($item->procure_acc_id);
-        $total = $procurement->estimate_sub_total + $request->total;
-        $procurement->estimate_sub_total = $total;
-        $procurement->save();
+        DB::transaction(function () use($request, $item, $id) {
+            if($request->source){
+                $source     = $request->source;
+                $file       = null;
+            }else if($request->file){
+                $file       = $request->file('file');
+                
+                if($file) {
+                    $path       = 'public/file/' . $item->procure_acc_id . '/' ;
+                    $file_name  = $item->name . '.' . $file[0]->clientExtension();
+                    $store      = $file[0]->storeAs($path, $file_name);
+                    $link       = $request->root() . '/storage/file/' . $item->procure_acc_id . '/' . $file_name;
+                    $file       = Storage::url($store);
+                    $file       = $request->root() . $file;
+                    $file       = $link;
+                }else
+                {
+                    $file       = $request->file;
+                }
+
+                $source     = null;
+            }
+
+            $procurement = ProcurementAccounts::find($item->procure_acc_id);
+            
+            $estimate = Estimate::find($procurement->estimate_id);
+            $estimate->sub_total = $estimate->sub_total + $request->total - $item->estimate_total;
+            $estimate->save();
+
+            ProcurementItem::find($id)
+                ->update([
+                    'estimate_price'    => $request->price,
+                    'estimate_total'    => $request->total,
+                    'estimate_source'   => $source,
+                    'estimate_file'     => $file
+                ]);
+
+            // if($procurement->estimate_id == null)
+            // {
+            //     $estimate = Estimate::find()([
+            //             'sub_total'     => $request->total
+            //     ]);
+
+            //     $procurement->estimate_id = $estimate->id;
+            //     $procurement->save();
+            // }else
+            // {
+                // $estimate = Estimate::find($procurement->estimate_id);
+
+                // $estimate->sub_total = $estimate->sub_total + $request->total;
+                // $estimate->save();
+            // }
+        });
     }
 }
