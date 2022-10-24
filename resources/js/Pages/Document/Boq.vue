@@ -23,11 +23,11 @@
                                 <div>Unit Kerja {{procurement.unit}}</div>
                             </div>
                             <div>
-                                <div class="text-lg font-bold">Total : {{convertToRupiah(procurement.estimate_total)}}</div>
+                                <div class="text-lg font-bold">Total : {{convertToRupiah(procurement.estimate.total)}}</div>
                             </div>
                         </div>
     
-                        <EasyDataTable
+                        <!-- <EasyDataTable
                             v-model:items-selected="itemsSelected"
                             hide-footer
                             :headers="headers"
@@ -43,6 +43,24 @@
                             </template>
                             <template #item-satuan >
                                 <div>unit</div>
+                            </template>
+                            <template #item-specification="{ specification }">
+                                <div class="mb-2" style="white-space: pre-wrap;">
+                                    {{specification}}
+                                </div>
+                            </template>
+                        </EasyDataTable> -->
+                        <EasyDataTable
+                            v-model:items-selected="itemsSelected"
+                            hide-footer
+                            table-class-name="customize-table"
+                            :headers="headers"
+                            :items="procurement.items"
+                            border-cell
+                            class="mt-3"
+                        >
+                            <template #item-image="{ image }">
+                                <img class="w-25" :src="image" />
                             </template>
                             <template #item-specification="{ specification }">
                                 <div class="mb-2" style="white-space: pre-wrap;">
@@ -76,15 +94,15 @@
     
     const headers = [
       { text: "Nama",           value: "name", fixed: true, width: 60, sortable: true }, // set fixed to true
-      { text: "Gambar",         value: "image", width: 50},
-      { text: "Jumlah",         value: "unit", width: 20},
-      { text: "Satuan",         value: "satuan", width: 20},
       { text: "Spesifikasi",    value: "specification", width: 110}, // set fixed to true
+      { text: "Jumlah",         value: "quantity", width: 20},
+      { text: "Satuan",         value: "unit", width: 20},
+      { text: "Gambar",         value: "image", width: 50},
     ];
     
     defineProps({
         procurement : {
-            tipe : Object
+            tipe : Object,
         }
     })
 

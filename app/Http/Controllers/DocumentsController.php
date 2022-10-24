@@ -10,9 +10,57 @@ class DocumentsController extends Controller
 {
     public function boq ($id) {
         
-        $procurement = ProcurementAccounts::with('items')->find($id);
-        // dd($id,$procurement);    
+        $procurement = ProcurementAccounts::with(['items', 'estimate'])->find($id);
         return Inertia::render('Document/Boq',[
+            'procurement' => $procurement
+        ]);      
+    }
+    public function hps ($id) {
+        
+        $procurement = ProcurementAccounts::with(['items', 'estimate', 'timeline', 'executor.ppk'])->find($id);
+        return Inertia::render('Document/Hps',[
+            'procurement' => $procurement
+        ]);      
+    }
+    public function sppbj ($id) {
+        
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        return Inertia::render('Document/SPPBJ',[
+            'procurement' => $procurement
+        ]);      
+    }
+    public function spk ($id) {
+        
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        return Inertia::render('Document/SPK',[
+            'procurement' => $procurement
+        ]);      
+    }
+    public function bastp ($id) {
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        return Inertia::render('Document/BASTP',[
+            'procurement' => $procurement
+        ]);      
+    }
+    public function bap ($id) {
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        return Inertia::render('Document/BAP',[
+            'procurement' => $procurement
+        ]);      
+    }
+    public function sp ($id) {
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        if($procurement->category == 'Barang') $title = 'SURAT PERINTAH PENGIRIMAN (SPP)';
+        else $title = 'SURAT PERINTAH MULAI KERJA (SPMK)';
+
+        return Inertia::render('Document/SP',[
+            'procurement'   => $procurement,
+            'title'        => $title
+        ]);      
+    }
+    public function bahp ($id) {
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        return Inertia::render('Document/BAHP',[
             'procurement' => $procurement
         ]);      
     }
