@@ -9,14 +9,16 @@
             </div>
         </template>
         <template #file v-if="procurement.status == 3">
-            <button @click="newRequest()" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Ajukan Ulang</button>
+            <Link :href="route('unit.procurement.reupload', procurement.id)" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Ajukan Ulang</Link>
+
+            <!-- <button @click="newRequest()" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Ajukan Ulang</button> -->
         </template>
     </Show>
 </template>
 
 <script setup>
 import Show from "@/Layouts/Procurement/Show.vue";
-import { useForm } from "@inertiajs/inertia-vue3";
+import { useForm, Link } from "@inertiajs/inertia-vue3";
 
 const props = defineProps({
 	procurement: { type: Object, required: true },

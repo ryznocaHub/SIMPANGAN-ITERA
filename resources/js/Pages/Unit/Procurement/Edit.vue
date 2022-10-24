@@ -75,7 +75,7 @@
                     <div class="ml-5 flex flex-col">
                         <Label value="Jumlah" />
                         <p class="font-bold text-lg tracking-wider">
-                            {{ x.itemPreview['unit'] }} Unit
+                            {{ x.itemPreview['quantity'] }} {{ x.itemPreview['unit'] }}
                         </p>
                     </div>
                     <div class="flex flex-col basis-1/2 mt-5">

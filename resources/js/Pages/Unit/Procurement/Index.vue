@@ -6,6 +6,15 @@
                 <template #item-status="{ status }">
                     <StatusButton :status=status />
                 </template>
+                <template #item-sub_total="{ budget_plan }">
+                    <div>{{budget_plan.sub_total}}</div>
+                </template>
+                <template #item-ppn="{ budget_plan }">
+                    <div>{{budget_plan.ppn}}</div>
+                </template>
+                <template #item-total="{ budget_plan }">
+                    <div>{{budget_plan.total}}</div>
+                </template>
                 <template #item-aksi="{ id }">
                     <Link :href="route('unit.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
                 </template>
@@ -31,7 +40,7 @@ const headers = [
     { text: "Kategori",         value: "category", sortable: true },
     { text: "Status",           value: "status", sortable: true },
     { text: "Sub Total",        value: "sub_total", sortable: true },
-    { text: "PPN",              value: "PPN", sortable: true },
+    { text: "PPN",              value: "ppn", sortable: true },
     { text: "Total",            value: "total", sortable: true },
     { text: "aksi",             value: "aksi", sortable: true },
 ];

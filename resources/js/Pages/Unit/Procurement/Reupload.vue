@@ -10,8 +10,13 @@
                         type="text"
                         class="mt-1 block w-full"
                         v-model="formRAB.account"
-                        placeholder="Akun Pengadaan"
-                        required
+                    />
+                    <Label for="judul" value="Judul Pengadaan" />
+                    <Input
+                        id="judul"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="formRAB.judul"
                     />
 
                     <Label for="category" value="Kategori Pengadaan" />
@@ -20,7 +25,6 @@
                         type="search"
                         class="mt-1 block w-full"
                         v-model="formRAB.category"
-                        placeholder="Kategori Pengadaan"
                         list="categoryList"
                         required
                     />
@@ -32,12 +36,30 @@
                     </datalist>
                 </div>
                 <div class="ml-10">
-                    <!-- <Label for="file" value="File RAB" /> -->
+                    <div v-if="formRAB.reupload" class="h-full pb-5 flex flex-col">
+                        <Label for="judul" value="Data RAB" />
+                        <p class="text-first font-bold flex-1">{{ procurement.name }}</p>
+                        <div>
+                            <button
+                                @click="changeItem()"
+                                class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
+                            >
+                                Ubah Item
+                            </button>
+                            <button
+                                @click="reupload()"
+                                class="ml-5 btn text-white bg-first border-none font-bold"
+                            >
+                                Ajukan Ulang
+                            </button>
+    
+                        </div>
+                    </div>
                     <DropZone
                         class="drop-area border-4 border-first border-dashed text-center flex place-items-center drop-area border-4 border-first border-dashed text-center flex place-items-center w-full h-full"
                         @files-dropped="addFiles"
                         #default="{ dropZoneActive }"
-                        v-if="!info.file_name"
+                        v-else-if="!info.file_name"
                     >
                         <label for="file-input">
                             <div v-if="info.status == 9" class="text-secondary">{{ info.message }}</div>
@@ -64,8 +86,6 @@
                     <div v-else class="h-full pb-5 flex flex-col">
                         <Label for="judul" value="File RAB" />
                         <p class="text-first font-bold flex-1">{{ info.file_name }}</p>
-                        <!-- @click.prevent="uploadFiles(info)" -->
-                            <!-- @click="emit('convert',data,info)" -->
                         <div>
                             <button
                                 @click="cancel()"
@@ -101,33 +121,44 @@ import Header1 from "@/Components/utils/Header1.vue";
 import Container from "@/Components/utils/Container.vue";
 // import createUploader from "../composables/File-Uploader";
 
-const formRAB = useForm({
-    judul: "",
-    category: "",
-    account: "",
-    terms: false,
-    dataList: null,
-    dataInfo: null
-});
-
 const emit = defineEmits(["convert"]);
+const props = defineProps(['procurement']);
 // const { uploadFiles } = createUploader("google.com");
 const { info, data, addFiles, removeFile } = useFileList();
 
-// const submit = () => {
-    // form.post(route("procureAccount.store"), {
-        // onFinish: () => form.reset("judul", "category"),
-    // });
-// };
+const formRAB = useForm({
+    judul: props.procurement.name,
+    category: props.procurement.category,
+    account: props.procurement.account,
+    terms: false,
+    dataList: null,
+    dataInfo: null,
+    reupload: true,
+    _method: 'patch',
+});
+
 const cancel = () => {
+    formRAB.reupload = true;
     removeFile();
+}
+
+const changeItem = () => {
+    formRAB.reupload = false;
+    console.log("done")
+}
+
+const reupload = () => {
+    formRAB.post(route("unit.procurement.editinfo",props.procurement.id),{
+        onSuccess:  () => {emit('convert',data,info);},
+        onError:    (e) => {console.log("error", e)}
+    
+    })
 }
 
 const storeDataXlxs = () => {
     formRAB.dataList = data.value
     formRAB.dataInfo = info.value
-    // emit('convert',data,info);
-    formRAB.post(route("unit.procurement.store"),{
+    formRAB.post(route("unit.procurement.edititem",props.procurement.id),{
         onSuccess:  () => {emit('convert',data,info);},
         onError:    (e) => {console.log("error", e)}
     
