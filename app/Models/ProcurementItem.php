@@ -14,6 +14,7 @@ class ProcurementItem extends Model
         'name',
         'specification',
         'unit',
+        'quantity',
         'price',
         'estimate_price',
         'total',

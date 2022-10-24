@@ -26,47 +26,49 @@ class ProcurementAccounts extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'account',
-        'unit',
-        'year',
-        'category',
-        'hps_executor',
-        'executor',              
-        'executor_id',           
-        'contract_id',           
-        'person_responsible',    
-        'person_responsible_id', 
-        'PPK',                   
-        'PPK_id',                
-        'treasurer',             
-        'treasurer_id',          
-        'PPN',                   
-        'sub_total',             
-        'estimate_sub_total',             
-        'total',      
-        'estimate_total',      
-        'provit', 
-        'user_id',
-        'supplier_id',
-        'comment',
-        'status',
-        'procurement_start',
-        'rab_submitted',
-        'hps_submitted',
-        'supplier_submitted',
-        'procurement_end',
+       'user_id',
+            'supplier_id',
+            'contract_id',
+            'executor_id',
+            'timeline_id',
+            'budget_plan_id',
+            'estimate_id',
+            'realized_id',
+            'name',
+            'account',
+            'rup_code',
+            'year',
+            'unit',
+            'category',
+            'status',
+            'comment',
     ];
 
     public function items() {
         return $this->hasMany(ProcurementItem::class, 'procure_acc_id');
     }
 
-    public function hpsexecutor(){
-        return $this->hasOne(User::class,'id','hps_executor');
+    public function executor(){
+        return $this->hasOne(Executor::class,'id','executor_id');
     }
 
     public function suppliers(){
         return $this->hasOne(Supplier::class,'id','supplier_id');
+    }
+
+    public function contract(){
+        return $this->hasOne(Contract::class,'id','contract_id');
+    }
+
+    public function timeline(){
+        return $this->hasOne(Timeline::class,'id','timeline_id');
+    }
+    
+    public function budget_plan(){
+        return $this->hasOne(BudgetPlan::class,'id','budget_plan_id');
+    }
+    
+    public function estimate(){
+        return $this->hasOne(Estimate::class,'id','estimate_id');
     }
 }

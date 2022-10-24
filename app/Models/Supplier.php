@@ -12,6 +12,8 @@ class Supplier extends Model
     protected $fillable = [
         'name',
         'npwp',
+        'pic',
+        'pic_position',
         'entity',
         'address',
         'province',
