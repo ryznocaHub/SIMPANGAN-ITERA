@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignId('procure_acc_id')->references('id')->on('procurement_accounts')->onDelete('cascade');
             $table->string('name');
             $table->longText('specification')->nullable();
-            $table->integer('unit');
+            $table->string('unit');
+            $table->integer('quantity');
             $table->integer('price');
             $table->integer('estimate_price')->nullable();
             $table->integer('total');

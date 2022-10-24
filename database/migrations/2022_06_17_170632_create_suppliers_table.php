@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('regency')->nullable();
             $table->string('bank')->nullable();
             $table->string('account')->nullable();
+            $table->string('pic')->nullable();
+            $table->string('pic_position')->nullable();
             $table->timestamps();
         });
     }
