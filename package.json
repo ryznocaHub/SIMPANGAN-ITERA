@@ -31,6 +31,7 @@
         "moment": "^2.29.4",
         "vue-html2pdf": "^1.8.0",
         "vue-moment": "^4.1.0",
+        "vue-sweetalert2": "^5.0.5",
         "vue3-easy-data-table": "^1.4.14",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.10/xlsx-0.18.10.tgz"
     }

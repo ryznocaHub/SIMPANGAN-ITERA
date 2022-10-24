@@ -6,10 +6,18 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+
+const options = {
+    confirmButtonColor: '#8CAFCE',
+    cancelButtonColor: '#ff7674',
+  };
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -17,6 +25,7 @@ createInertiaApp({
     setup({ el, app, props, plugin }) {
         return createApp({ render: () => h(app, props) })
             .use(plugin)
+            .use(VueSweetalert2)
             .use(ZiggyVue, Ziggy)
             .component(
                 "EasyDataTable", Vue3EasyDataTable
