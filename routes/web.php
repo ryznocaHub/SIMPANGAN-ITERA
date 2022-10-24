@@ -46,6 +46,9 @@ Route::group(['middleware' => 'auth'], function (){
 
     Route::prefix('unit')->middleware('unit')->name('unit.')->group(function(){
         Route::resource('procurement',          ProcurementAccountController::class)->except(['destroy']);
+        Route::get('procurement/reupload/{id}', [ProcurementAccountController::class,'reUploadRAB'])->name('procurement.reupload');
+        Route::patch('procurement/editinfo/{id}', [ProcurementAccountController::class,'editDataRAB'])->name('procurement.editinfo');
+        Route::patch('procurement/edititem/{id}', [ProcurementAccountController::class,'editItemRAB'])->name('procurement.edititem');
         Route::resource('item',                 ProcurementItemController::class)->only(['update']);
         Route::get('/dashboard',                [DashboardController::class, 'unit'])->name('dashboard');
     });
@@ -55,12 +58,14 @@ Route::group(['middleware' => 'auth'], function (){
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update', 'edit']);
         Route::post('updatehps/{id}',           [ProcurementItemController::class, 'updateHPS'])->name('item.updateHPS');
         Route::get('boq/{id}',                  [DocumentsController::class, 'boq'])->name('document.boq');
+        Route::get('hps/{id}',                  [DocumentsController::class, 'hps'])->name('document.hps');
     });
     
     Route::prefix('ppk')->middleware('ppk')->name('ppk.')->group(function(){
         Route::get('/dashboard',                [DashboardController::class, 'ppk'])->name('dashboard');
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update']);
         Route::get('boq/{id}',                  [DocumentsController::class, 'boq'])->name('document.boq');
+        Route::get('hps/{id}',                  [DocumentsController::class, 'hps'])->name('document.hps');
     });
     
     Route::prefix('pp')->middleware('pp')->name('pp.')->group(function(){
@@ -75,6 +80,12 @@ Route::group(['middleware' => 'auth'], function (){
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update']);
         Route::resource('supplier',             SupplierController::class);
         Route::get('boq/{id}',                  [DocumentsController::class, 'boq'])->name('document.boq');
+        Route::get('spk/{id}',                  [DocumentsController::class, 'spk'])->name('document.spk');
+        Route::get('sppbj/{id}',                [DocumentsController::class, 'sppbj'])->name('document.sppbj');
+        Route::get('bastp/{id}',                [DocumentsController::class, 'bastp'])->name('document.bastp');
+        Route::get('bap/{id}',                  [DocumentsController::class, 'bap'])->name('document.bap');
+        Route::get('sp/{id}',                   [DocumentsController::class, 'sp'])->name('document.sp');
+        Route::get('bahp/{id}',                 [DocumentsController::class, 'bahp'])->name('document.bahp');
     });
     
     Route::prefix('siren')->middleware('siren')->name('siren.')->group(function(){
