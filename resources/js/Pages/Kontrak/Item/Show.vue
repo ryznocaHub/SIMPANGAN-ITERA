@@ -1,5 +1,5 @@
 <template>
-    <Show :items=items />
+    <Show :items=items :noRAB="0" />
 </template>
 
 <script setup>

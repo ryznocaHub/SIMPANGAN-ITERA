@@ -35,7 +35,7 @@ const headers = [
     { text: "Kategori",         value: "category", sortable: true },
     { text: "Status",           value: "status", sortable: true },
     { text: "Supplier",         value: "supplier", sortable: true },
-    { text: "Total",            value: "total", sortable: true },
+    { text: "Total",            value: "estimate.total", sortable: true },
     { text: "aksi",             value: "aksi", sortable: true },
 ];
 </script>
