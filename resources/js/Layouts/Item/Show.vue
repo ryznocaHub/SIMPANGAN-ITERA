@@ -38,7 +38,7 @@
                     </div>
                 </Container>
             </div>
-            <div class="flex">
+            <div class="flex" v-if="props.noRAB == 1" >
                 <InfoDetail :items=x.itemPreview :status="1" />
                 <slot :data=x.itemPreview :successVerification="verification" />
             </div>
@@ -77,6 +77,7 @@ import InfoDetail from "@/Components/InfoDetail/Index.vue";
 
 const props = defineProps({
 	items: { type: Object },
+	noRAB: { type: Number, default: 1 },
 })
 
 const x = useForm({
@@ -110,7 +111,6 @@ function verification (id) {
         return item.id != id;
     });
     x.currentIndex = x.items.map(object => object.id).indexOf(x.itemPreview['id']);
-    console.log(x.items)
 }
 
 function convertToRupiah(angka) {
