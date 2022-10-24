@@ -1,5 +1,5 @@
 <template>
-    <Show :items=items >
+    <Show :items=items :noRAB="0" >
         <!-- <InfoDetail :items="slotProps.data" :status="2" class="ml-5"/> -->
     </Show>
 </template>

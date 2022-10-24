@@ -1,7 +1,7 @@
 <template>
     <Show :procurement=procurement >
         <template #file>
-            <a v-show="procurement.hps_submitted" :href="route('pp.document.boq',procurement.id)" class="btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lihat BOQ</a>
+            <a v-show="procurement.timeline.hps_approved" :href="route('pp.document.boq',procurement.id)" class="btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lihat BOQ</a>
         </template>
     </Show>
 </template>

@@ -20,14 +20,21 @@
                         <label :for=id class="modal cursor-pointer">
                         <label class="modal-box relative" for="">
                             <label :for=id class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
-                            <Header1 title="Tunjuk Supplier" class="my-12" widhSize=50 />
-                                                        <input id="suppliers"
+                            <Header1 title="Data Supplier" class="my-12" widhSize=50 />
+                            <Label value="Nominal Penawaran" class="mt-10" />
+                            <input id="offer"
+                            type="number"
+                            class=" block w-full"
+                            v-model="data.offer"
+                            >
+                            <Label value="Supplier" class="mt-5"/>
+                            <input id="suppliers"
                                 type="search"
-                                class="mt-12 mb-5 block w-full"
+                                class="block w-full mb-5"
                                 v-model="data.supplier"
                                 placeholder="Pilih Supplier"
                                 list="listsuppliers"
-                                required>
+                            >
                             <datalist id="listsuppliers">
                                 <option v-for="supplier in props.suppliers" :key=supplier.id>{{supplier.name}}</option>
                             </datalist>
@@ -49,6 +56,7 @@ import { Link } from '@inertiajs/inertia-vue3'
 import Container from "@/Components/utils/Container.vue";
 import Header1 from "@/Components/utils/Header1.vue";
 import StatusButton from "@/Components/statusButton/index.vue"
+import Label from '@/Components/utils/Label.vue';
 
  const props = defineProps({
 	procurements: { type: Object, required: true },
@@ -64,22 +72,22 @@ const headers = [
     { text: "Kategori",         value: "category", sortable: true },
     { text: "Status",           value: "status", sortable: true },
     { text: "Supplier",         value: "supplier", sortable: true },
-    { text: "Sub Total",        value: "sub_total", sortable: true },
-    { text: "PPN",              value: "PPN", sortable: true },
-    { text: "Total",            value: "total", sortable: true },
+    { text: "Total",            value: "estimate.total", sortable: true },
     { text: "aksi",             value: "aksi", sortable: true },
 ];
 
 const data = useForm({
-    _method: 'patch',
-    supplier: "",
-    status: 9
+    _method     : 'patch',
+    supplier    : "",
+    offer       : 0,
+    status      : 9
 });
 
 const verifikasi = (id) =>{
     data.post(route("pp.procurement.update", id),{
         onSuccess:  () => {
             console.log("sukses memilih Supplier")
+            data.reset()
         },
         onError:    (e) => {console.log(e)}
     })
