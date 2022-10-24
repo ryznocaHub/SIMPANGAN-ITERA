@@ -20,6 +20,7 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+        "@develoka/angka-terbilang-js": "^1.4.2",
         "@heroicons/vue": "^2.0.7",
         "@vuepic/vue-datepicker": "^3.4.8",
         "canvg": "^4.0.1",
@@ -29,6 +30,7 @@
         "jspdf": "^2.5.1",
         "moment": "^2.29.4",
         "vue-html2pdf": "^1.8.0",
+        "vue-moment": "^4.1.0",
         "vue3-easy-data-table": "^1.4.14",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.10/xlsx-0.18.10.tgz"
     }
