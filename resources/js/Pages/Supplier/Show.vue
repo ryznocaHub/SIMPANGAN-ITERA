@@ -14,7 +14,7 @@
             <p class="font-bold text-lg tracking-wider mb-3">
                 <span >{{supplier.bank}} {{supplier.account}}</span>
             </p>
-            <Link @click="route('kontrak.supplier.edit',supplier.id)" class="btn mt-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Edit</Link>
+            <Link :href="route('kontrak.supplier.edit',supplier.id)" class="btn mt-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Edit</Link>
         </Container>
     </Master>
 </template>

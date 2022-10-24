@@ -33,6 +33,29 @@
                     />
                 </div>
             </div>
+            <div class="flex">
+                <div class="mt-1 w-4/12 ">
+            
+                    <Label value="Jabatan" />
+                    <Input
+                        id="entity"
+                        type="text"
+                        class="w-full"
+                        v-model="data.pic_position"
+                        :value="data.pic_position"
+                    />
+                </div>
+                <div class="mt-1 w-full ml-10">
+                    <Label value="Nama Penanggung Jawab" />
+                    <Input
+                        id="nama"
+                        class="w-full"
+                        type="text"
+                        v-model="data.pic"
+                        :value="data.pic"
+                    />
+                </div>
+            </div>
             <Label value="NPWP" />
             <Input
                 id="npwp"
@@ -40,7 +63,6 @@
                 class="mt-1 block w-full"
                 v-model="data.npwp"
                 :value="data.npwp"
-                required
             />
             <Label value="Alamat" />
             <Input
@@ -80,12 +102,16 @@
                     <Label value="Bank" />
                     <Input
                         id="bank"
-                        type="text"
+                        type="search"
                         class="mt-1 block w-full"
                         v-model="data.bank"
                         :value="data.bank"
+                        list="listBank"
                         required
                     />
+                    <datalist id="listBank">
+                        <option v-for="bank in banks" :key=bank>{{bank}}</option>
+                    </datalist>
                 </div>
                 <div class="w-full ml-10">
                     <Label value="Rekening" />
@@ -121,6 +147,8 @@ const props = defineProps({
 
 const data = useForm({
     name:       props.supplier.name,
+    pic:        props.supplier.pic,
+    pic_position:props.supplier.pic_position,
     npwp:       props.supplier.npwp,
     entity:     props.supplier.entity,
     address:    props.supplier.address,
@@ -144,5 +172,107 @@ let back = function()
 {
     window.history.back();
 }
+
+const banks = [
+    'Bank Aceh Syariah',
+    'Bank Aladin Syariah',
+    'Bank Allo Indonesia',
+    'Bank Amar Indonesia',
+    'Bank ANZ Indonesia',
+    'Bank Artha Graha Internasional',
+    'Bank Banten',
+    'Bank BCA Syariah',
+    'Bank Bengkulu',
+    'Bank Bisnis Internasional',
+    'Bank BJB',
+    'Bank BJB Syariah',
+    'Bank BNP Paribas Indonesia',
+    'Bank BPD Bali',
+    'Bank BPD DIY',
+    'Bank BRK Syariah',
+    'Bank BSG',
+    'Bank BTPN',
+    'Bank BTPN Syariah',
+    'Bank Bumi Arta',
+    'Bank Capital Indonesia',
+    'Bank Central Asia (BCA)',
+    'Bank China Construction Bank Indonesia',
+    'Bank CIMB Niaga',
+    'Bank Commonwealth',
+    'Bank CTBC Indonesia',
+    'Bank Danamon Indonesia',
+    'Bank DBS Indonesia',
+    'Bank Digital BCA',
+    'Bank DKI',
+    'Bank Fama Internasional',
+    'Bank Ganesha',
+    'Bank HSBC Indonesia',
+    'Bank IBK Indonesia',
+    'Bank ICBC Indonesia',
+    'Bank Ina Perdana',
+    'Bank Index Selindo',
+    'Bank J Trust Indonesia',
+    'Bank Jago',
+    'Bank Jambi',
+    'Bank Jasa Jakarta',
+    'Bank Jateng',
+    'Bank Jatim',
+    'Bank Kalbar',
+    'Bank Kalsel',
+    'Bank Kalteng',
+    'Bank Kaltimtara',
+    'Bank KB Bukopin',
+    'Bank KB Bukopin Syariah',
+    'Bank KEB Hana Indonesia',
+    'Bank Lampung',
+    'Bank Maluku Malut',
+    'Bank Mandiri',
+    'Bank Mandiri Taspen',
+    'Bank Maspion',
+    'Bank Mayapada Internasional',
+    'Bank MaybankIndonesia',
+    'Bank Mayora',
+    'Bank Mega',
+    'Bank Mega Syariah',
+    'Bank Mestika Dharma',
+    'Bank Mizuho Indonesia',
+    'Bank MNC Internasional',
+    'Bank Muamalat Indonesia',
+    'Bank Multiarta Sentosa',
+    'Bank Nagari',
+    'Bank Nationalnobu',
+    'Bank Negara Indonesia',
+    'Bank Neo Commerce',
+    'Bank NTB Syariah',
+    'Bank NTT',
+    'Bank OCBC NISP',
+    'Bank Bank of India Indonesia',
+    'Bank Oke Indonesia',
+    'Bank Panin',
+    'Bank Panin Dubai Syariah',
+    'Bank Papua',
+    'Bank Permata',
+    'Bank Prima Master',
+    'Bank QNB Indonesia',
+    'Bank Rakyat Indonesia (BRI)',
+    'Bank Raya Indonesia',
+    'Bank Resona Perdania',
+    'Bank Sahabat Sampoerna',
+    'Bank SBI Indonesia',
+    'Bank Seabank Indonesia',
+    'Bank Shinhan Indonesia',
+    'Bank Sinarmas',
+    'Bank Sulselbar',
+    'Bank Sulteng',
+    'Bank Sultra',
+    'Bank Sumsel Babel',
+    'Bank Sumut',
+    'Bank Syariah Indonesia',
+    'Bank Tabungan Negara',
+    'Bank UOB Indonesia',
+    'Bank Victoria Internasional',
+    'Bank Victoria Syariah',
+    'Bank Woori Saudara',
+]
 
 </script>
