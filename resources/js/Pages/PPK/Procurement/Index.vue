@@ -10,8 +10,8 @@
                 <template #item-aksi="{ id }">
                     <Link :href="route('ppk.procurement.show', id)" class="btn btn-xs btn-outline text-first font-bold" >Lihat</Link>
                 </template>
-                <template #item-hps_executor="{ hps_executor, hpsexecutor, id }">
-                    <div v-if="hps_executor != null">{{hpsexecutor.name}}</div>
+                <template #item-hps_executor="{ executor, id }">
+                    <div v-if="executor.hps != null">{{executor.hps.name}}</div>
                     <div v-else>
                         <!-- The button to open modal -->
                         <label :for=id class="btn btn-xs border-first modal-button bg-first">Pilih Tim HPS</label>
@@ -155,6 +155,7 @@ const rejectHPS = (id) =>{
     reject.post(route("ppk.procurement.update", id),{
         onSuccess:  () => {
             console.log("sukses menolak HPS")
+            reject.reset()
         },
         onError:    (e) => {console.log(e)}
     })
