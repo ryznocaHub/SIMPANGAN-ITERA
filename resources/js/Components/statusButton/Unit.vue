@@ -5,7 +5,7 @@
     <div v-show="status == 2" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">
         Mengajukan RAB
     </div>
-    <div v-show="status == 3" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">
+    <div v-show="status == 3" class="relative badge badge-secondary badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">
         RAB Ditolak
     </div>
     <div v-show="status == 4" class="relative badge badge-first badge-outline tooltip tooltip-bottom ml-2" data-tip="RAB sudah diajukan, dalam pengecekan tim pengadaan">

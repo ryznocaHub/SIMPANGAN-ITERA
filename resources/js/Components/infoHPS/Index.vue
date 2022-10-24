@@ -26,13 +26,12 @@
                     min="1000"
                     @change="total()"
                     placeholder="Harga Satuan"
-                    required
                 />
             </div>
             <div class="flex flex-col">
                 <Label value="Jumlah" />
                 <p class="font-bold text-lg tracking-wider">
-                    {{ items['unit'] }} Unit
+                    {{ items['quantity'] }} {{ items['unit'] }}
                 </p>
             </div>
             <div class="flex flex-col basis-1/2 mt-5">
@@ -53,16 +52,17 @@
             class="mb-5"
             type="file"
             accept=".pdf"
-            @change="onInputChangeFile"
-            v-if="!x.fileName"
+            @input="(e) => onInputChangeFile(e)"
+            v-if="!x.fileName || x.status==0"
         />
         <div v-else class="mb-5">{{x.fileName}}</div>
+        <a v-if="x.status == 0 && hps.file && !hps.source"  class="mb-5 text-sm font-bold text-first underline underline-offset-8" :href="x.fileName" download target="_self">Lihat File {{hps.source}}</a>
         <div class="flex justify-between">
             <a v-show="hps.source" class=" hover:bg-none text-xs text-first underline underline-offset-8 " id="visit" :href="hps.source" target="_blank">
                 Kunjungi Sumber
             </a>
             <button
-                v-if="hps.total != 0 &&( hps.source != '' || hps.file != null)"
+                v-if="(hps.total != 0 && hps.total != null) &&( (hps.source != '' && hps.source != null) || hps.file != null)"
                 class="btn btn-xs text-white bg-first border-none  font-bold"
                 id="use"
                 @click="verifikasi()"
@@ -107,52 +107,79 @@ function convertToRupiah(angka) {
 }
 
 const hps = useForm({
-    price   : 0,
-    unit    : props.items['unit'],
-    source  : "",
-    file    : null,
-    total   : 0
+    price   : props.items['estimate_price'],
+    unit    : props.items['quantity'],
+    source  : props.items['estimate_source'],
+    file    : props.items['estimate_file'],
+    total   : props.items['estimate_total'],
+    status  : 1
 });
 
+const isiForm = () => {
+    hps.price       = props.items['estimate_price']
+    hps.unit        = props.items['quantity']
+    hps.source      = props.items['estimate_source']
+    hps.file        = props.items['estimate_file']
+    hps.total       = props.items['estimate_total']
+    hps.status      = 1
+}
+
+// function fillForm (){
+// }
+
 const x = useForm({
-    fileName : ""
+    fileName        : props.items.estimate_file,
+    status          : 0
 })
 
 const total = () =>{
     hps.total=hps.unit*hps.price
+    hps.status  = 0
 }
 
 const useRAB = () => {
-    hps.unit = props.items['unit']
-    hps.price = props.items['price']
-    hps.source = props.items['source']
+    hps.unit    = props.items['quantity']
+    hps.price   = props.items['price']
+    hps.source  = props.items['source']
+    hps.file    = null
+    hps.status  = 0
+    x.status    = 0
     total();
 }
 
 const verifikasi = () => {
     hps.post(route('hps.item.updateHPS', props.items['id']),{
-        onSuccess : () =>{
-            emit('editTotal',hps.total);
-            console.log("sukses",props.items['id'])
+        onSuccess : (e) =>{
+            console.log("succes",props.items)
+            emit('editTotal',hps, props.items.estimate_total);
+            // console.log("sukses",props.items['id'])
             emit('successVerification', props.items['id'])
-            hps.reset()
+            // console.log("item sukses",props.items)
+        },
+        onFinish : () => {
+            isiForm()
             x.reset()
         },
         onError : (e) => {
             console.log("gagal", e)
         }
     })
+
 }
 
 function onInputChangeFile(e) {
-    hps.file = e.target.files;
-    hps.source = "";
-    console.log(e.target.files[0].name)
-    x.fileName = e.target.files[0].name;
+    x.status=1
+    hps.file = e.target.files
+    hps.source = ""
+    // console.log(e.target.files[0].name)
+    x.fileName = e.target.files[0].name
+    hps.status  = 0
 }
 
 function onInputChangeSource(e) {
-    x.fileName = null;
-    hps.file = null;
+    x.fileName  = null;
+    hps.file    = null;
+    hps.status  = 0
+    x.status    = 1
 }
 </script>

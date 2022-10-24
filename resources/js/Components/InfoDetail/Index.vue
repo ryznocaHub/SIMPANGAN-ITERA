@@ -18,7 +18,7 @@
             <div class="ml-5 flex flex-col">
                 <Label value="Jumlah" />
                 <p class="font-bold text-lg tracking-wider">
-                    <span >{{items['unit']}}</span>
+                    {{ items['quantity'] }} {{ items['unit'] }}
                 </p>
             </div>
             <div class="flex flex-col basis-1/2 mt-5">
@@ -52,7 +52,7 @@
                     Kunjungi Sumber
                 </a>
         </div>
-        <a v-else class="mb-5 text-sm font-bold text-first underline underline-offset-8" :href="items['estimate_file']" download target="_self">Download File</a>
+        <a v-else class="mb-5 text-sm font-bold text-first underline underline-offset-8" :href="items['estimate_file']" download target="_self">Lihat File</a>
         <!-- <button @click="cek()">cek</button> -->
     </Container>
 </template>

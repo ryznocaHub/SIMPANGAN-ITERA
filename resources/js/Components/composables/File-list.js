@@ -18,7 +18,7 @@ export default function () {
         }
         //read file RAB
         const file_read = read(await newFiles[0].arrayBuffer());
-        console.log("ss");
+        // console.log("ss");
         //get Data RAB
         var dataRow = utils.sheet_to_json(file_read.Sheets[file_read.SheetNames[0]], { header: 1 });
         //hapus row xlxs yaang kosong
@@ -26,11 +26,11 @@ export default function () {
         //simpan data umum ke info
         info.value = new DataDetail(dataRow,newFiles[0].name);
         //hanya mengambil data item
-        data.value = dataRow.slice(5,-7)
+        data.value = dataRow.slice(5,-8)
         // console.log("file_read",file_read)
         // console.log("datarow",dataRow)
         // console.log("data",data.value)
-        console.log("info in file list",info.value);
+        // console.log("info in file list",info.value);
     }
 
     function fileExists(otherId) {
@@ -58,9 +58,10 @@ class DataDetail {
         this.name                   = `${data[1]}`;
         this.year                   = `${data[2]}`;
         this.unit                   = `${data[3]}`;
-        this.sub_total              = `${data[data.length-7][5]}`;
-        this.PPN                    = `${data[data.length-6][5]}`;
-        this.total                  = `${data[data.length-5][5]}`;
+        this.sub_total              = `${data[data.length-8][6]}`;
+        this.ppn                    = `${data[data.length-7][6]}`;
+        this.overheat               = `${data[data.length-6][6]}`;
+        this.total                  = `${data[data.length-5][6]}`;
         this.executor               = `${data[data.length-2][0]}`;
         this.executor_id            = `${data[data.length-1][0]}`;
         this.person_responsible     = `${data[data.length-2][2]}`;
@@ -69,13 +70,6 @@ class DataDetail {
         this.PPK_id                 = `${data[data.length-1][4]}`;
         this.treasurer              = `${data[data.length-2][6]}`;
         this.treasurer_id           = `${data[data.length-1][6]}`;
-        // this.url = URL.createObjectURL(file);
         this.status = 1;
     }
-    // constructor(file) {
-    //     this.file = file;
-    //     this.id = `${file.name}-${file.size}-${file.lastModified}-${file.type}`;
-    //     this.url = URL.createObjectURL(file);
-    //     this.status = null;
-    // }
 }
