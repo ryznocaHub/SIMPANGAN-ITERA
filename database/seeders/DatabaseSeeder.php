@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\SupplierSeeder;
 use Database\Seeders\UnitSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\CategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,7 +22,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SupplierSeeder::class,
             UnitSeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            CategorySeeder::class
         ]);
     }
 }

@@ -19,8 +19,8 @@ class UserSeeder extends Seeder
             'name'      => 'Head Of UKPBJ',
             'identity_number'  =>  '19770527 200003 1 002',
             'identity_type'  =>  'NIP',
-            'email'     => 'headOfUKPBJ@gmail.com',
-            'password'  => bcrypt('headOfUKPBJ'),
+            'email'     => 'admin@gmail.com',
+            'password'  => bcrypt('admin'),
             'role'      => User::ROLE_Head_UKPBJ,
             'unit_id'   => 1 
 
