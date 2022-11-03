@@ -6,11 +6,10 @@ export default function () {
 
 	function addFiles(newFiles) {
 		const type = newFiles[0].type
-		if(!type.includes("image")){
-            info.value = new Fail("File harus berupa gambar");
-
-            return;
-        }
+		
+		if(!type.includes("image")) return info.value = new Fail("File harus berupa gambar");
+		console.log(newFiles[0].size, 5*1024*1024)
+		if(newFiles[0].size > 5*1024*1024) return info.value = new Fail("Ukuran gambar terlalu besar (maks: 5 Mb)");
 		info.value.status = 0;
 		let newUploadableFiles = [...newFiles].map((file) => new UploadableFile(file)).filter((file) => !fileExists(file.id))
 		files.value = newUploadableFiles

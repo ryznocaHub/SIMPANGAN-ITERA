@@ -5,32 +5,30 @@ export default function () {
     const info = ref([]);
     const data = ref([]);
 
-    async function addFiles(newFiles) {
-        // let newUploadableFiles = [...newFiles]
-        //     .map((file) => new UploadableFile(file))
-        // files.value = newUploadableFiles;
-        // files.value = newFiles;
+    async function addFiles(newFiles, fileName) {
         const availableType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        const title = ['No', 'Nama Barang', 'Spesifikasi', 'Jumlah', 'unit', 'Harga Satuan', 'Total Harga', 'Gambar', 'Peruntukan', 'Sumber']
+
         if(newFiles[0].type != availableType){
             info.value = new Fail("Tidak sesuai format RAB. File harus berformat xlxs.");
 
             return;
         }
+
         //read file RAB
         const file_read = read(await newFiles[0].arrayBuffer());
-        // console.log("ss");
         //get Data RAB
         var dataRow = utils.sheet_to_json(file_read.Sheets[file_read.SheetNames[0]], { header: 1 });
         //hapus row xlxs yaang kosong
         dataRow = dataRow.filter(x => x.length > 0);
+        if(JSON.stringify(dataRow[4]) != JSON.stringify(title) )         return info.value = new Fail("Urutan kolom item salah, Periksa kembali Format RAB")
+        if(dataRow[7][0] != 'Sub Total')   return info.value = new Fail("Kolom Sub Total tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[8][0] != 'PPN 11%')         return info.value = new Fail("Kolom PPN tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[9][0] != 'Overheat')    return info.value = new Fail("Kolom Overheat tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[10][0] != 'Total')      return info.value = new Fail("Kolom Total tidak ditemukan, Periksa kembali Format RAB")
         //simpan data umum ke info
-        info.value = new DataDetail(dataRow,newFiles[0].name);
-        //hanya mengambil data item
+        info.value = new DataDetail(dataRow,fileName);
         data.value = dataRow.slice(5,-8)
-        // console.log("file_read",file_read)
-        // console.log("datarow",dataRow)
-        // console.log("data",data.value)
-        // console.log("info in file list",info.value);
     }
 
     function fileExists(otherId) {
