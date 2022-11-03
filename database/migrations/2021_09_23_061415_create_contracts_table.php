@@ -36,7 +36,8 @@ return new class extends Migration
             $table->string('paket_sp')->nullable();
             $table->timestamp('date_bastp', 6)->nullable();
             $table->string('no_bastp')->nullable();
-            $table->timestamp('date_bastp', 6)->nullable();
+            $table->string('no_bahp')->nullable();
+            $table->timestamp('date_bahp', 6)->nullable();
             $table->string('no_bap')->nullable();
             $table->timestamp('date_bap', 6)->nullable();
             $table->timestamps();
