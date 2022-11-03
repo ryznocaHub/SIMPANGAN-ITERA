@@ -13,6 +13,24 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    public function headUKPBJ()    
+    {   
+        $procurements   = ProcurementAccounts::select(['procurement_accounts.id', 'procurement_accounts.name', 'procurement_accounts.status', 'budget_plans.total as total', 'timelines.rab_submitted as date'])
+            -> join('budget_plans','procurement_accounts.budget_plan_id', '=', 'budget_plans.id')
+            -> join('timelines','procurement_accounts.timeline_id', '=', 'timelines.id')
+            -> orderBy('timelines.rab_submitted')
+            -> paginate(100);
+        // dd($procurements);
+        // with('budget_plan', 'timeline') -> orderBy('status') -> get();
+        $grouped        = $procurements -> sortBy('status') -> groupBy('status');
+        // dd($procurements ,$grouped);
+        
+        return Inertia::render('Admin/Index',[
+            'procurements'  => $procurements,
+            'groupedProc'   => $grouped
+        ]);
+    }
+    
     public function ppk()    
     {   
         return Inertia::render('PPK/Index');

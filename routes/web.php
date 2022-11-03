@@ -5,6 +5,7 @@ use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\ProcurementAccountController;
 use App\Http\Controllers\ProcurementItemController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use App\Models\Supplier;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -39,9 +40,14 @@ Route::get('/cek', [DashboardController::class, 'cek'])->name('cek');
 Route::group(['middleware' => 'auth'], function (){
     // Route::get('/', [DashboardController::class, 'cek'])->name('dashboard.TimHPS');
     
-    Route::prefix('admin')->middleware('headUKPBJ')->name('admin.')->group(function(){
-        Route::resource('procurement',          ProcurementAccountController::class)->only(['index']);
+    Route::prefix('admin')->middleware('admin')->name('admin.')->group(function(){
+        Route::resource('procurement',          ProcurementAccountController::class)->only(['show']);
         Route::get('/dashboard',                [DashboardController::class, 'headUKPBJ'])->name('dashboard');
+        Route::resource('supplier',             SupplierController::class)->only(['index', 'show']);
+        Route::get('user/nonactive',            [UserController::class, 'usersNonActive']) ->name('usersNonActive');
+        Route::post('user/nonactiveuser/{id}',  [UserController::class, 'nonActiveUser'])  ->name('nonActiveUser');
+        Route::post('user/activeuser/{id}',     [UserController::class, 'activeUser'])     ->name('activeUser');
+        Route::resource('user',                 UserController::class);
     });
 
     Route::prefix('unit')->middleware('unit')->name('unit.')->group(function(){

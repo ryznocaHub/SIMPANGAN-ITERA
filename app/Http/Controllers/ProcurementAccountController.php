@@ -23,14 +23,6 @@ use Ramsey\Uuid\Type\Time;
 class ProcurementAccountController extends Controller
 {
     public function index (){
-        // dd(Auth::id());
-        if(Auth::user()->role == User::ROLE_UNIT){
-            $procurements = ProcurementAccounts::where('user_id',Auth::id())->with('budget_plan')->get();
-            // dd($procurements);
-            return Inertia::render('Unit/Procurement/Index',[
-                'procurements' => $procurements,
-            ]);
-        }
         
         // if(Auth::user()->role == User::ROLE_HPS_TEAM)
         // {
@@ -47,17 +39,39 @@ class ProcurementAccountController extends Controller
         $status = ProcurementAccounts::status[Auth::user()->role -1];
         $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Index';
         
-        if(Auth::user()->role == User::ROLE_PPK)
+        if(Auth::user()->role == User::ROLE_UNIT){
+            $procurements = ProcurementAccounts::where('user_id',Auth::id())
+                -> with('budget_plan')
+                -> where('status','>=', $status)
+                -> get();
+            
+            return Inertia::render($url,[
+                'procurements' => $procurements,
+            ]);
+        }
+        else if(Auth::user()->role == User::ROLE_VerifAccount){
+            $procurements = ProcurementAccounts::with('budget_plan')
+                -> where('status','>=', $status)
+                -> get();
+            
+            return Inertia::render($url,[
+                'procurements' => $procurements,
+            ]);
+        }
+        else if(Auth::user()->role == User::ROLE_PPK)
         {
-            $procurements = ProcurementAccounts::where('status','>=', $status)->with('executor.hps')->get();
-            // dd($procurements);
+            $procurements = ProcurementAccounts::where('status','>=', $status)
+                -> with('executor.hps')
+                -> get();
+
             $hpsTeams = User::where('role',User::ROLE_HPS_TEAM)->get();
             // dd($procurements);
             return Inertia::render($url, [
                 'procurements'  => $procurements,
                 'hpsteams'      => $hpsTeams
             ]);
-        }else if(Auth::user()->role == User::ROLE_HPS_TEAM)
+        }
+        else if(Auth::user()->role == User::ROLE_HPS_TEAM)
         {
             $procurements = ProcurementAccounts::where('status','>=', $status)
                 ->with(['suppliers', 'estimate'])    
@@ -66,19 +80,25 @@ class ProcurementAccountController extends Controller
                     $query->where($role, Auth::id());
                 })  
                 ->get();
-        }else
+            
+            return Inertia::render($url, [
+                'procurements'  => $procurements,
+            ]);
+        }
+        else
         {
             $procurements = ProcurementAccounts::where('status','>=', $status)
-                                -> with(['suppliers', 'estimate'])
-                                -> get();
+                -> with(['suppliers', 'estimate'])
+                -> get();
+            // dd($procurements);
+            $suppliers = Supplier::all();
+            // dd($suppliers);
+            return Inertia::render($url, [
+                'procurements'  => $procurements,
+                'datasuppliers'      => $suppliers
+            ]);
         }
 
-        $suppliers = Supplier::all();
-        $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Index';
-        return Inertia::render($url, [
-            'procurements'  => $procurements,
-            'suppliers'      => $suppliers
-        ]);
     }
 
     public function show ($id){
@@ -97,12 +117,30 @@ class ProcurementAccountController extends Controller
 
     public function store (Request $request){
         $validated = $request->validate([
-            'category'  => 'required|String|',
-            'account'   => 'required|String'
+            'category'                          => 'required|String|exists:categories,name',
+            'account'                           => 'required|String|unique:procurement_accounts,account',
+            'dataInfo.PPK'                      => 'required|exists:users,name',
+            'dataInfo.executor'                 => 'required',
+            'dataInfo.executor_id'              => 'required',
+            'dataInfo.person_responsible'       => 'required',
+            'dataInfo.person_responsible_id'    => 'required',
+        ],[
+            'category.required'                         => 'Pilih kategori yang tersedia',
+            'category.String'                           => 'Kategori berupa huruf',
+            'category.exists'                           => 'Kategori salah, Pilih kategori yang tersedia',
+            'account.required'                          => 'Nomor akun harus diisi',
+            'account.String'                            => 'Nomor akun berupa huruf',
+            'dataInfo.PPK.required'                     => 'Nama PPK harus diisi',
+            'dataInfo.PPK.exists'                       => 'Nama PPK salah',
+            'dataInfo.executor.required'                => 'Nama Pelaksana harus diisi',
+            'dataInfo.executor_id.required'             => 'Identitas Pelaksana harus diisi',
+            'dataInfo.person_responsible.required'      => 'Nama Penanggung Jawab harus diisi',
+            'dataInfo.person_responsible_id.required'   => 'Identitas Penanggung Jawab harus diisi',
+            'dataInfo.treasurer.required'               => 'Nama Bendahara Pengeluaran harus diisi',
+            'dataInfo.treasurer_id.required'            => 'Identitas Bendahara Pengeluaran harus diisi',
         ]);
 
         $info = $request->dataInfo;
-        // dd($request->dataList);
         $newprocurementId = DB::transaction(function() use($info, $request){
             $ppk = User::where('name','like',$info['PPK'])->first();
             // dd($ppk);
@@ -255,7 +293,7 @@ class ProcurementAccountController extends Controller
 
             }else if($request->status == ProcurementAccounts::is_ChoosingHpsExecutor){
                 $validated = $request->validate([
-                    'rup_code'    => 'required|string',
+                    'rup_code'    => 'required|string|exist:procurement_accounts,rup_code',
                 ]);
                 DB::transaction(function () use($procurement, $request){
                     $procurement->rup_code = $request->rup_code;
@@ -288,7 +326,11 @@ class ProcurementAccountController extends Controller
             if($request->status==ProcurementAccounts::is_CreateHPS)
             {
                 $validated = $request->validate([
-                    'hps'       => 'required|string'
+                    'hps'       => 'required|string|exists:users,name'
+                ],[
+                    'hps.required'  => 'Pilih Tim HPS yang tersedia',
+                    'hps.string'    => 'Nama Tim HPS berupa huruf',
+                    'hps.exists'    => 'Nama Tim HPS salah, Pilih Nama yang tersedia',
                 ]);
 
                 DB::transaction(function () use($request, $procurement)
@@ -309,6 +351,8 @@ class ProcurementAccountController extends Controller
             {
                 $validated = $request->validate([
                     'comment'    => 'required|string',
+                ],[
+                    'comment.required'  => 'Berikan komentar untuk mempermudah Tim HPS'
                 ]);
                 
                 Timeline::find($procurement->timeline_id)
@@ -340,8 +384,10 @@ class ProcurementAccountController extends Controller
                 'sub_total'     => 'required|integer',
                 'ppn'           => 'required|integer',
                 'overheat'      => 'required|integer',
-                'percentage'    => 'required|max:20',
+                'percentage'    => 'required|numeric|between:0,19.99',
                 'chooser'       => 'required|boolean',
+            ],[
+                'percentage.max'    =>  'overheat maksimal 20%'
             ]);
 
             DB::transaction(function () use($request, $id){
@@ -563,6 +609,7 @@ class ProcurementAccountController extends Controller
     }
 
     public function reUploadRAB($id){
+        
         $procurement = ProcurementAccounts::find($id);
         return Inertia::render('Unit/Procurement/Reupload',[
             'procurement'   =>  $procurement
@@ -571,9 +618,17 @@ class ProcurementAccountController extends Controller
 
     public function editDataRAB(Request $request, $id){
         $validated = $request->validate([
-            'category'  => 'required|String|',
-            'judul'     => 'required|String|',
-            'account'   => 'required|String'
+            'category'                          => 'required|String|exists:categories,name',
+            'account'                           => 'required|String',
+            'judul'                             => 'required|String',
+        ],[
+            'category.required'                 => 'Pilih kategori yang tersedia',
+            'category.String'                   => 'Kategori berupa huruf',
+            'category.exists'                   => 'Kategori salah, Pilih kategori yang tersedia',
+            'account.required'                  => 'Nomor akun harus diisi',
+            'account.String'                    => 'Nomor akun berupa huruf',
+            'judul.required'                    => 'Judul harus diisi',
+            'judul.String'                      => 'Judul berupa huruf',
         ]);
 
         $newprocurementId = DB::transaction(function() use($id, $request){
@@ -600,9 +655,30 @@ class ProcurementAccountController extends Controller
 
     public function editItemRAB(Request $request, $id){
         $validated = $request->validate([
-            'category'  => 'required|String|',
-            'judul'     => 'required|String|',
-            'account'   => 'required|String'
+            'category'                          => 'required|String|exists:categories,name',
+            'account'                           => 'required|String',
+            'judul'                             => 'required|String',
+            'dataInfo.PPK'                      => 'required|exists:users,name',
+            'dataInfo.executor'                 => 'required',
+            'dataInfo.executor_id'              => 'required',
+            'dataInfo.person_responsible'       => 'required',
+            'dataInfo.person_responsible_id'    => 'required',
+        ],[
+            'category.required'                         => 'Pilih kategori yang tersedia',
+            'category.String'                           => 'Kategori berupa huruf',
+            'category.exists'                           => 'Kategori salah, Pilih kategori yang tersedia',
+            'account.required'                          => 'Nomor akun harus diisi',
+            'account.String'                            => 'Nomor akun berupa huruf',
+            'judul.required'                            => 'Judul harus diisi',
+            'judul.String'                              => 'Judul berupa huruf',
+            'dataInfo.PPK.required'                     => 'Nama PPK harus diisi',
+            'dataInfo.PPK.exists'                       => 'Nama PPK salah',
+            'dataInfo.executor.required'                => 'Nama Pelaksana harus diisi',
+            'dataInfo.executor_id.required'             => 'Identitas Pelaksana harus diisi',
+            'dataInfo.person_responsible.required'      => 'Nama Penanggung Jawab harus diisi',
+            'dataInfo.person_responsible_id.required'   => 'Identitas Penanggung Jawab harus diisi',
+            'dataInfo.treasurer.required'               => 'Nama Bendahara Pengeluaran harus diisi',
+            'dataInfo.treasurer_id.required'            => 'Identitas Bendahara Pengeluaran harus diisi',
         ]);
 
         $info = $request->dataInfo;
