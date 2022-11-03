@@ -5,7 +5,7 @@
 	</div>
 	<DropZone class="drop-area border-4 border-first border-dashed text-center flex flex-col align-center justify-center w-full h-full" @files-dropped="addImage" #default="{ dropZoneActive }" v-else>
 		<div v-show="info.status == 9" class="text-secondary">{{ info.message }}</div>
-		<label for="file-input " class="">
+		<label for="file-input" class="">
 			<span v-if="dropZoneActive">
 				<span>Letakkan Gambar disini</span>
 				<!-- <span class="smaller">to add them</span> -->
@@ -17,7 +17,7 @@
 				</span>
 			</span>
 
-			<input type="file" id="file-input" @change="onInputChange" />
+			<input type="file" id="file-input" @change="onInputChange" accept="image/*" hidden />
 		</label>
 	</DropZone>
 </template>
