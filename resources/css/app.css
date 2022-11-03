@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.swal2-icon-success,
+.swal2-icon-success .swal2-title {
+color: #89B77D !important;
+}
+
+.colored-toast .swal2-icon-info,
+.swal2-icon-info .swal2-title {
+color: #8CAFCE !important;
+}
+
+.colored-toast .swal2-icon-warning,
+.swal2-icon-warning .swal2-title {
+color: #EEE8A9 !important;
+}
+
+.colored-toast .swal2-icon-error,
+.swal2-icon-error .swal2-title {
+color: #F87272 !important;
+}
