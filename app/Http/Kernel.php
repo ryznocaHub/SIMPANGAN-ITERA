@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Admin;
 use App\Http\Middleware\Hps;
 use App\Http\Middleware\Kontrak;
 use App\Http\Middleware\PP;
@@ -76,5 +77,6 @@ class Kernel extends HttpKernel
         'pp'        => PP::class,
         'kontrak'   => Kontrak::class,
         'siren'     => Siren::class,
+        'admin'     => Admin::class
     ];
 }
