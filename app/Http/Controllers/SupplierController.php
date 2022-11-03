@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -12,6 +14,11 @@ class SupplierController extends Controller
     public function index ()
     {
         $suppliers = Supplier::all();
+
+        if(Auth::user()->role != User::ROLE_CONTRACT_TEAM){
+            $suppliers = $suppliers->whereNotNull('npwp');
+            // dd($suppliers);
+        }
 
         return Inertia::render('Supplier/Index',[
             'suppliers' => $suppliers
