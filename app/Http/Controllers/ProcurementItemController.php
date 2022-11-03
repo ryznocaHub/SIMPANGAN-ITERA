@@ -26,7 +26,7 @@ class ProcurementItemController extends Controller
 
     public function update(Request $request, $id){
         $validated = $request->validate([
-            'image' => 'image',
+            'image' => 'image|max:5120',
         ]);
 
         $item = ProcurementItem::find($id);
@@ -53,6 +53,8 @@ class ProcurementItemController extends Controller
             'price' => 'required|integer|min:1000',
             'total' => 'required|integer|min:1000',
             'status'=> 'required'
+        ],[
+            'price.min' => 'Periksa kembali harga item'
         ]);
 
         if($request->status == 1) return 0;
@@ -61,6 +63,11 @@ class ProcurementItemController extends Controller
 
         DB::transaction(function () use($request, $item, $id) {
             if($request->source){
+                $request->validate([
+                    'source' => 'required|url',
+                ],[
+                    'source.url' => 'Periksa kembali url (e.g. https://www.tokopedia.com)'
+                ]);
                 $source     = $request->source;
                 $file       = null;
             }else if($request->file){
