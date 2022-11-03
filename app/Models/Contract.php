@@ -31,6 +31,8 @@ class Contract extends Model
         'payment',
         'no_bastp',
         'date_bastp',
+        'no_bahp',
+        'date_bahp',
         'no_bap',
         'date_bap',
     ];
