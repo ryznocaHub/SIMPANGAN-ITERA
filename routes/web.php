@@ -22,41 +22,31 @@ use Inertia\Inertia;
 |
 */
 
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]);
-// });
 
 Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
 
-Route::get('/cek', [DashboardController::class, 'cek'])->name('cek');
 
 Route::group(['middleware' => 'auth'], function (){
-    // Route::get('/', [DashboardController::class, 'cek'])->name('dashboard.TimHPS');
     
     Route::prefix('admin')->middleware('admin')->name('admin.')->group(function(){
-        Route::resource('procurement',          ProcurementAccountController::class)->only(['show']);
         Route::get('/dashboard',                [DashboardController::class, 'headUKPBJ'])->name('dashboard');
-        Route::resource('supplier',             SupplierController::class)->only(['index', 'show']);
         Route::get('user/nonactive',            [UserController::class, 'usersNonActive']) ->name('usersNonActive');
         Route::post('user/nonactiveuser/{id}',  [UserController::class, 'nonActiveUser'])  ->name('nonActiveUser');
         Route::post('user/activeuser/{id}',     [UserController::class, 'activeUser'])     ->name('activeUser');
         Route::resource('user',                 UserController::class);
+        Route::resource('supplier',             SupplierController::class)->only(['index', 'show']);
+        Route::resource('procurement',          ProcurementAccountController::class)->only(['show']);
     });
 
     Route::prefix('unit')->middleware('unit')->name('unit.')->group(function(){
-        Route::resource('procurement',          ProcurementAccountController::class)->except(['destroy']);
+        Route::get('/dashboard',                [DashboardController::class, 'unit'])->name('dashboard');
         Route::get('procurement/reupload/{id}', [ProcurementAccountController::class,'reUploadRAB'])->name('procurement.reupload');
         Route::patch('procurement/editinfo/{id}', [ProcurementAccountController::class,'editDataRAB'])->name('procurement.editinfo');
         Route::patch('procurement/edititem/{id}', [ProcurementAccountController::class,'editItemRAB'])->name('procurement.edititem');
         Route::resource('item',                 ProcurementItemController::class)->only(['update']);
-        Route::get('/dashboard',                [DashboardController::class, 'unit'])->name('dashboard');
+        Route::resource('procurement',          ProcurementAccountController::class)->except(['destroy']);
     });
     
     Route::prefix('hps')->middleware('hps')->name('hps.')->group(function(){
@@ -78,6 +68,9 @@ Route::group(['middleware' => 'auth'], function (){
         Route::get('/dashboard',                [DashboardController::class, 'pp'])->name('dashboard');
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update']);
         Route::get('boq/{id}',                  [DocumentsController::class, 'boq'])->name('document.boq');
+        Route::get('bakn/{id}',                 [DocumentsController::class, 'bakn'])->name('document.bakn');
+        Route::get('bahp/{id}',                 [DocumentsController::class, 'bahp'])->name('document.bahp');
+        Route::get('bae/{id}',                  [DocumentsController::class, 'baep'])->name('document.baep');
         // Route::resource('supplier',             Supplier::class)                    ->only(['create','store']);
     });
     
@@ -91,7 +84,6 @@ Route::group(['middleware' => 'auth'], function (){
         Route::get('bastp/{id}',                [DocumentsController::class, 'bastp'])->name('document.bastp');
         Route::get('bap/{id}',                  [DocumentsController::class, 'bap'])->name('document.bap');
         Route::get('sp/{id}',                   [DocumentsController::class, 'sp'])->name('document.sp');
-        Route::get('bahp/{id}',                 [DocumentsController::class, 'bahp'])->name('document.bahp');
     });
     
     Route::prefix('siren')->middleware('siren')->name('siren.')->group(function(){
@@ -99,7 +91,7 @@ Route::group(['middleware' => 'auth'], function (){
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update']);
     });
     
-    Route::resource('item',ProcurementItemController::class)->only(['show']);
+    Route::resource('item',                     ProcurementItemController::class)->only(['show']);
     Route::get('/dashboard/TimHPS',             [DashboardController::class, 'TimHPS'])->name('dashboard.TimHPS');
 });
 
