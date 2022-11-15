@@ -1,0 +1,1 @@
+import{o as s,e as i,d as e,t as a,z as l}from"./app.df3260cc.js";const o={class:"flex flex-col mb-5"},c={class:"text-2xl font-black tracking-widest"},_={__name:"Header1",props:{title:String,widthSize:String},setup(t){return(n,r)=>(s(),i("div",o,[e("h1",c,a(t.title),1),e("div",{class:"h-1 bg-first rounded",style:l({width:t.widthSize+"px"})},null,4)]))}};export{_};

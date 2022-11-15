@@ -1,0 +1,1 @@
+import{_ as a}from"./Master.1f615f96.js";import{o as t,c as r,w as o,a as s}from"./app.df3260cc.js";import{_ as e}from"./Header1.119769ea.js";const f={__name:"UnitDashboard",props:{units:Array},setup(_){return(c,n)=>(t(),r(a,null,{default:o(()=>[s(e,{title:"Form Input RAB"})]),_:1}))}};export{f as default};

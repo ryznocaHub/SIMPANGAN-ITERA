@@ -1,1 +1,0 @@
-import{a as o}from"./Show.8b9d02d8.js";import{o as e,c as m}from"./app.35366383.js";import"./Master.6e78ae6a.js";import"./Container.fd7110e0.js";import"./Label.23df5a7a.js";import"./Header1.57f707b5.js";import"./Input.d1f1fc38.js";const l={__name:"Show",props:{items:{type:Object}},setup(t){return(r,i)=>(e(),m(o,{items:t.items},null,8,["items"]))}};export{l as default};
