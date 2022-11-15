@@ -8,7 +8,7 @@
             <p class="text-sm mb-10 text-gray-500">{{procurement.description}}</p>
 
             <div class="flex">
-                <Container class="justify-between w-10/12">
+                <Container class="justify-between w-9/12">
                     <div class="flex justify-between">
                         <div>
                             <div class="flex">

@@ -81,6 +81,7 @@ class ProcurementItemController extends Controller
 
                     $path       = 'public/file/' . $item->procure_acc_id . '/' ;
                     $file_name  = $item->name . '.' . $file[0]->clientExtension();
+                    $file_name  = str_replace(' ', '_', $file_name);
                     $store      = $file[0]->storeAs($path, $file_name);
                     $link       = $request->root() . '/storage/file/' . $item->procure_acc_id . '/' . $file_name;
                     $file       = Storage::url($store);

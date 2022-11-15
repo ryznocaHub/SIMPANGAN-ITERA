@@ -168,6 +168,7 @@ class ProcurementAccountController extends Controller
             'category.exists'                           => 'Kategori salah, Pilih kategori yang tersedia',
             'account.required'                          => 'Nomor akun harus diisi',
             'account.String'                            => 'Nomor akun berupa huruf',
+            'account.unique'                            => 'Nomor akun sudah terpakai',
             'dataInfo.PPK.required'                     => 'Nama PPK harus diisi',
             'dataInfo.PPK.exists'                       => 'Nama PPK salah atau tidak tersedia',
             'dataInfo.executor.required'                => 'Nama Pelaksana harus diisi',
