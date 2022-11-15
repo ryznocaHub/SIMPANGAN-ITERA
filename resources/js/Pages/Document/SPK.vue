@@ -24,7 +24,7 @@
                 </div>
                 <div class="border-l-2 px-2">
                     <span >NOMOR DAN TANGGAL SPK:</span> 
-                    <div class=" mt-2 mb-3 font-normal text-secondary">
+                    <div class=" mt-2 mb-3 font-normal ">
                         No. {{procurement.contract.no_spk}} Tanggal: {{moment(procurement.contract.date_start_spk, 'YYYY-MM-DD').format('DD-MM-YYYY')}}
                     </div>
                 </div>
@@ -52,13 +52,13 @@
             <div class="mt-2 mb-5 font-bold">SUMBER DANA:</div>
             <div>
                 Surat Perintah Kerja (SPK) ini dibiayai dari sumber dana APBN Institut Teknologi Sumatera dengan kode akun kegiatan {{procurement.account}}. 
-                Pembayaran ditransfer ke rekening Bank Lampung dengan nomer rekening 4050002000663 Atas
-                Nama <span class="text-secondary">Atas Nama</span>
+                Pembayaran ditransfer ke rekening {{supplier.bank}} dengan nomer rekening {{supplier.account}} Atas
+                Nama <span class="">{{supplier.name}}</span>
             </div>
         </div>
         <div class="mx-10 border-2 text-justify px-2 pb-3">
             <div class="mt-2 mb-5 font-bold">WAKTU PELAKSANAAN PEKERJAAN:</div>
-            <div class="col-span-3 text-secondary">{{procurement.contract.days}} ({{angkaTerbilang(procurement.contract.days)}}) Hari Kalender ({{moment(procurement.contract.date_start_spk, 'YYYY-MM-DD').format('DD-MM-YYYY')}} s/d {{moment(procurement.contract.date_end_spk, 'YYYY-MM-DD').format('DD-MM-YYYY')}})</div>
+            <div class="col-span-3 ">{{procurement.contract.days}} ({{angkaTerbilang(procurement.contract.days)}}) Hari Kalender ({{moment(procurement.contract.date_start_spk, 'YYYY-MM-DD').format('DD-MM-YYYY')}} s/d {{moment(procurement.contract.date_end_spk, 'YYYY-MM-DD').format('DD-MM-YYYY')}})</div>
         </div>
         <!-- <div id="nilai"></div> -->
         <!-- <div class="mx-10 border-2 text-justify px-2 pb-3 mt-10" >
@@ -332,10 +332,10 @@
         <Kop/>
         <div class="mx-10 mb-10 text-justify">
             <div class="text-xl font-bold text-center my-10">RINGKASAN SPK</div>
-            <div class="flex mt-2 text-secondary">
+            <div class="flex mt-2 ">
                 <div class="font-bold">1.</div>
                 <div class="ml-3 w-36 ">Nomor dan Tanggal DIPA</div>
-                <div class="pl-3">: Nomor Tanggal</div>
+                <div class="pl-3">: {{procurement.account}}</div>
             </div>
             <div class="flex mt-2">
                 <div class="font-bold">2.</div>
@@ -360,8 +360,8 @@
             </div>
             <div class="flex mt-2">
                 <div class="font-bold">6.</div>
-                <div class="ml-3 w-36 text-secondary">Uraian Pekerjaan</div>
-                <div class="pl-3">: </div>
+                <div class="ml-3 w-36 ">Uraian Pekerjaan</div>
+                <div class="pl-3">: {{procurement.name}}</div>
             </div>
             <div class="flex mt-2">
                 <div class="font-bold">7.</div>
@@ -371,7 +371,7 @@
             <div class="flex mt-2">
                 <div class="font-bold">8.</div>
                 <div class="ml-3 w-[265px]">Cara Pembayaran</div>
-                <div class="pl-3">: Pembayaran sekaligus melalui transfer ke rekening Bank Lampung dengan nomer rekening 4050002000663 Atas Nama <span class="text-secondary">Atas Nama</span> </div>
+                <div class="pl-3">: Pembayaran sekaligus melalui transfer ke rekening {{supplier.bank}} dengan nomer rekening {{supplier.account}} Atas Nama <span class="">{{supplier.name }}</span> </div>
             </div>
             <div class="flex mt-2">
                 <div class="font-bold">9.</div>
@@ -386,8 +386,8 @@
             </div>
             <div class="flex mt-2">
                 <div class="font-bold">11.</div>
-                <div class="ml-3 w-36 text-secondary">Ketentuan Sanksi</div>
-                <div class="pl-3">: -</div>
+                <div class="ml-3 w-36 ">Ketentuan Sanksi</div>
+                <div class="pl-3">: 1/1000  (satu per seribu) dari nilai bagian SPK untuk setiap hari keterlambatan</div>
             </div>
             <div class="grid place-items-end mt-14 font-bold">
                 <div class="w-6/12 flex flex-col align-end text-center">
@@ -415,6 +415,8 @@ import Kop from './Kop.vue';
 defineProps({
     procurement : {
         tipe : Object
+    },supplier :{
+        tipe: Object
     }
 })
 

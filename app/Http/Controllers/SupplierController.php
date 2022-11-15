@@ -44,13 +44,15 @@ class SupplierController extends Controller
             'name'          => 'required|string',
             'pic'           => 'required|string',
             'pic_position'  => 'required|string',
-            'npwp'          => 'required|string|regex:/^\d{15,16}$/',
+            // 'npwp'          => 'required|string|regex:/^\d{15,20}$/',
+            'npwp'          => 'required|string',
             'entity'        => 'required|string',
             'address'       => 'required|string',
             'province'      => 'required|string',
             'regency'       => 'required|string',
             'bank'          => 'required|string',
-            'account'       => 'required|string|regex:/^\d{10,16}$/',
+            'account'       => 'required|string',
+            // 'account'       => 'required|string|regex:/^\d{10,16}$/',
         ]);
 
         Supplier::create([

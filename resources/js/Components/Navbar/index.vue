@@ -18,7 +18,7 @@
         </label>
 
         <div class="flex-1">
-            <Link :href="route('home')" class="btn btn-ghost normal-case text-xl" >SIMPANGAN</Link>
+            <Link @click="emit('loading')" :href="route('home')" class="btn btn-ghost normal-case text-xl" >SIMPANGAN</Link>
         </div>
         <div class="flex-none">
             <div class="normal-case text-xl">{{  user.name }}</div>
@@ -76,7 +76,7 @@
                         </a>
                     </li>
                     <li><a>Settings</a></li> -->
-                    <li><Link :href="route('logout')" method="post" as="button">Logout</Link></li>
+                    <li><Link @click="emit('loading')" :href="route('logout')" method="post" as="button">Logout</Link></li>
                 </ul>
             </div>
         </div>
@@ -89,4 +89,6 @@ import { computed } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 
 const user = computed(() => usePage().props.value.auth.user)
+const emit = defineEmits('loading')
+
 </script>

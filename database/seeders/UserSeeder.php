@@ -23,14 +23,31 @@ class UserSeeder extends Seeder
             'password'  => bcrypt('admin'),
             'role'      => User::ROLE_Head_UKPBJ,
             'unit_id'   => 1 
-
+        ]);
+        User::create([
+            'name'      => 'Head Of UKPBJ 2',
+            'identity_number'  =>  '19770527 200003 1 002',
+            'identity_type'  =>  'NIP',
+            'email'     => 'admin2@gmail.com',
+            'password'  => bcrypt('admin2'),
+            'role'      => User::ROLE_Head_UKPBJ,
+            'unit_id'   => 1 
         ]);
         User::create([
             'name'      => 'Unit 1',
-            'identity_number'  =>  '19770527 200003 1 002',
-            'identity_type'  =>  'NIP',
+            'identity_number'   =>  '19770527 200003 1 002',
+            'identity_type'     =>  'NIP',
             'email'     => 'unit1@gmail.com',
             'password'  => bcrypt('unit1unit1'),
+            'role'      => User::ROLE_UNIT,
+            'unit_id'   => 1 
+        ]);
+        User::create([
+            'name'      => 'Unit 2',
+            'identity_number'   =>  '19770527 200003 1 002',
+            'identity_type'     =>  'NIP',
+            'email'     => 'unit2@gmail.com',
+            'password'  => bcrypt('unit2unit2'),
             'role'      => User::ROLE_UNIT,
             'unit_id'   => 1 
         ]);
@@ -44,11 +61,29 @@ class UserSeeder extends Seeder
             'unit_id'   => 1 
         ]);
         User::create([
+            'name'      => 'Fikri Halim , S.Kom',
+            'identity_number'   =>  '19770527 200003 1 002',
+            'identity_type'     =>  'NIP',
+            'email'     => 'ppk2@gmail.com',
+            'password'  => bcrypt('ppk2ppk2'),
+            'role'      => User::ROLE_PPK,
+            'unit_id'   => 1 
+        ]);
+        User::create([
             'name'      => 'pp 1',
             'identity_number'  =>  '1995 0826 2021 1352',
             'identity_type'  =>  'NRK',
             'email'     => 'pp1@gmail.com',
             'password'  => bcrypt('pp1pp1'),
+            'role'      => User::ROLE_PP,
+            'unit_id'   => 1 
+        ]);
+        User::create([
+            'name'      => 'pp 2',
+            'identity_number'  =>  '1995 0826 2021 1352',
+            'identity_type'  =>  'NRK',
+            'email'     => 'pp2@gmail.com',
+            'password'  => bcrypt('pp2pp2'),
             'role'      => User::ROLE_PP,
             'unit_id'   => 1 
         ]);
@@ -89,6 +124,15 @@ class UserSeeder extends Seeder
             'unit_id'   => 1 
         ]);
         User::create([
+            'name'      => 'kontrak 2',
+            'identity_number'   =>  '1995 0826 2021 1352',
+            'identity_type'     =>  'NRK',
+            'email'     => 'kontrak2@gmail.com',
+            'password'  => bcrypt('kontrak2kontrak2'),
+            'role'      => User::ROLE_CONTRACT_TEAM,
+            'unit_id'   => 1 
+        ]);
+        User::create([
             'name'      => 'teknis 1',
             'identity_number'  =>  '1995 0826 2021 1352',
             'identity_type'  =>  'NRK',
@@ -98,11 +142,29 @@ class UserSeeder extends Seeder
             'unit_id'   => 1 
         ]);
         User::create([
+            'name'      => 'teknis 2',
+            'identity_number'  =>  '1995 0826 2021 1352',
+            'identity_type'  =>  'NRK',
+            'email'     => 'teknis2@gmail.com',
+            'password'  => bcrypt('teknis2teknis2'),
+            'role'      => User::ROLE_TECHNICAL_TEAM,
+            'unit_id'   => 1 
+        ]);
+        User::create([
             'name'      => 'siren 1',
             'identity_number'  =>  '1995 0826 2021 1352',
             'identity_type'  =>  'NRK',
             'email'     => 'siren1@gmail.com',
             'password'  => bcrypt('siren1siren1'),
+            'role'      => User::ROLE_VerifAccount,
+            'unit_id'   => 1 
+        ]);
+        User::create([
+            'name'      => 'siren 1',
+            'identity_number'  =>  '1995 0826 2021 1352',
+            'identity_type'  =>  'NRK',
+            'email'     => 'siren2@gmail.com',
+            'password'  => bcrypt('siren2siren2                             '),
             'role'      => User::ROLE_VerifAccount,
             'unit_id'   => 1 
         ]);

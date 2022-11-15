@@ -1,12 +1,12 @@
 <template>
     <div class="flex justify-center  ">
         <div id="app" ref="document" class="w-1/2 ">
-            <button class="btn bg-first border-none w-full text-white mb-5" @click="exportToPDF(procurement.name)">Download BASTP</button>
+            <button class="btn bg-first border-none w-full text-white mb-5" @click="exportToPDF(procurement.name)">Download BAST</button>
             <div class="border-2 border-black">
                 <div id="element-to-convert" >
                     <Kop/>
                     <div class="mx-10">
-                        <div class="font-bold text-lg text-center mt-10">BERITA ACARA SERAH TERIMA PEKERJAAN</div>
+                        <div class="font-bold text-lg text-center mt-10">BERITA ACARA SERAH TERIMA</div>
                         <div class="text-center">Nomor : {{procurement.contract.no_bastp}}</div>
                         <div class="indent-10 mt-10 text-justify">
                             Pada hari ini {{getDate(procurement.contract.date_bastp)}}, kami yang bertanda tangan di bawah ini:
@@ -96,7 +96,7 @@ const getDate = (date) =>{
         "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"
     ]
     });
-    return moment(date, 'YYYY-MM-DD h:mm:ss a').format('dddd [Tanggal] DD [bulan] MMMM [tahun] YYYY');
+    return moment(date, 'YYYY-MM-DD h:mm:ss a').format('dddd [Tanggal] D [bulan] MMMM [tahun] YYYY');
     // return moment().format('dddd [Tanggal] DD [bulan] MMMM [tahun] YYYY');
 }
 

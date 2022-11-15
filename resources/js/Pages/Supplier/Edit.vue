@@ -1,135 +1,137 @@
 <template>
     <Master>
-        <Container class="w-6/12">
-            <Header1 title="Data Supplier" widthSize="100" />
-            <div class="flex mt-5">
-                <div class="mt-1 w-4/12 ">
-            
-                    <Label value="Jenis Perusahaan" />
-                    <Input
-                        id="entity"
-                        type="text"
-                        class="w-full"
-                        v-model="data.entity"
-                        :value="data.entity"
-                        list="categoryList"
-                        required
-                    />
-                    <datalist id="categoryList">
-                        <option value="PT" />
-                        <option value="CV" />
-                    </datalist>
+        <template v-slot="{ loading }" }>
+            <Container class="w-6/12">
+                <Header1 title="Data Supplier" widthSize="100" />
+                <div class="flex mt-5">
+                    <div class="mt-1 w-4/12 ">
+                
+                        <Label value="Jenis Perusahaan" />
+                        <Input
+                            id="entity"
+                            type="text"
+                            class="w-full"
+                            v-model="data.entity"
+                            :value="data.entity"
+                            list="categoryList"
+                            required
+                        />
+                        <datalist id="categoryList">
+                            <option value="PT" />
+                            <option value="CV" />
+                        </datalist>
+                    </div>
+                    <div class="mt-1 w-full ml-10">
+                        <Label value="Nama" />
+                        <Input
+                            id="nama"
+                            class="w-full"
+                            type="text"
+                            v-model="data.name"
+                            placeholder="Nama Perusahaan"
+                            :value="data.name"
+                            required
+                        />
+                    </div>
                 </div>
-                <div class="mt-1 w-full ml-10">
-                    <Label value="Nama" />
-                    <Input
-                        id="nama"
-                        class="w-full"
-                        type="text"
-                        v-model="data.name"
-                        placeholder="Nama Perusahaan"
-                        :value="data.name"
-                        required
-                    />
+                <div class="flex">
+                    <div class="mt-1 w-4/12 ">
+                
+                        <Label value="Jabatan" />
+                        <Input
+                            id="entity"
+                            type="text"
+                            class="w-full"
+                            v-model="data.pic_position"
+                            :value="data.pic_position"
+                        />
+                    </div>
+                    <div class="mt-1 w-full ml-10">
+                        <Label value="Nama Penanggung Jawab" />
+                        <Input
+                            id="nama"
+                            class="w-full"
+                            type="text"
+                            v-model="data.pic"
+                            :value="data.pic"
+                        />
+                    </div>
                 </div>
-            </div>
-            <div class="flex">
-                <div class="mt-1 w-4/12 ">
-            
-                    <Label value="Jabatan" />
-                    <Input
-                        id="entity"
-                        type="text"
-                        class="w-full"
-                        v-model="data.pic_position"
-                        :value="data.pic_position"
-                    />
+                <Label value="NPWP" />
+                <Input
+                    id="npwp"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="data.npwp"
+                    :value="data.npwp"
+                />
+                <Label value="Alamat" />
+                <Input
+                    id="alamat"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="data.address"
+                    :value="data.address"
+                    required
+                />
+                <div class="flex">
+                    <div class="w-4/12">
+                        <Label value="Provinsi" />
+                        <Input
+                            id="Province"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="data.province"
+                            :value="data.province"
+                            required
+                        />
+                    </div>
+                    <div class="w-full ml-10">
+                        <Label value="Kota / Kabupaten" />
+                        <Input
+                            id="regency"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="data.regency"
+                            :value="data.regency"
+                            required
+                        />
+                    </div>
                 </div>
-                <div class="mt-1 w-full ml-10">
-                    <Label value="Nama Penanggung Jawab" />
-                    <Input
-                        id="nama"
-                        class="w-full"
-                        type="text"
-                        v-model="data.pic"
-                        :value="data.pic"
-                    />
+                <div class="flex">
+                    <div class="mt-1 w-4/12 ">
+                        <Label value="Bank" />
+                        <Input
+                            id="bank"
+                            type="search"
+                            class="mt-1 block w-full"
+                            v-model="data.bank"
+                            :value="data.bank"
+                            list="listBank"
+                            required
+                        />
+                        <datalist id="listBank">
+                            <option v-for="bank in banks" :key=bank>{{bank}}</option>
+                        </datalist>
+                    </div>
+                    <div class="w-full ml-10">
+                        <Label value="Rekening" />
+                        <Input
+                            id="account"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="data.account"
+                            :value="data.account"
+                            required
+                        />
+                    </div>
                 </div>
-            </div>
-            <Label value="NPWP" />
-            <Input
-                id="npwp"
-                type="text"
-                class="mt-1 block w-full"
-                v-model="data.npwp"
-                :value="data.npwp"
-            />
-            <Label value="Alamat" />
-            <Input
-                id="alamat"
-                type="text"
-                class="mt-1 block w-full"
-                v-model="data.address"
-                :value="data.address"
-                required
-            />
-            <div class="flex">
-                <div class="w-4/12">
-                    <Label value="Provinsi" />
-                    <Input
-                        id="Province"
-                        type="text"
-                        class="mt-1 block w-full"
-                        v-model="data.province"
-                        :value="data.province"
-                        required
-                    />
+                <div class="flex justify-end mt-10">
+                    <button @click="back()" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Cancel</button>
+                    <button @click="edit(supplier.id, loading)" class="btn border-first modal-button bg-first ml-3">Edit</button>
                 </div>
-                <div class="w-full ml-10">
-                    <Label value="Kota / Kabupaten" />
-                    <Input
-                        id="regency"
-                        type="text"
-                        class="mt-1 block w-full"
-                        v-model="data.regency"
-                        :value="data.regency"
-                        required
-                    />
-                </div>
-            </div>
-            <div class="flex">
-                <div class="mt-1 w-4/12 ">
-                    <Label value="Bank" />
-                    <Input
-                        id="bank"
-                        type="search"
-                        class="mt-1 block w-full"
-                        v-model="data.bank"
-                        :value="data.bank"
-                        list="listBank"
-                        required
-                    />
-                    <datalist id="listBank">
-                        <option v-for="bank in banks" :key=bank>{{bank}}</option>
-                    </datalist>
-                </div>
-                <div class="w-full ml-10">
-                    <Label value="Rekening" />
-                    <Input
-                        id="account"
-                        type="text"
-                        class="mt-1 block w-full"
-                        v-model="data.account"
-                        :value="data.account"
-                        required
-                    />
-                </div>
-            </div>
-            <div class="flex justify-end mt-10">
-                <button @click="back()" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Cancel</button>
-                <button @click="edit(supplier.id)" class="btn border-first modal-button bg-first ml-3">Edit</button>
-            </div>
-        </Container>
+            </Container>
+        </template>
     </Master>
 </template>
 
@@ -140,31 +142,34 @@ import Container from "@/Components/utils/Container.vue";
 import Header1 from "@/Components/utils/Header1.vue";
 import Label from '@/Components/utils/Label.vue';
 import Input from '@/Components/utils/Input.vue';
+import Notification from "@/Components/composables/Notification"
 
+const toast = Notification()
 const props = defineProps({
 	supplier: { type: Object, required: true },
 })
 
 const data = useForm({
-    name:       props.supplier.name,
-    pic:        props.supplier.pic,
-    pic_position:props.supplier.pic_position,
-    npwp:       props.supplier.npwp,
-    entity:     props.supplier.entity,
-    address:    props.supplier.address,
-    province:   props.supplier.province,
-    regency:    props.supplier.regency,
-    bank:       props.supplier.bank,
-    account:    props.supplier.account,
-    _method: 'patch',
+    name        : props.supplier.name,
+    pic         : props.supplier.pic,
+    pic_position: props.supplier.pic_position,
+    npwp        : props.supplier.npwp,
+    entity      : props.supplier.entity,
+    address     : props.supplier.address,
+    province    : props.supplier.province,
+    regency     : props.supplier.regency,
+    bank        : props.supplier.bank,
+    account     : props.supplier.account,
+    _method     : 'patch',
 })
 
-const edit = (id) =>{
+const edit = (id,loading) =>{
     data.post(route("kontrak.supplier.update", id),{
-        onSuccess:  (e) => {
-            console.log("sukses mengubah data supplier ",e)
-        },
-        onError:    (e) => {console.log(e)}
+        onSuccess   :   (e) => toast('success', 'Berhasil ubah data supplier ' + data.name),
+        onError     :   (e) => toast('error', 'Gagal ubah data supplier'),
+        onStart     :   (e) => data.clearErrors(),
+        onStart     :   ()  => loading(),
+        onFinish    :   ()  => loading()
     })
 }
 

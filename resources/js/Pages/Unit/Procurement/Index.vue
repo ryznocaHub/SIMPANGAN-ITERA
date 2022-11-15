@@ -1,25 +1,35 @@
 <template>
     <Master>
-        <Container >
+        <template v-slot="{ loading }" }>
             <Header1 title="Daftar Pengadaan" widthSize="100" />
-            <EasyDataTable :headers="headers" :items="procurements" buttons-pagination>
-                <template #item-status="{ status }">
-                    <StatusButton :status=status />
-                </template>
-                <template #item-sub_total="{ budget_plan }">
-                    <div>{{budget_plan.sub_total}}</div>
-                </template>
-                <template #item-ppn="{ budget_plan }">
-                    <div>{{budget_plan.ppn}}</div>
-                </template>
-                <template #item-total="{ budget_plan }">
-                    <div>{{budget_plan.total}}</div>
-                </template>
-                <template #item-aksi="{ id }">
-                    <Link :href="route('unit.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
-                </template>
-            </EasyDataTable>
-        </Container>
+            <Container >
+                <EasyDataTable 
+                :headers="headers" 
+                :items="procurements" 
+                table-class-name="customize-table"
+                sortBy="status"
+                sortType="asc" 
+                :rows-per-page="5"
+                :maxPaginationNumber="10"
+                buttons-pagination>
+                    <template #item-status="{ status }">
+                        <StatusButton :status=status />
+                    </template>
+                    <template #item-sub_total="{ budget_plan }">
+                        <div>{{budget_plan.sub_total}}</div>
+                    </template>
+                    <template #item-ppn="{ budget_plan }">
+                        <div>{{budget_plan.ppn}}</div>
+                    </template>
+                    <template #item-total="{ budget_plan }">
+                        <div>{{budget_plan.total}}</div>
+                    </template>
+                    <template #item-aksi="{ id }">
+                        <Link @click="loading()" :href="route('unit.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
+                    </template>
+                </EasyDataTable>
+            </Container>
+        </template>
     </Master>
 </template>
 
@@ -35,13 +45,11 @@ import StatusButton from "@/Components/statusButton/index.vue"
 })
 
 const headers = [
-    { text: "Nama",             value: "name", sortable: true },
-    { text: "Tahun Anggaran",   value: "year", sortable: true },
-    { text: "Kategori",         value: "category", sortable: true },
-    { text: "Status",           value: "status", sortable: true },
-    { text: "Sub Total",        value: "sub_total", sortable: true },
-    { text: "PPN",              value: "ppn", sortable: true },
-    { text: "Total",            value: "total", sortable: true },
-    { text: "aksi",             value: "aksi", sortable: true },
+    { text: "Judul Paket",      value: "name"       , sortable: true },
+    { text: "Nomor Akun",       value: "account"    , sortable: true },
+    { text: "Kategori",         value: "category"   , sortable: true },
+    { text: "Status",           value: "status"     , sortable: true },
+    { text: "Nilai RAB",        value: "total"      , sortable: true },
+    { text: "aksi",             value: "aksi"       },
 ];
 </script>

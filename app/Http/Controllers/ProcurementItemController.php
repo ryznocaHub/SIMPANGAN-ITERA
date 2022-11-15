@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Validation\ValidationException;
 
 class ProcurementItemController extends Controller
 {
@@ -60,7 +61,7 @@ class ProcurementItemController extends Controller
         if($request->status == 1) return 0;
         // dd($request->status);
         $item = ProcurementItem::find($id);
-
+        // dd($request);
         DB::transaction(function () use($request, $item, $id) {
             if($request->source){
                 $request->validate([
@@ -74,6 +75,10 @@ class ProcurementItemController extends Controller
                 $file       = $request->file('file');
                 
                 if($file) {
+                    if($file[0]->clientExtension() != 'pdf') throw ValidationException::withMessages([
+                        'file'  => "Format file berupa pdf",
+                    ]);
+
                     $path       = 'public/file/' . $item->procure_acc_id . '/' ;
                     $file_name  = $item->name . '.' . $file[0]->clientExtension();
                     $store      = $file[0]->storeAs($path, $file_name);

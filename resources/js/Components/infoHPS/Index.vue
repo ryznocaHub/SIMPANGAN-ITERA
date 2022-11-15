@@ -24,10 +24,13 @@
                     class="mt-1 block w-full"
                     v-model.number="hps.price"
                     min="1000"
+                    :status="hps.errors.price"
                     @change="total()"
                     placeholder="Harga Satuan"
                 />
+                <div v-if="hps.errors.price" class="text-sm text-error mt-1 mb-5">{{ hps.errors.price }}</div>
             </div>
+
             <div class="flex flex-col">
                 <Label value="Jumlah" />
                 <p class="font-bold text-lg tracking-wider">
@@ -47,7 +50,9 @@
             type="text"
             v-model="hps.source"
             @change="onInputChangeSource"
+            :status="hps.errors.source"
         />
+        <div class="text-sm text-error mt-1 mb-5" v-if="hps.errors.source" >{{ hps.errors.source }}</div>
         <input
             class="mb-5"
             type="file"
@@ -55,8 +60,9 @@
             @input="(e) => onInputChangeFile(e)"
             v-if="!x.fileName || x.status==0"
         />
-        <div v-else class="mb-5">{{x.fileName}}</div>
-        <a v-if="x.status == 0 && hps.file && !hps.source"  class="mb-5 text-sm font-bold text-first underline underline-offset-8" :href="x.fileName" download target="_self">Lihat File {{hps.source}}</a>
+        <div    v-else class="mb-5">{{x.fileName}}</div>
+        <a      v-if="x.status == 0 && hps.file && !hps.source"  class="mb-5 text-sm font-bold text-first underline underline-offset-8" :href="x.fileName" download target="_self">Lihat File {{hps.source}}</a>
+        <div class="text-sm text-error mt-1 mb-5" v-if="hps.errors.file" >{{ hps.errors.file }}</div>
         <div class="flex justify-between">
             <a v-show="hps.source" class=" hover:bg-none text-xs text-first underline underline-offset-8 " id="visit" :href="hps.source" target="_blank">
                 Kunjungi Sumber
@@ -85,12 +91,14 @@ import Container from '@/Components/utils/Container.vue';
 import Input from '@/Components/utils/Input.vue';
 import Label from '@/Components/utils/Label.vue';
 import { useForm } from "@inertiajs/inertia-vue3";
+import Notification from "@/Components/composables/Notification"
 
 const props = defineProps({
 	items: { type: Object },
 })
 
 const emit = defineEmits(['successVerification','editTotal'])
+const toast = Notification() 
 
 function convertToRupiah(angka) {
     var rupiah = "";
@@ -149,20 +157,22 @@ const useRAB = () => {
 
 const verifikasi = () => {
     hps.post(route('hps.item.updateHPS', props.items['id']),{
-        onSuccess : (e) =>{
-            console.log("succes",props.items)
+        onSuccess   : (e) =>{
+            // console.log("succes",props.items)
             emit('editTotal',hps, props.items.estimate_total);
             // console.log("sukses",props.items['id'])
             emit('successVerification', props.items['id'])
-            // console.log("item sukses",props.items)
+            toast('success', 'Berhasil ubah data '+ props.items['name'])
         },
-        onFinish : () => {
+        onError     : (e) => {
+            console.log(e)
+            toast('error', 'Gagal merubah data '+ props.items['name'])
+        },
+        onStart     : () => hps.clearErrors(),
+        onFinish    : () => {
             isiForm()
             x.reset()
         },
-        onError : (e) => {
-            console.log("gagal", e)
-        }
     })
 
 }
@@ -181,5 +191,6 @@ function onInputChangeSource(e) {
     hps.file    = null;
     hps.status  = 0
     x.status    = 1
+    hps.clearErrors('file')
 }
 </script>

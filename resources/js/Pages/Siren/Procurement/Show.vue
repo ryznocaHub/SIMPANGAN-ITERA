@@ -1,10 +1,10 @@
 <template>
     <Show :procurement=procurement >
-        <template #comment="{data}">
-            <div v-if="data.comment">
+        <template #comment>
+            <div v-if="procurement.comment">
                 <div class="divider"></div>
                 <div class="text-secondary font-bold ">
-                    Catatan Penolakan RAB: {{ data.comment }}
+                    Catatan Penolakan RAB: {{ procurement.comment }}
                 </div>
             </div>
         </template>

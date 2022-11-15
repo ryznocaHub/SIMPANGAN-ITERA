@@ -18,6 +18,7 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Ramsey\Uuid\Type\Time;
 
 class ProcurementAccountController extends Controller
@@ -50,25 +51,30 @@ class ProcurementAccountController extends Controller
             ]);
         }
         else if(Auth::user()->role == User::ROLE_VerifAccount){
-            $procurements = ProcurementAccounts::with('budget_plan')
+            $procurements = ProcurementAccounts::with(['budget_plan', 'timeline'])
                 -> where('status','>=', $status)
                 -> get();
-            
+            // dd($procurements);
             return Inertia::render($url,[
                 'procurements' => $procurements,
             ]);
         }
         else if(Auth::user()->role == User::ROLE_PPK)
         {
-            $procurements = ProcurementAccounts::where('status','>=', $status)
-                -> with('executor.hps')
-                -> get();
+            $procurements = $procurements = ProcurementAccounts::whereHas('executor', function ($query) {
+                    $query->where('ppk', Auth::id());
+                })
+                ->where('status','>=',$status)
+                ->with(['budget_plan','estimate','executor.hps'])
+                ->get();
 
-            $hpsTeams = User::where('role',User::ROLE_HPS_TEAM)->get();
-            // dd($procurements);
+            // if(!$procurements) return abort(404);
+            $hpsTeams   = User::where('role',User::ROLE_HPS_TEAM)->get();
+            $ppList     = User::where('role',User::ROLE_PP)->get();
             return Inertia::render($url, [
                 'procurements'  => $procurements,
-                'hpsteams'      => $hpsTeams
+                'hpsteams'      => $hpsTeams,
+                'ppList'        => $ppList
             ]);
         }
         else if(Auth::user()->role == User::ROLE_HPS_TEAM)
@@ -85,38 +91,68 @@ class ProcurementAccountController extends Controller
                 'procurements'  => $procurements,
             ]);
         }
+        else if(Auth::user()->role == User::ROLE_PP)
+        {
+            $procurements = $procurements = ProcurementAccounts::whereHas('executor', function ($query) {
+                    $query->where('pp', Auth::id());
+                })
+                -> with(['suppliers', 'estimate'])
+                ->where('status','>=',$status)
+                ->get();
+
+            return Inertia::render($url, [
+                'procurements'  => $procurements,
+            ]);
+        }
         else
         {
             $procurements = ProcurementAccounts::where('status','>=', $status)
                 -> with(['suppliers', 'estimate'])
                 -> get();
             // dd($procurements);
-            $suppliers = Supplier::all();
+            // $suppliers = Supplier::all()->sortBy('name');
             // dd($suppliers);
             return Inertia::render($url, [
                 'procurements'  => $procurements,
-                'datasuppliers'      => $suppliers
+                // 'suppliers'     => $suppliers
             ]);
         }
 
     }
 
     public function show ($id){
-        $procurement = ProcurementAccounts::with(['suppliers', 'executor.ppk', 'budget_plan', 'timeline', 'contract'])
-                                            -> find($id);
-        // dd($procurement);
+        $status = ProcurementAccounts::status[Auth::user()->role -1];
+
+        $procurement = ProcurementAccounts::with(['suppliers', 'executor.ppk', 'executor.hps', 'executor.siren_approval', 'executor.siren_reject', 'executor.pp', 'executor.contract', 'budget_plan', 'timeline', 'contract', 'estimate'])
+                            -> where('status','>=', $status)
+                            -> find($id);
+                            
+        if(!$procurement) return abort(404);
+        if(Auth::user()->role == User::ROLE_UNIT && $procurement -> user_id != Auth::id()) return abort(403);
+        else if (Auth::user()->role == User::ROLE_HPS_TEAM && $procurement -> executor -> hps != Auth::id()) return abort(403);
+
         $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Show';
+
+
+        $suppliers = Supplier::all();
+        // dd($procurement);
         return Inertia::render($url,[
-            'procurement' => $procurement,
+            'procurement'   => $procurement,
+            'suppliers'     => $suppliers
         ]);
     }
 
     public function create (){
-        return Inertia::render('Unit/Procurement/Create');
+        $ppks = User::where("role","=",User::ROLE_PPK)->get();
+        // dd($ppk);
+        return Inertia::render('Unit/Procurement/Create',[
+            'ppks' => $ppks
+        ]);
     }
 
     public function store (Request $request){
         $validated = $request->validate([
+            'description'                       => 'required|String',
             'category'                          => 'required|String|exists:categories,name',
             'account'                           => 'required|String|unique:procurement_accounts,account',
             'dataInfo.PPK'                      => 'required|exists:users,name',
@@ -125,13 +161,15 @@ class ProcurementAccountController extends Controller
             'dataInfo.person_responsible'       => 'required',
             'dataInfo.person_responsible_id'    => 'required',
         ],[
+            'description.required'                      => 'Masukkan deskripsi singkat tentang paket',
+            'description.String'                        => 'deskripsi berupa huruf',
             'category.required'                         => 'Pilih kategori yang tersedia',
             'category.String'                           => 'Kategori berupa huruf',
             'category.exists'                           => 'Kategori salah, Pilih kategori yang tersedia',
             'account.required'                          => 'Nomor akun harus diisi',
             'account.String'                            => 'Nomor akun berupa huruf',
             'dataInfo.PPK.required'                     => 'Nama PPK harus diisi',
-            'dataInfo.PPK.exists'                       => 'Nama PPK salah',
+            'dataInfo.PPK.exists'                       => 'Nama PPK salah atau tidak tersedia',
             'dataInfo.executor.required'                => 'Nama Pelaksana harus diisi',
             'dataInfo.executor_id.required'             => 'Identitas Pelaksana harus diisi',
             'dataInfo.person_responsible.required'      => 'Nama Penanggung Jawab harus diisi',
@@ -170,17 +208,18 @@ class ProcurementAccountController extends Controller
             ]);
 
             $newProcurement_Account = ProcurementAccounts::create([
-                'name'                   => $info['name'],
-                'account'                => $request->account,
-                'user_id'                => Auth::id(),
-                'unit'                   => Auth::user()->units->full_name,
-                'category'               => $request->category,
-                'year'                   => $info['year'],
-                'status'                 => 1,
-                'executor_id'            => $executor->id,
-                'budget_plan_id'         => $budget_plan->id,
-                'estimate_id'            => $estimate->id,
-                'timeline_id'            => $timeline->id,
+                'name'                  => $info['name'],
+                'description'           => $request->description,
+                'account'               => $request->account,
+                'user_id'               => Auth::id(),
+                'unit'                  => Auth::user()->units->full_name,
+                'category'              => $request->category,
+                'year'                  => $info['year'],
+                'status'                => 1,
+                'executor_id'           => $executor->id,
+                'budget_plan_id'        => $budget_plan->id,
+                'estimate_id'           => $estimate->id,
+                'timeline_id'           => $timeline->id,
             ]);
     
             $items=[];
@@ -207,6 +246,12 @@ class ProcurementAccountController extends Controller
     }
 
     public function edit ($id){
+        $procurement = ProcurementAccounts::with(['estimate', 'budget_plan', 'executor']) -> find($id);
+        if(!$procurement) return abort(404);
+
+        if(Auth::user()->role == User::ROLE_UNIT && $procurement -> user_id != Auth::id()) throw abort(401);
+        else if (Auth::user()->role == User::ROLE_HPS_TEAM && $procurement -> executor -> hps != Auth::id()) throw abort(403);
+
         if(Auth::user()->role == User::ROLE_UNIT){
             $items = ProcurementItem::where('procure_acc_id',$id)
                                     -> whereNull('image')
@@ -217,8 +262,6 @@ class ProcurementAccountController extends Controller
                 'id'    => $id,
             ]); 
         }else{
-            $procurement = ProcurementAccounts::find($id);
-
             if($procurement->status != ProcurementAccounts::is_HPSReject)
             {
                 $items = ProcurementItem::where('procure_acc_id',$id)
@@ -229,7 +272,6 @@ class ProcurementAccountController extends Controller
                 $items = ProcurementItem::where('procure_acc_id',$id)->get();
             }
             
-            $procurement = ProcurementAccounts::with(['estimate', 'budget_plan'])-> find($id);
             return Inertia::render('Hps/Procurement/Edit',[
                 'items'         => $items,
                 'procurement'   => $procurement,
@@ -276,6 +318,9 @@ class ProcurementAccountController extends Controller
             if($request->status == ProcurementAccounts::is_RABReject){
                 $validated = $request->validate([
                     'comment'    => 'required|string',
+                ],[
+                    'comment.required'  => 'Berikan komentar untuk mempermudah unit',
+                    'comment.string'    => 'Komentar berupa huruf',
                 ]);
                 DB::transaction(function () use($procurement, $request){
                     $procurement->comment = $request->comment;
@@ -293,7 +338,11 @@ class ProcurementAccountController extends Controller
 
             }else if($request->status == ProcurementAccounts::is_ChoosingHpsExecutor){
                 $validated = $request->validate([
-                    'rup_code'    => 'required|string|exist:procurement_accounts,rup_code',
+                    'rup_code'          => 'required|string|unique:procurement_accounts,rup_code',
+                ],[
+                    'rup_code.required' => 'Kode RUP harus diisi',
+                    'rup_code.string'   => 'Kode RUP berupa huruf',
+                    'rup_code.unique'   => 'Kode RUP telah terpakai',
                 ]);
                 DB::transaction(function () use($procurement, $request){
                     $procurement->rup_code = $request->rup_code;
@@ -335,7 +384,10 @@ class ProcurementAccountController extends Controller
 
                 DB::transaction(function () use($request, $procurement)
                 {
-                    $hps_executor = User::where('name', $request->hps)->firstOrFail();
+                    $hps_executor = User::where('name', $request->hps)
+                        ->where('role',User::ROLE_HPS_TEAM)
+                        ->firstOrFail();
+                        
                     Executor::find($procurement->executor_id)
                         -> update([
                             'hps'   => $hps_executor->id
@@ -364,11 +416,36 @@ class ProcurementAccountController extends Controller
             }
             else if($request->status==ProcurementAccounts::is_ChoosingSupplier)
             {
-                $procurement->comment = null;
-                Timeline::find($procurement->timeline_id)
-                    -> update ([
-                        'hps_approved'      => Carbon::now('Asia/Jakarta')
+                $request->validate([
+                    'pp'       => 'required|string|exists:users,name'
+                ],[
+                    'pp.required'  => 'Pilih Pejabat Pengadaan yang tersedia',
+                    'pp.string'    => 'Nama PP berupa huruf',
+                    'pp.exists'    => 'Nama PP salah, Pilih Nama yang tersedia',
+                ]);
+
+                DB::transaction(function () use($request, $procurement)
+                {
+                    $pp = User::where('name', $request->pp)
+                        ->where('role',User::ROLE_PP)
+                        ->firstOrFail();
+                    Executor::find($procurement->executor_id)
+                        -> update([
+                            'pp'   => $pp->id
+                        ]);
+
+                    $procurement -> update([
+                        'comment'   => null
                     ]);
+    
+                    Timeline::find($procurement->timeline_id)
+                        -> update ([
+                            'hps_approved'      => Carbon::now('Asia/Jakarta')
+                        ]);
+
+                    $contract = Contract::create();
+                    $procurement->contract_id = $contract->id;
+                });
             }
 
             $procurement->status = $request->status;
@@ -419,57 +496,211 @@ class ProcurementAccountController extends Controller
                 // $procurement->estimate_total    = $total;
                 // $procurement->provit            = $request->provit;
                 // $procurement->save();
-
                 return Redirect::route('hps.procurement.index');
             // }
         }
         else if(Auth::user()->role == User::ROLE_PP){
-            $validated = $request->validate([
-                'status'    => 'required|integer|min:9|max:9',
-                'supplier'  => 'required|string',
-                'offer'     => 'required|integer|min:1',
-            ]);
-
-            $procurement = ProcurementAccounts::with('estimate')->find($id);
-
-            if($request->offer > $procurement->estimate->total) return "Penawaran harus dibawah total Harga Perkiraan Sementara (Rp. )" . $procurement->estimate->total;
-
-            DB::transaction(function () use($request, $procurement){
-
-                $supplier = Supplier::firstOrCreate(['name' => $request->supplier]);
+            //create BAKN
+            if($request->status == 1){
+                $request->validate([
+                    'no_bakn'   => 'required|string|unique:contracts,no_bakn',
+                    'days'      => 'required|integer|min:1',
+                    'date_bakn' => 'required|date',
+                ],[
+                    'no_bakn.required'  => 'Nomor BAKN tidak boleh kosong',
+                    'no_bakn.string'    => 'Nomor BAKN berupa huruf',
+                    'no_bakn.unique'    => 'Nomor BAKN telah terpakai',
+                    'days.required'     => 'Masukkan masa pekerjaan ',
+                    'days.integer'      => 'Masa Pekerjaan berupa angka',
+                    'days.min'          => 'Masa Pekerjaan diatas 1 hari',
+                    'date_bakn.required'=> 'Masukkan tanggal pembuatan BAKN',
+                    'date_bakn.date'    => 'Format tanggal salah',
+                ]);
     
-                if($procurement->status == ProcurementAccounts::is_ChoosingSupplier){
-                    
-                    Timeline::find($procurement->timeline_id)
-                        -> update ([
-                            'supplier_selected' => Carbon::now('Asia/Jakarta')
+                $procurement = ProcurementAccounts::with('contract')->find($id);
+    
+                DB::transaction(function () use($request, $procurement)
+                {
+                    if($procurement->status == ProcurementAccounts::is_ChoosingSupplier)
+                    {
+                        Timeline::find($procurement->timeline_id)
+                            -> update ([
+                                'bakn_created'      => Carbon::now('Asia/Jakarta')
+                            ]);
+        
+                        $procurement->contract
+                        ->update([
+                            'no_bakn'   => $request->no_bakn,
+                            'days'      => $request->days,
+                            'date_bakn' => Carbon::parse($request->date_bakn)
                         ]);
+                    }
+                });
+            }
+            // create BAHP
+            else if($request->status == 2){
+                $validated = $request->validate([
+                    'no_bahp'   => 'required|string|unique:contracts,no_bahp',
+                    'date_bahp' => 'required|date',
+                ],[
+                    'no_bahp.required'  => 'Nomor BAHP tidak boleh kosong',
+                    'no_bahp.unique'    => 'Nomor BAHP sudah terpakai',
+                    'date_bahp.required'  => 'Pilih tanggal BAHP',
+                    'date_bahp.date'    => 'Format tanggal tidak sesuai'
+                ]);
+                // dd($request);
 
-                    Executor::find($procurement->timeline_id)
-                        -> update ([
-                            'pp'    => Auth::id()
+                $procurement = ProcurementAccounts::with('contract')->find($id);
+
+                DB::transaction(function () use($request, $procurement){
+                    if($procurement->status == ProcurementAccounts::is_ChoosingSupplier){
+                        
+                        Timeline::find($procurement->timeline_id)
+                            -> update ([
+                                'bahp_created'      => Carbon::now('Asia/Jakarta'),
+                                'supplier_selected' => Carbon::now('Asia/Jakarta'),
+                            ]);
+        
+                        $procurement->contract->update([
+                            'no_bahp'   => $request->no_bahp,
+                            'date_bahp' => Carbon::parse($request->date_bahp)
                         ]);
+                        
+                        $procurement->update([
+                            'status'    => ProcurementAccounts::is_CreateContract,
+                        ]);
+                    }
+                });
+            }
+            // create BAEP
+            else if($request->status == 3){
+                $validated = $request->validate([
+                    'no_baep'   => 'required|string|unique:contracts,no_baep',
+                    'date_baep' => 'required|date',
+                    'correction'=> 'required|integer',
+                ],[
+                    'no_baep.required'      => 'Nomor BAE tidak boleh kosong',
+                    'no_baep.unique'        => 'Nomor BAE sudah terpakai',
+                    'date_baep.required'    => 'Tanggal BAE tidak boleh kosong',
+                    'date_baep.date'        => 'Format tanggal salah',
+                    'correction.required'   => 'Masukkan nilai koreksi',
+                    'correction.integer'    => 'Nilai koreksi berupa angka',
+                ]);
 
-                    $contract = Contract::create([
-                        'offer'     => $request->offer
+                $procurement = ProcurementAccounts::with('contract')->find($id);
+                if($procurement->contract->offer < $request->correction) throw ValidationException::withMessages([
+                    'correction'  => "Nilai Koreksi tidak boleh diatas nilai Penawaran Rp." . $procurement->contract->offer,
+                ]);
+                
+                DB::transaction(function () use($request, $procurement){
+                    if($procurement->status == ProcurementAccounts::is_ChoosingSupplier){
+                        
+                        Timeline::find($procurement->timeline_id)
+                            -> update ([
+                                'baep_created' => Carbon::now('Asia/Jakarta')
+                            ]);
+        
+                        $procurement->contract->update([
+                            'no_baep'       => $request->no_baep,
+                            'correction'    => $request->correction,
+                            'date_baep'     => Carbon::parse($request->date_baep)
+                        ]);
+                    }
+                });
+            }
+            // create file offer
+            else if($request->status == 4)
+            {
+                $request->validate([
+                    'no_offer'   => 'required|string|unique:contracts,no_offer',
+                    'supplier'  => 'required|string',
+                    'offer'      => 'required|integer',
+                    'file_offer' => 'required',     
+                    'date_offer' => 'required|date',
+                ],[
+                    'no_offer.required'     => 'Nomor penawaran tidak boleh kosong',
+                    'no_offer.unique'       => 'Nomor penawaran sudah terpakai',
+                    'supplier.required' => 'Pilih atau masukkan nama supplier',
+                    'offer.required'        => 'Masukkan nilai penawaran',
+                    'offer.integer'         => 'Nilai penawaran berupa angka',
+                    'file_offer.required'   => 'Lampirkan file penawaran',
+                    'date_offer.required'   => 'Masukkan tanggal penawaran',
+                    'date_offer.date'       => 'Format tanggal tidak sesuai, pilih kembali',
+                ]);
+
+                $procurement = ProcurementAccounts::with('estimate')->find($id);
+                if($procurement->estimate->total < $request->offer) throw ValidationException::withMessages([
+                    'offer'  => "Nilai Penawaran tidak boleh diatas nilai HPS Rp." . $procurement->estimate->total,
+                ]);
+
+                $file       = $request->file('file_offer');
+                
+                if($file) {
+                    if($file[0]->clientExtension() != 'pdf') throw ValidationException::withMessages([
+                        'file'  => "Format file berupa pdf",
                     ]);
 
-                    $procurement->status = $request->status;
-                    $procurement->supplier_id = $supplier->id;
-                    $procurement->contract_id = $contract->id;
-                    $procurement->save();
-                    
+                    $path       = 'public/file/' . $id . '/' ;
+                    $file_name  = 'Offer_File' . '.' . $file[0]->clientExtension();
+                    $store      = $file[0]->storeAs($path, $file_name);
+                    $link       = $request->root() . '/storage/file/' . $id . '/' . $file_name;
+                    $file       = Storage::url($store);
+                    $file       = $request->root() . $file;
+                    $file       = $link;
                 }
-            });
-            return Redirect::route('pp.procurement.index');
+                else throw ValidationException::withMessages([
+                    'file'  => "Format file berupa pdf",
+                ]);
+                
+                $procurement    = ProcurementAccounts::find($id);
+                
+                $supplier = Supplier::firstOrCreate(['name' => $request->supplier]);
+                $procurement -> update([
+                    'supplier_id'   => $supplier->id,
+                ]);
+
+                Contract::find($procurement->contract_id)
+                    -> update([
+                        'no_offer'   => $request->no_offer,     
+                        'offer'      => $request->offer,     
+                        'file_offer' => $file,     
+                        'date_offer' => Carbon::parse($request->date_offer),
+                    ]);
+
+            }
+            else {
+                $status = ['','','','','BAKN','BAHP','BAE'];
+                $procurement = ProcurementAccounts::find($id);
+                if      ($request->status == 4) $file       = $request->file('file_bakn');
+                else if ($request->status == 5) $file       = $request->file('file_bahp');
+                else if ($request->status == 6) $file       = $request->file('file_baep');
+                
+                if($file[0]->clientExtension() != 'pdf') throw ValidationException::withMessages([
+                    'file'  => "Format file berupa pdf",
+                ]);
+
+                $path       = 'public/file/' . $id . '/' . 'PP/';
+                $file_name  = $procurement->name . '_' . $status[$request->status] .'.' . $file[0]->clientExtension();
+                $store      = $file[0]->storeAs($path, $file_name);
+                $link       = $request->root() . '/storage/file/' . $id . '/' . 'PP/' . $file_name;
+                $file       = Storage::url($store);
+                $file       = $request->root() . $file;
+                $file       = $link;
+                
+                if      ($request->status == 4) Contract::find($procurement->contract_id) -> update (['file_bakn' => $file]);
+                else if ($request->status == 5) Contract::find($procurement->contract_id) -> update (['file_bahp' => $file]);
+                else if ($request->status == 6) Contract::find($procurement->contract_id) -> update (['file_baep' => $file]);
+            }
+
+            return Redirect::route('pp.procurement.show', $id);
         }
         else if(Auth::user()->role == User::ROLE_CONTRACT_TEAM){
             if($request->status == 1)
             {
                 $validated = $request->validate([
-                    'no_sppbj'      => 'required|string',
+                    'no_sppbj'      => 'required|string|unique:contracts,no_sppbj',
                     'purpose_sppbj' => 'required|string',
-                    'no_offer'      => 'required|string',
+                    'no_offer'      => 'required|string|unique:contracts,no_offer',
                     'date_offer'    => 'required|date',
                     'date_sppbj'    => 'required|date',
                 ]);
@@ -502,7 +733,7 @@ class ProcurementAccountController extends Controller
             else if($request->status == 2)
             {
                 $validated = $request->validate([
-                    'no_spk'    => 'required|string',
+                    'no_spk'    => 'required|string|unique:contracts,no_spk',
                     'mak_code'  => 'required|string',
                     'days'      => 'required|numeric|min:1',
                     'start'     => 'required|date',
@@ -535,7 +766,7 @@ class ProcurementAccountController extends Controller
             else if($request->status == 3)
             {
                 $validated = $request->validate([
-                    'no_bastp'      => 'required|string',
+                    'no_bastp'      => 'required|string|unique:contracts,no_bastp',
                     'date_bastp'    => 'required|date',
                 ]);
 
@@ -559,7 +790,7 @@ class ProcurementAccountController extends Controller
             else if($request->status == 4)
             {
                 $validated = $request->validate([
-                    'no_bap'      => 'required|string',
+                    'no_bap'      => 'required|string|unique:contracts,no_bap',
                     'date_bap'    => 'required|date',
                 ]);
 
@@ -582,8 +813,8 @@ class ProcurementAccountController extends Controller
             else if($request->status == 5)
             {
                 $validated = $request->validate([
-                    'no_sp'      => 'required|string',
-                    'paket_sp'   => 'required|string',
+                    'no_sp'      => 'required|string|unique:contracts,no_sp',
+                    // 'paket_sp'   => 'required|string',
                     'date_sp'    => 'required|date',
                 ]);
 
@@ -594,7 +825,7 @@ class ProcurementAccountController extends Controller
                     Contract::find($procurement->contract_id)
                         -> update([
                             'no_sp'          => $request->no_sp,
-                            'paket_sp'          => $request->paket_sp,
+                            // 'paket_sp'          => $request->paket_sp,
                             'date_sp'        => Carbon::parse($request->date_sp),
                         ]);
                     
@@ -618,35 +849,39 @@ class ProcurementAccountController extends Controller
 
     public function editDataRAB(Request $request, $id){
         $validated = $request->validate([
-            'category'                          => 'required|String|exists:categories,name',
-            'account'                           => 'required|String',
-            'judul'                             => 'required|String',
+            'description'           => 'required|String',
+            'category'              => 'required|String|exists:categories,name',
+            'account'               => 'required|String',
+            'judul'                 => 'required|String',
         ],[
-            'category.required'                 => 'Pilih kategori yang tersedia',
-            'category.String'                   => 'Kategori berupa huruf',
-            'category.exists'                   => 'Kategori salah, Pilih kategori yang tersedia',
-            'account.required'                  => 'Nomor akun harus diisi',
-            'account.String'                    => 'Nomor akun berupa huruf',
-            'judul.required'                    => 'Judul harus diisi',
-            'judul.String'                      => 'Judul berupa huruf',
+            'description.required'  => 'Masukkan deskripsi singkat tentang paket',
+            'description.String'    => 'deskripsi berupa huruf',
+            'category.required'     => 'Pilih kategori yang tersedia',
+            'category.String'       => 'Kategori berupa huruf',
+            'category.exists'       => 'Kategori salah, Pilih kategori yang tersedia',
+            'account.required'      => 'Nomor akun harus diisi',
+            'account.String'        => 'Nomor akun berupa huruf',
+            'judul.required'        => 'Judul harus diisi',
+            'judul.String'          => 'Judul berupa huruf',
         ]);
 
         $newprocurementId = DB::transaction(function() use($id, $request){
 
             ProcurementAccounts::find($id)
-                                    -> update([
-                'name'                   => $request->judul,
-                'account'                => $request->account,
-                'category'               => $request->category,
-                'status'                 => 2,
-            ]);
+                -> update([
+                    'name'          => $request->judul,
+                    'description'   => $request->description,
+                    'account'       => $request->account,
+                    'category'      => $request->category,
+                    'status'        => 2,
+                ]);
     
             $procurement = ProcurementAccounts::find($id);
 
             Timeline::find($procurement->timeline_id)
-                        -> update([
-                            'rab_reupload'  =>  Carbon::now('Asia/Jakarta')
-                        ]);
+                -> update([
+                    'rab_reupload'  =>  Carbon::now('Asia/Jakarta')
+                ]);
 
         },3);
 

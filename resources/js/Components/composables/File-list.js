@@ -20,12 +20,14 @@ export default function () {
         //get Data RAB
         var dataRow = utils.sheet_to_json(file_read.Sheets[file_read.SheetNames[0]], { header: 1 });
         //hapus row xlxs yaang kosong
+        console.log("old",dataRow)
         dataRow = dataRow.filter(x => x.length > 0);
+        console.log("new",dataRow)
         if(JSON.stringify(dataRow[4]) != JSON.stringify(title) )         return info.value = new Fail("Urutan kolom item salah, Periksa kembali Format RAB")
-        if(dataRow[7][0] != 'Sub Total')   return info.value = new Fail("Kolom Sub Total tidak ditemukan, Periksa kembali Format RAB")
-        if(dataRow[8][0] != 'PPN 11%')         return info.value = new Fail("Kolom PPN tidak ditemukan, Periksa kembali Format RAB")
-        if(dataRow[9][0] != 'Overheat')    return info.value = new Fail("Kolom Overheat tidak ditemukan, Periksa kembali Format RAB")
-        if(dataRow[10][0] != 'Total')      return info.value = new Fail("Kolom Total tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[dataRow.length-8][0] != 'Sub Total')   return info.value = new Fail("Kolom Sub Total tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[dataRow.length-7][0] != 'PPN 11%')     return info.value = new Fail("Kolom PPN tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[dataRow.length-6][0] != 'Overheat')    return info.value = new Fail("Kolom Overheat tidak ditemukan, Periksa kembali Format RAB")
+        if(dataRow[dataRow.length-5][0] != 'Total')      return info.value = new Fail("Kolom Total tidak ditemukan, Periksa kembali Format RAB")
         //simpan data umum ke info
         info.value = new DataDetail(dataRow,fileName);
         data.value = dataRow.slice(5,-8)

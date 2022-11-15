@@ -6,7 +6,7 @@
                 <div id="element-to-convert" >
                     <Kop />
                     <div class="text-center text-lg font-bold underline">PENETAPAN HARGA PERKIRAAN SENDIRI</div>
-                    <div class="text-center text-secondary">Nomor: {{procurement.account}}</div>
+                    <div class="text-center ">Nomor: {{procurement.account}}</div>
                     <div class="text-center mt-5">{{procurement.category}}</div>
                     <div class="text-center font-bold">{{procurement.name}}</div>
                     <div class="text-center mt-3">SUMBER DANA : PNBP</div>
@@ -15,14 +15,14 @@
                     <div class="mx-10 text-justify">
                         <div class="indent-10 mt-10">
                             Pada hari ini 
-                            <span v-if="procurement.timeline.hps_approved">{{procurement.timeline.hps_approved}}</span> 
-                            <span v-else>{{nowDay()}}</span> 
+                            <span v-if="procurement.timeline.hps_approved">{{ nowDay(procurement.timeline.hps_approved)}}</span> 
+                            <span v-else>{{nowDay(moment())}}</span> 
                             dibawah ini selaku Pejabat Pembuat Komitmen telah melakukan klarifikasi dan pemeriksaan ulang terhadap spesifikasi, maka secara seksama saya menyetujui rencana pelaksanaan Pengadaan dan menetapkan Harga Perkiraan Sendiri (HPS) sebagai berikut :
                         </div>
                         <div class="text-center font-bold italic mt-3">{{convertToRupiah(procurement.estimate.total)}}</div>
                         <div class="text-center font-bold italic mb-5">({{angkaTerbilang(procurement.estimate.total)}} rupiah)</div>
                         <div class="indent-10">
-                            Harga tersebut telah memperhitungkan Pajak Pertambahan Nilai (PPN) sesuai dengan peraturan perundang-undangan yang berlaku dan keuntungan yang wajar bagi penyedia barang/jasa. Pekerjaan ini dilaksanakan dengan jangka waktu pelaksanaan selama <span class="text-sencondary">14 Hari</span>  Kalender.
+                            Harga tersebut telah memperhitungkan Pajak Pertambahan Nilai (PPN) sesuai dengan peraturan perundang-undangan yang berlaku dan keuntungan yang wajar bagi penyedia barang/jasa. Pekerjaan ini dilaksanakan dengan jangka waktu pelaksanaan selama <span class="text-secondary">14 Hari</span>  Kalender.
                         </div>
                         <div class="grid place-items-end mt-14" id="signature">
                             <div class="w-6/12 flex flex-col align-end text-end">
@@ -90,20 +90,16 @@
     import angkaTerbilang from '@develoka/angka-terbilang-js';
     import 'moment/locale/id'
 
-    moment.updateLocale('en', {
-        months : [
-            "Januari", "Feruari", "Maret", "April", "Mei", "Juni", "Juli",
-            "Agustus", "September", "Oktober", "November", "Desember"
-        ],
-        weekdays : [
-        "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"
-    ]
-    });
+    const props = defineProps({
+        procurement : {
+            tipe : Object,
+        }
+    })
 
     const exportToPDF = () => {
         html2pdf(document.getElementById("element-to-convert"), {
             margin: 0,
-            filename: "i-was-html.pdf",
+            filename: "HPS_" + props.procurement.name + ".pdf",
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
@@ -111,10 +107,18 @@
         });
     }
 
-    function nowDay () {
-        
-        var now = moment().locale('id')
-        return now.format("DD MMMM YYYY"); 
+    function nowDay (date) {
+        moment.updateLocale('en', {
+            months : [
+                "Januari", "Feruari", "Maret", "April", "Mei", "Juni", "Juli",
+                "Agustus", "September", "Oktober", "November", "Desember"
+            ],
+            weekdays : [
+            "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"
+        ]
+        });
+
+        return moment( date, 'YYYY-MM-DD h:mm:ss a').format('dddd [Tanggal] D [bulan] MMMM [tahun] YYYY'); 
     }
     
     const headers = [
@@ -128,12 +132,6 @@
       { text: "Source",         value: "source", width: 40},
     ];
     
-    defineProps({
-        procurement : {
-            tipe : Object,
-        }
-    })
-
     function convertToRupiah(angka) {
         var rupiah = "";
         var angkarev = angka.toString().split("").reverse().join("");

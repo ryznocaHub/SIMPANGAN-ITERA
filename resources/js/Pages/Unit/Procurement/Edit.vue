@@ -1,119 +1,121 @@
 <template>
     <Master>
-        <div v-if="x.items.length == 0">
-            <StatusRedirect text="Anda sudah mengunggah semua gambar. Silahkan ajukan RAB">
-                <button
-                    class="btn gap-2 bg-first border-none"
-                    @click="confirm()"       
-                >
-                    Ajukan RAB
-                </button>
-            </StatusRedirect>
-        </div>
-
-        <div v-else>
-            <div >
-            <!-- <h3 class="h3 text-xl font-extrabold tracking-wider">
-                {{ info.name }}
-            </h3> -->
-            <div class="flex max-h-96 mb-10">
-                <div class="flex-1 max-w-[50%] p-5 flex place-content-center">
-                    <!-- <ImgLogin class="object-contain" /> -->
-                    <!-- <img src="/storage/cek.svg" alt="" /> -->
-                    <div class="grid place-items-center" v-if="x.itemPreview['image'] != null">
-                        <img class="max-w-full min-h-80 max-h-80" :src="x.itemPreview['image']" />
+        <template v-slot="{ loading }" }>
+            <div v-if="x.items.length == 0">
+                <StatusRedirect text="Anda sudah mengunggah semua gambar. Silahkan ajukan RAB">
+                    <button
+                        class="btn gap-2 bg-first border-none"
+                        @click="() => {loading(); confirm()}"       
+                    >
+                        Ajukan RAB
+                    </button>
+                </StatusRedirect>
+            </div>
+    
+            <div v-else>
+                <div >
+                <!-- <h3 class="h3 text-xl font-extrabold tracking-wider">
+                    {{ info.name }}
+                </h3> -->
+                <div class="flex max-h-96 mb-10">
+                    <div class="flex-1 max-w-[50%] p-5 flex place-content-center">
+                        <!-- <ImgLogin class="object-contain" /> -->
+                        <!-- <img src="/storage/cek.svg" alt="" /> -->
+                        <div class="grid place-items-center" v-if="x.itemPreview['image'] != null">
+                            <img class="max-w-full min-h-80 max-h-80" :src="x.itemPreview['image']" />
+                        </div>
+                        <DropZoneImage  :files=files  @addFiles="insertImage" :info=info @removeFile="deleteImage" v-else/>
                     </div>
-                    <DropZoneImage  :files=files  @addFiles="insertImage" :info=info @removeFile="deleteImage" v-else/>
+                    <Container class="flex-1 flex flex-col">
+                        <h3 class="h3 text-xl font-extrabold tracking-wider">
+                            {{ x.itemPreview['name'] }}
+                        </h3>
+                        <Label value="Spesifikasi" class="mb-3 mt-10" />
+                        <div class="list-disc overflow-y-auto" style="white-space: pre-wrap;">
+                                {{ x.itemPreview['specification'] }}
+                        </div>
+                        <div class="flex justify-between mt-10">
+                            <button
+                                class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
+                                :disabled="x.orderArr[0] == x.itemPreview['id'] ? true : false"
+                                @click="prevItemPreview(x.itemPreview['id'])"
+                            >
+                                &lt; Sebelumnya
+                            </button>
+                            <button
+                                v-show="data.image"
+                                class="btn text-white bg-first border-none font-bold"
+                                @click="verifikasi(loading)"
+                            >
+                            verifikasi
+                            </button>
+                            <button
+                                class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
+                                :disabled="x.orderArr[x.orderArr.length-1]==(x.itemPreview['id']) ? true : false"
+                                @click="nextItemPreview(x.itemPreview['id'])"       
+                            >
+                                Selanjutnya &gt;
+                            </button>
+                        </div>
+                    </Container>
                 </div>
-                <Container class="flex-1 flex flex-col">
+                <Container
+                    class="card border-2 bg-grey-50 border-dashed border-gray-600 p-5 w-1/3"
+                >
                     <h3 class="h3 text-xl font-extrabold tracking-wider">
-                        {{ x.itemPreview['name'] }}
+                        Data RAB
                     </h3>
-                    <Label value="Spesifikasi" class="mb-3 mt-10" />
-                    <div class="list-disc overflow-y-auto" style="white-space: pre-wrap;">
-                            {{ x.itemPreview['specification'] }}
+                    <div class="divider"></div>
+                    <div class="flex flex-wrap">
+                        <div class="flex flex-col basis-1/2">
+                            <Label value="Satuan" />
+                            <p class="font-bold text-lg tracking-wider">
+                                {{ convertToRupiaj(x.itemPreview['price']) }}
+                            </p>
+                        </div>
+                        <div class="ml-5 flex flex-col">
+                            <Label value="Jumlah" />
+                            <p class="font-bold text-lg tracking-wider">
+                                {{ x.itemPreview['quantity'] }} {{ x.itemPreview['unit'] }}
+                            </p>
+                        </div>
+                        <div class="flex flex-col basis-1/2 mt-5">
+                            <Label value="Total" />
+                            <p class="font-bold text-lg tracking-wider">
+                                {{ convertToRupiaj(x.itemPreview['total']) }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex justify-between mt-10">
-                        <button
-                            class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
-                            :disabled="x.orderArr[0] == x.itemPreview['id'] ? true : false"
-                            @click="prevItemPreview(x.itemPreview['id'])"
-                        >
-                            &lt; Sebelumnya
-                        </button>
-                        <button
-                            v-show="data.image"
-                            class="btn text-white bg-first border-none font-bold"
-                            @click="verifikasi()"
-                        >
-                        verifikasi
-                        </button>
-                        <button
-                            class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold"
-                            :disabled="x.orderArr[x.orderArr.length-1]==(x.itemPreview['id']) ? true : false"
-                            @click="nextItemPreview(x.itemPreview['id'])"       
-                        >
-                            Selanjutnya &gt;
-                        </button>
+                    <Label value="Sumber" class="mt-5" />
+                    <Input
+                        class="w-full"
+                        type="text"
+                        isDisable
+                        :value="x.itemPreview['source']"
+                    />
+                    <div class="flex justify-between">
+                        <a class="hover:bg-none text-xs text-first underline underline-offset-8 " id="visit" :href=x.itemPreview[8] target="_blank">
+                            Kunjungi Laman
+                        </a>
+                        <!-- <button @click="cek()">cek</button> -->
                     </div>
                 </Container>
-            </div>
-            <Container
-                class="card border-2 bg-grey-50 border-dashed border-gray-600 p-5 w-1/3"
-            >
-                <h3 class="h3 text-xl font-extrabold tracking-wider">
-                    Data RAB
-                </h3>
-                <div class="divider"></div>
-                <div class="flex flex-wrap">
-                    <div class="flex flex-col basis-1/2">
-                        <Label value="Satuan" />
-                        <p class="font-bold text-lg tracking-wider">
-                            {{ convertToRupiaj(x.itemPreview['price']) }}
-                        </p>
-                    </div>
-                    <div class="ml-5 flex flex-col">
-                        <Label value="Jumlah" />
-                        <p class="font-bold text-lg tracking-wider">
-                            {{ x.itemPreview['quantity'] }} {{ x.itemPreview['unit'] }}
-                        </p>
-                    </div>
-                    <div class="flex flex-col basis-1/2 mt-5">
-                        <Label value="Total" />
-                        <p class="font-bold text-lg tracking-wider">
-                            {{ convertToRupiaj(x.itemPreview['total']) }}
-                        </p>
-                    </div>
                 </div>
-                <Label value="Sumber" class="mt-5" />
-                <Input
-                    class="w-full"
-                    type="text"
-                    isDisable
-                    :value="x.itemPreview['source']"
-                />
-                <div class="flex justify-between">
-                    <a class="hover:bg-none text-xs text-first underline underline-offset-8 " id="visit" :href=x.itemPreview[8] target="_blank">
-                        Kunjungi Laman
-                    </a>
-                    <!-- <button @click="cek()">cek</button> -->
-                </div>
-            </Container>
+                <Container class="mt-10">
+                    <Header1 title="Daftar Item" widthSize="60" />
+                    <EasyDataTable :headers="headers" :items="x.items" buttons-pagination>
+                        <template #item-aksi="{ id }">
+                        <!-- <a :href="teamUrl">{{ teamName }}</a> -->
+                            <button @click="changePreview(id)">Lihat</button>
+                        </template>
+                        <template #item-status="{ image }">
+                            <div v-if="image"> terverifikasi </div>
+                            <div v-else> tertunda </div>
+                        </template>
+                    </EasyDataTable>
+                </Container>
             </div>
-            <Container class="mt-10">
-                <Header1 title="Daftar Item" widthSize="60" />
-                <EasyDataTable :headers="headers" :items="x.items" buttons-pagination>
-                    <template #item-aksi="{ id }">
-                    <!-- <a :href="teamUrl">{{ teamName }}</a> -->
-                        <button @click="changePreview(id)">Lihat</button>
-                    </template>
-                    <template #item-status="{ image }">
-                        <div v-if="image"> terverifikasi </div>
-                        <div v-else> tertunda </div>
-                    </template>
-                </EasyDataTable>
-            </Container>
-        </div>
+        </template>
     </Master>
 </template>
 
@@ -131,8 +133,10 @@ import StatusRedirect from "@/Components/StatusRedirect/index.vue"
 import useFileList from '@/Components/composables/Dropzone-Image'
 import ImgComplete from "@/Components/icons/imgComplete.vue";
 import { Inertia } from "@inertiajs/inertia";
+import Notification from "@/Components/composables/Notification"
 
 const { files, info, addFiles, removeFile } = useFileList()
+const toast = Notification() 
 
 const props = defineProps({
 	items: { type: Object },
@@ -151,10 +155,12 @@ const data = useForm({
     image: null
 });
 
-const verifikasi = () =>{
+const verifikasi = (loading) =>{
     data.post(route("unit.item.update",parseInt(x.itemPreview['id'])),{
-        onSuccess:  () => { 
+        onSuccess   : ()    => { 
             const id = x.itemPreview['id'];
+            toast('success', 'Berhasil Unggah Gambar ' + x.itemPreview['name'])
+
             if(x.itemPreview['id'] == x.orderArr[x.orderArr.length - 1]){
                 prevItemPreview(x.itemPreview['id']);
             }else{
@@ -168,8 +174,11 @@ const verifikasi = () =>{
             x.items = x.items.filter(function (item) {
                 return item.id != id;
             });
+
         },
-        onError:    (e) => {console.log(e)}
+        onError     : (e)   => toast('error', 'Gagal Unggah Gambar ' + x.itemPreview['name']),
+        onStart     : ()    => loading(),
+        onFinish    : ()    => loading()
     })
 }
 
@@ -182,16 +191,12 @@ const confirm = () => {
     console.log("props",props.id)
     dataConfirmation.post(route('unit.procurement.update',props.id),{
         onSuccess : () => {
-            console.log("sukses ajukan RAB")
+            toast('success', 'Berhasil mengajukan RAB ')
         },
         onError: () => {
-            console.log("gagal ajukan RAB")
+            toast('error', 'Gagal mengajukan RAB ')
         }
     });
-}
-
-const cek = () => {
-    console.log("image",data.image)
 }
 
 const insertImage = (file) => {

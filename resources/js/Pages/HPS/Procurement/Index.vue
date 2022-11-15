@@ -1,16 +1,26 @@
 <template>
     <Master>
-        <Container >
+        <template v-slot="{ loading }" }>
             <Header1 title="Daftar Pengadaan" widthSize="100" />
-            <EasyDataTable :headers="headers" :items="procurements" buttons-pagination>
-                <template #item-status="{ status }">
-                    <StatusButton :status=status />
-                </template>
-                <template #item-aksi="{ id }">
-                    <Link :href="route('hps.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
-                </template>
-            </EasyDataTable>
-        </Container>
+            <Container >
+                <EasyDataTable 
+                :headers="headers" 
+                :items="procurements" 
+                table-class-name="customize-table"
+                sortBy="status"
+                sortType="asc" 
+                :rows-per-page="5"
+                :maxPaginationNumber="10"
+                buttons-pagination>
+                    <template #item-status="{ status }">
+                        <StatusButton :status=status />
+                    </template>
+                    <template #item-aksi="{ id }">
+                        <Link @click="loading()" :href="route('hps.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
+                    </template>
+                </EasyDataTable>
+            </Container>
+        </template>
     </Master>
 </template>
 

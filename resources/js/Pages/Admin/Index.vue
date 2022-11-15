@@ -1,134 +1,150 @@
 <template>
     <Master>
-        <Vue3Lottie :animationData="Dashboard" :height="450" :width="700" />
-        <div class="flex justify-between items-center h-screen mt-10">
-            <div class="w-6/12 " >
-                <Header1 title="Status Pengadaan" width-size="100" class="" />
-                <Container >
-                    <Bar
-                        :chart-options="chartOptions"
-                        :chart-data="chartData"
-                        :width="width"
-                        :height="height"
-                    />
-                </Container>
-            </div>
-            <div v-if="data.preview" class="w-6/12  ml-5  ">
-                <div class="flex justify-between">
-                    <Header1 title="Daftar Pengadaan" width-size="100" />
-                    <button @click="() => data.preview = null" class="btn btn-sm  text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >X</button>
+        <template v-slot="{ loading }" }>
+            <Vue3Lottie :animationData="Dashboard" :height="450" :width="700" />
+            <div class="flex justify-between items-center h-screen mt-10">
+                <div class="w-6/12 " >
+                    <Header1 title="Status Pengadaan" width-size="100" class="" />
+                    <Container >
+                        <Bar
+                            :chart-options="chartOptions"
+                            :chart-data="chartData"
+                            :width="width"
+                            :height="height"
+                        />
+                    </Container>
                 </div>
-                <Container  >
-                    <!-- <button @click="all()"  class=" w-3/12 btn btn-sm mb-3 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Lihat Semua</button> -->
-                    <EasyDataTable :headers="headers" :items="data.preview" buttons-pagination class="">
-                        <template #item-aksi="{ id }">
-                            <Link :href="route('admin.procurement.show', id)" class="btn btn-xs text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Lihat</Link>
-                        </template>
-                    </EasyDataTable>
-                </Container>
-
-            </div>
-            <!-- <img  src="/image/dashboard/Data.svg" class="w-3/12 h-3/12"/> -->
-            <!-- <Vue3Lottie v-else :animationData="BarChart" :height="450" :width="450" /> -->
-            <div v-else class="w-5/12 text-right ">
-                <div class="flex justify-end ">
-                    <div class="text-right text-4xl font-extrabold tracking-widest text-first drop-shadow-xl flex ">Pengadaan</div>
-                    <span class="flex h-5 w-5 relative justify-center items-center">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75 delay-200"></span>
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid delay-75"></span>
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid"></span>
-                        <span class="right-0 relative inline-flex rounded-full h-3 w-3 bg-error"></span>
-                    </span>
+                <div v-if="data.preview" class="w-6/12  ml-5  ">
+                    <div class="flex justify-between">
+                        <Header1 title="Daftar Pengadaan" width-size="100" />
+                        <button @click="() => data.preview = null" class="btn btn-sm  text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >X</button>
+                    </div>
+                    <Container  >
+                        <!-- <button @click="all()"  class=" w-3/12 btn btn-sm mb-3 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Lihat Semua</button> -->
+                        <EasyDataTable 
+                        :headers="headers" 
+                        :items="data.preview" 
+                        table-class-name="customize-table"
+                        sortBy="status"
+                        sortType="asc" 
+                        :rows-per-page="5"
+                        :maxPaginationNumber="10"
+                        buttons-pagination>
+                            <template #item-date="{ date }">
+                                {{moment(date).format('DD-MM-yy')}}
+                            </template>
+                            <template #item-total="{ total }">
+                                {{convertToRupiah(total)}}
+                            </template>
+                            <template #item-aksi="{ id }">
+                                <Link @click="loading()" :href="route('admin.procurement.show', id)" class="btn btn-xs text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Lihat</Link>
+                            </template>
+                        </EasyDataTable>
+                    </Container>
+    
                 </div>
-                <div class="text-right mr-5 text-4xl font-extrabold mb-5 tracking-widest text-first drop-shadow-xl">Barang dan Jasa</div>
-                <div class="text-lg tracking-wide leading-7">adalah kegiatan Pengadaan Barang / Jasa oleh Kementerian / Lembaga / Perangkat Daerah yang dibiayai oleh APBN/APBD yang prosesnya sejak identifikasi kebutuhan, sampai dengan serah terima hasil pekerjaan.</div> 
-            </div>
-        </div>
-        <div class="flex justify-between items-center">
-            <div class="w-5/12">
-                <div class="flex ">
-                    <span class="flex h-5 w-5 relative justify-center items-center">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75 delay-200"></span>
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid delay-75"></span>
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid"></span>
-                        <span class="right-0 relative inline-flex rounded-full h-3 w-3 bg-error"></span>
-                    </span>
-                    <div class="text-4xl font-extrabold tracking-widest text-first drop-shadow-xl flex ">Institut</div>
+                <!-- <img  src="/image/dashboard/Data.svg" class="w-3/12 h-3/12"/> -->
+                <!-- <Vue3Lottie v-else :animationData="BarChart" :height="450" :width="450" /> -->
+                <div v-else class="w-5/12 text-right ">
+                    <div class="flex justify-end ">
+                        <div class="text-right text-4xl font-extrabold tracking-widest text-first drop-shadow-xl flex ">Pengadaan</div>
+                        <span class="flex h-5 w-5 relative justify-center items-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75 delay-200"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid delay-75"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid"></span>
+                            <span class="right-0 relative inline-flex rounded-full h-3 w-3 bg-error"></span>
+                        </span>
+                    </div>
+                    <div class="text-right mr-5 text-4xl font-extrabold mb-5 tracking-widest text-first drop-shadow-xl">Barang dan Jasa</div>
+                    <div class="text-lg tracking-wide leading-7">adalah kegiatan Pengadaan Barang / Jasa oleh Kementerian / Lembaga / Perangkat Daerah yang dibiayai oleh APBN/APBD yang prosesnya sejak identifikasi kebutuhan, sampai dengan serah terima hasil pekerjaan.</div> 
                 </div>
-                <div class="ml-5 text-4xl font-extrabold mb-5 tracking-widest text-first drop-shadow-xl">Teknologi Sumatera</div>
-                <div class="text-lg tracking-wide leading-7">Sebagai salah satu Perguruan Tinggi Negeri di Indonesia, ITERA turut melaksanakan kegiatan pengadaan barang dan jasa guna menunjang tercapainya Tridharma Perguruan Tinggi.</div> 
-                <div class="text-lg tracking-wide leading-7">Setidaknya terdapat &#177;50 unit kerja yang melaksanakan kegiatan pengadaan barang dan jasa.</div> 
             </div>
-            <div class="w-7/12 grid place-items-center ml-10">
-                <Header1 title="Sebaran Nilai RAB" width-size="100" class="place-self-start"  />
-                <Container class=" mt-0 w-full">
-                    <Line
-                        :chart-options="chartLineOptions"
-                        :chart-data="data.cek"
-                        :height="200"
-                        ref="line"
-                    />
-                </Container>
-                <Header1 title="Filter Data" width-size="100" class="place-self-start mt-8"  />
-                <div class="flex justify-between">
-                    <Container class=" w-6/12 flex flex-col justify-between">
-                        <div>
-                            <div>Filter Berdasarkan Jangkauan Tanggal</div>
-                            <div class="flex justify-center mb-5 mt-5" :class="{'mb-5' : !data.error}">
-                                <Datepicker 
-                                    v-model="data.start" 
-                                    :enableTimePicker="false"  
-                                    format='dd-MM-yy'
-                                    :maxDate="new Date()"
-                                    :monthChangeOnScroll="false"
-                                    autoApply 
-                                    @update:modelValue="() => {data.year = null; data.month = null}"
-                                />
-                                <span class="mx-5 font-bold text-lg">-</span>
-                                <Datepicker 
-                                    v-model="data.end" 
-                                    :enableTimePicker="false"  
-                                    format='dd-MM-yy'
-                                    :maxDate="new Date()"
-                                    :monthChangeOnScroll="false"
-                                    autoApply 
-                                    @update:modelValue="() => {data.year = null; data.month = null}"
-                                />
+            <div class="flex justify-between items-center">
+                <div class="w-5/12">
+                    <div class="flex ">
+                        <span class="flex h-5 w-5 relative justify-center items-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75 delay-200"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid delay-75"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-none border-error border-2 border-solid"></span>
+                            <span class="right-0 relative inline-flex rounded-full h-3 w-3 bg-error"></span>
+                        </span>
+                        <div class="text-4xl font-extrabold tracking-widest text-first drop-shadow-xl flex ">Institut</div>
+                    </div>
+                    <div class="ml-5 text-4xl font-extrabold mb-5 tracking-widest text-first drop-shadow-xl">Teknologi Sumatera</div>
+                    <div class="text-lg tracking-wide leading-7">Sebagai salah satu Perguruan Tinggi Negeri di Indonesia, ITERA turut melaksanakan kegiatan pengadaan barang dan jasa guna menunjang tercapainya Tridharma Perguruan Tinggi.</div> 
+                    <div class="text-lg tracking-wide leading-7">Setidaknya terdapat &#177;50 unit kerja yang melaksanakan kegiatan pengadaan barang dan jasa.</div> 
+                </div>
+                <div class="w-7/12 grid place-items-center ml-10">
+                    <Header1 title="Sebaran Nilai RAB" width-size="100" class="place-self-start"  />
+                    <Container class=" mt-0 w-full">
+                        <Line
+                            :chart-options="chartLineOptions"
+                            :chart-data="data.cek"
+                            :height="200"
+                        />
+                    </Container>
+                    <Header1 title="Filter Data" width-size="100" class="place-self-start mt-8"  />
+                    <div class="flex justify-between">
+                        <Container class=" w-6/12 flex flex-col justify-between">
+                            <div>
+                                <div>Filter Berdasarkan Jangkauan Tanggal</div>
+                                <div class="flex justify-center mb-5 mt-5" :class="{'mb-5' : !data.error}">
+                                    <Datepicker 
+                                        v-model="data.start" 
+                                        :enableTimePicker="false"  
+                                        format='dd-MM-yy'
+                                        :maxDate="new Date()"
+                                        :monthChangeOnScroll="false"
+                                        autoApply 
+                                        @update:modelValue="() => {data.year = null; data.month = null}"
+                                    />
+                                    <span class="mx-5 font-bold text-lg">-</span>
+                                    <Datepicker 
+                                        v-model="data.end" 
+                                        :enableTimePicker="false"  
+                                        format='dd-MM-yy'
+                                        :maxDate="new Date()"
+                                        :monthChangeOnScroll="false"
+                                        autoApply 
+                                        @update:modelValue="() => {data.year = null; data.month = null}"
+                                    />
+                                </div>
+                                <div class="text-error text-sm mb-5 mt-2" v-if="data.error" >{{data.error}}</div>
                             </div>
-                            <div class="text-error text-sm mb-5 mt-2" v-if="data.error" >{{data.error}}</div>
-                        </div>
-                        <button @click="filterObj()" class="btn btn-sm mt-8 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Filter</button>
-                    </Container>
-                    <Container class="w-4/12">
-                        <div>Filter Berdasarkan Bulan</div>
-                        <Datepicker 
-                            v-model="data.month" 
-                            :enableTimePicker="false"  
-                            format="MMMM"
-                            :maxDate="new Date()"
-                            :monthChangeOnScroll="false"
-                            autoApply 
-                            monthPicker 
-                            monthNameFormat="long" 
-                            @update:modelValue="() => {data.year = null; data.start = null; data.end = null}"
-                        />
-                        <div class="mt-5">Filter Berdasarkan Tahun</div>
-                        <Datepicker 
-                            v-model="data.year" 
-                            :enableTimePicker="false"  
-                            format="yyyy"
-                            :maxDate="new Date()"
-                            :monthChangeOnScroll="false"
-                            autoApply 
-                            yearPicker  
-                            @update:modelValue="() => {data.month = null; data.start = null; data.end = null}"
-                        />
-                        <div class="text-error text-sm  mt-2" v-if="data.error2" >{{data.error2}}</div>
-                        <button @click="filterObj2()" class="btn btn-sm mt-8 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Filter</button>
-                    </Container>
+                            <button @click="filterObj()" class="btn btn-sm mt-8 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Filter</button>
+                        </Container>
+                        <Container class="w-4/12">
+                            <div>Filter Berdasarkan Bulan</div>
+                            <Datepicker 
+                                v-model="data.month" 
+                                :enableTimePicker="false"  
+                                format="MMMM"
+                                :maxDate="new Date()"
+                                :monthChangeOnScroll="false"
+                                autoApply 
+                                monthPicker 
+                                monthNameFormat="long" 
+                                @update:modelValue="() => {data.year = null; data.start = null; data.end = null}"
+                            />
+                            <div class="mt-5">Filter Berdasarkan Tahun</div>
+                            <Datepicker 
+                                v-model="data.year" 
+                                :enableTimePicker="false"  
+                                format="yyyy"
+                                :maxDate="new Date()"
+                                :monthChangeOnScroll="false"
+                                autoApply 
+                                yearPicker  
+                                @update:modelValue="() => {data.month = null; data.start = null; data.end = null}"
+                            />
+                            <div class="text-error text-sm  mt-2" v-if="data.error2" >{{data.error2}}</div>
+                            <button @click="filterObj2()" class="btn btn-sm mt-8 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Filter</button>
+                        </Container>
+                    </div>
                 </div>
             </div>
-        </div>
+        </template>
+
     </Master>
 </template>
 
@@ -143,13 +159,11 @@ import Header1 from "@/Components/utils/Header1.vue";
 import Dashboard from "/public/image/dashboard/dashboard.json"
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import { ref } from 'vue';
 import moment from 'moment';
 
 import { Chart as ChartJS, Title, Tooltip, BarElement, CategoryScale, LinearScale, LineElement, PointElement } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, BarElement, CategoryScale, LinearScale, LineElement, PointElement)
-
 
 const props = defineProps({ 
     procurements: {
@@ -168,7 +182,6 @@ const props = defineProps({
     },
 })
 
-const line = ref(props.procurements.data)
 
 function filterLength (datas) {
     var arr = []
@@ -187,6 +200,20 @@ function filterData (datas) {
     }
     // console.log(arr)
     return arr
+}
+
+function convertToRupiah (angka) {
+    var rupiah = "";
+    var angkarev = angka.toString().split("").reverse().join("");
+    for (var i = 0; i < angkarev.length; i++)
+        if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + ".";
+    return (
+        "Rp. " +
+        rupiah
+            .split("", rupiah.length - 1)
+            .reverse()
+            .join("")
+    );
 }
 
 var chartLineData = {
@@ -415,8 +442,9 @@ const  filterObj2 = () => {
         // console.log(data.month && true)
         // console.log(moment(x.date).isSame(data.month, 'month') && true)
         if(data.month) return data.month && moment(x.date).isSame(data.month, 'month')
-        else if (data.year) return data.year && moment(x.date).isSame(data.year, 'year')
-
+        // else if (data.year) return data.year && moment(x.date).isSame(data.year, 'year')
+        console.log(data.year)
+        console.log(moment(x.date).isSame(data.year, 'year'))
         // console.log("year",moment(x.date).isSame(data.year, 'year'))
         // console.log("month", moment(x.date).isSame(data.month, 'month'))
     });
@@ -433,12 +461,11 @@ const  filterObj2 = () => {
 }
 
 const headers = [
-    { text: "Nama",             value: "name", sortable: true },
-    { text: "Nomor Akun",       value: "account", sortable: true },
-    { text: "Unit",             value: "unit", sortable: true },
-    { text: "Tahun Anggaran",   value: "year", sortable: true },
-    { text: "Kategori",         value: "category", sortable: true },
-    { text: "aksi",             value: "aksi", sortable: true },
+    { text: "Tanggal",          value: "date"   , sortable: true },
+    { text: "Nama Paket PL",    value: "name"   , sortable: true },
+    { text: "Unit Kerja",       value: "unit"   , sortable: true },
+    { text: "Nilai RAB",        value: "total"  , sortable: true },
+    { text: "aksi",             value: "aksi"},
 ];
 
 </script>

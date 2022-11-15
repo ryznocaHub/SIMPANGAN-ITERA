@@ -6,11 +6,14 @@ import BreezeInput from "@/Components/utils/Input.vue";
 import BreezeLabel from "@/Components/utils/Label.vue";
 import BreezeValidationErrors from "@/Components/ValidationErrors.vue";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
+import Notification from "@/Components/composables/Notification"
 
 defineProps({
     canResetPassword: Boolean,
     status: String,
 });
+
+const toast = Notification() 
 
 const form = useForm({
     email: "",
@@ -20,9 +23,19 @@ const form = useForm({
 
 const submit = () => {
     form.post(route("login"), {
-        onFinish: () => form.reset("password"),
+        onStart: () => {
+            form.reset("password")
+            form.clearErrors()
+        },
+        onSuccess: (e) => {
+            toast('success', 'Login Berhasil')
+        },
+        onError: (e) => {
+            toast('error', 'Login Gagal')
+        }
     });
 };
+
 </script>
 
 <template>
@@ -43,6 +56,7 @@ const submit = () => {
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
+                    :status="form.errors.email"
                     required
                     autofocus
                     autocomplete="username"
@@ -56,6 +70,7 @@ const submit = () => {
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
+                    :status="form.errors.password"
                     required
                     autocomplete="current-password"
                 />

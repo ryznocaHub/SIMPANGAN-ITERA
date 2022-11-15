@@ -35,6 +35,7 @@ class ProcurementAccounts extends Model
             'estimate_id',
             'realized_id',
             'name',
+            'description',
             'account',
             'rup_code',
             'year',

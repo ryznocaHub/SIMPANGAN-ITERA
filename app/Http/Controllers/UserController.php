@@ -6,6 +6,7 @@ use App\Models\Supplier;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Illuminate\Validation\Rules;
@@ -43,6 +44,8 @@ class UserController extends Controller
     }
 
     public function show ($id){
+        if(Auth::user()->role != User::ROLE_Head_UKPBJ && Auth::id() != $id) return abort(403);
+
         $user = User::with('units')->find($id);
 
         return Inertia::render('Admin/Users/Show', [
@@ -55,7 +58,7 @@ class UserController extends Controller
             'name'              => 'required|string|min:4|max:255',
             'identity_number'   => 'required|string|regex:/\d+[\d+\s*]+/',
             'identity_type'     => 'required', 
-            'email'             => 'required|max:255',
+            'email'             => 'required|email|unique:users,email|max:255',
             'password'          => ['required',Rules\Password::defaults()],
             'role'              => 'required|digits_between:1,8',
             'unit'              => 'required|exists:units,full_name',
@@ -66,6 +69,7 @@ class UserController extends Controller
             'name.string'       => 'Nama berupa huruf',
             'email.required'    => 'Email tidak boleh kosong', 
             'email.unique'      => 'Email sudah terpakai', 
+            'email.unique'      => 'Periksa kembali format email', 
             'email.max'         => 'Email terlalu panjang', 
             'password.required' => 'password tidak boleh kosong', 
             'unit.required'     => 'Pilih Unit yang tersedia', 
@@ -81,7 +85,7 @@ class UserController extends Controller
         // $stringRole = ['Admin','Pejabat Pembuat Komitmen (PPK)','Pejabat Pengadilan (PP)', 'Tim HPS', 'Tim Kontrak', 'Tim Teknis', 'Unit', 'RAB Checker'];
         // $role       = array_search($request->role, $stringRole);
         // if(!$role) return abort(403);
-        $unit       = Unit::where('full_name', $request->unit)->firstOrFail();
+        $unit = Unit::where('full_name', $request->unit)->firstOrFail();
 
         $user = User::create([
             'name'              => $request->name,
@@ -93,14 +97,16 @@ class UserController extends Controller
             'unit_id'           => $unit->id
         ]);
 
+        $user->units = $unit;
+
         return Inertia::render('Admin/Users/Show',[
-            'user'  => $user
+            'user'  => $user,
         ]);
     }
 
     public function edit ($id) {
         $user   = User::find($id);
-        $units = Unit::all();
+        $units  = Unit::all();
 
         return Inertia::render('Admin/Users/Edit',[
             'user'      => $user,
@@ -113,7 +119,7 @@ class UserController extends Controller
             'name'              => 'required|string|min:4|max:255',
             'identity_number'   => 'required|string|regex:/\d+[\d+\s*]+/',
             'identity_type'     => 'required', 
-            'email'             => 'required|max:255',
+            'email'             => 'required|email|unique:users,email,'.$id.'|max:255',
             'password'          => ['required',Rules\Password::defaults()],
             'role'              => 'required|digits_between:1,8',
             'unit'              => 'required|exists:units,full_name',
@@ -140,9 +146,9 @@ class UserController extends Controller
         // if(!$role) return abort(403);
         $unit = Unit::where('full_name',$request->unit)->firstOrFail();
 
-        // dd($request);
+        // dd($unit);
 
-        $user = $user->update([
+        $user->update([
             'name'              => $request->name,
             'email'             => $request->email,
             'password'          => Hash::make($request->password),
@@ -152,13 +158,15 @@ class UserController extends Controller
             'unit_id'           => $unit->id,
         ]);
 
+        $user->units = $unit;
+
         return Inertia::render('Admin/Users/Show',[
-            'user'  => $user
+            'user'  => $user,
         ]);
     }
 
     public function nonActiveUser ($id) {
-        dd($id);
+        // dd($id);
         $user = User::find($id);
         $user = $user->update([
             'status'    => 0,

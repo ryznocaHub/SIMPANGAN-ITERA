@@ -8,7 +8,7 @@
                     <div class="mx-10">
                         <div class="font-bold text-lg text-center mt-5">{{title}}</div>
                         <div class=" text-center">Nomor : {{procurement.contract.no_sp}}</div>
-                        <div class="text-secondary text-center">Paket Pekerjaan : {{procurement.account}}</div>
+                        <div class="text-center">Paket Pekerjaan : {{procurement.account}}</div>
                         <div class="text-justify mt-10">
                             Yang bertanda tangan di bawah ini:
                         </div>
@@ -28,7 +28,8 @@
                         </div>
 
                         <div class="mt-3">Selanjutnya disebut sebagai Pejabat Pembuat Komitmen </div>
-                        <div class="mt-3 text-justify">berdasarkan Surat Perintah Kerja (SPK) nomor: {{procurement.contract.no_spk}} <span class="text-secondary">tanggal  {{getDate()}}</span>, bersama ini memerintahkan: </div>
+                        <div v-if="procurement.estimate.total > 50000000" class="mt-3 text-justify">berdasarkan Surat Perintah Kerja (SPK) nomor: {{procurement.contract.no_spk}} <span class="text-secondary">tanggal  {{getDate()}}</span>, bersama ini memerintahkan: </div>
+                        <div v-else class="mt-3 text-justify">berdasarkan Berita Acara Hasil Pengadaan Langsung (BAHPL) nomor: {{procurement.contract.no_bahp}} <span class="text-secondary">tanggal  {{getDate()}}</span>, bersama ini memerintahkan: </div>
                         
                         <div class="flex mt-3">
                             <div class="w-36">Nama Penyedia</div>

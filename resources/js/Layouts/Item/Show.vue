@@ -1,65 +1,72 @@
 <template>
     <Master>
-        <div v-if="x.items.length != 0">
-            <div >
-            <!-- <h3 class="h3 text-xl font-extrabold tracking-wider">
-                {{ info.name }}
-            </h3> -->
-            <div class="flex max-h-96 mb-10">
-                <div class="flex-1 max-w-[50%] p-5 flex place-content-center">
-                    <div class="grid place-items-center">
-                        <img class="max-w-full min-h-80 max-h-80" :src="x.itemPreview['image']" />
+        <template v-slot="{ loading }" }>
+            <div v-if="x.items.length != 0">
+                <div >
+                <!-- <h3 class="h3 text-xl font-extrabold tracking-wider">
+                    {{ info.name }}
+                </h3> -->
+                <div class="flex max-h-96 mb-10">
+                    <div class="flex-1 max-w-[50%] p-5 flex place-content-center">
+                        <div class="grid place-items-center">
+                            <img class="max-w-full min-h-80 max-h-80" :src="x.itemPreview['image']" />
+                        </div>
                     </div>
+                    <Container class="flex-1 flex flex-col">
+                        <h3 class="h3 text-xl font-extrabold tracking-wider">
+                            {{ x.itemPreview['name'] }}
+                        </h3>
+                        <Label value="Spesifikasi" class="mb-3 mt-10" />
+                        <div class="list-disc overflow-y-auto" style="white-space: pre-wrap;">
+                                {{ x.itemPreview['specification'] }}
+                        </div>
+                        <div class="flex justify-between mt-10">
+                            <button
+                                class="btn text-white bg-first border-none  font-bold"
+                                :disabled="x.currentIndex == 0 ? true : false"
+                                @click="prevItemPreview(x.itemPreview['id'])"
+                            >
+                                &lt; Sebelumnya
+                            </button>
+                            <!-- class="btn gap-2 bg-first border-none" -->
+                            <button
+                                class="btn text-white bg-first border-none  font-bold"
+                                :disabled="x.currentIndex == x.items.length-1 ? true : false"
+                                @click="nextItemPreview(x.itemPreview['id'])"       
+                            >
+                                Selanjutnya &gt;
+                            </button>
+                        </div>
+                    </Container>
                 </div>
-                <Container class="flex-1 flex flex-col">
-                    <h3 class="h3 text-xl font-extrabold tracking-wider">
-                        {{ x.itemPreview['name'] }}
-                    </h3>
-                    <Label value="Spesifikasi" class="mb-3 mt-10" />
-                    <div class="list-disc overflow-y-auto" style="white-space: pre-wrap;">
-                            {{ x.itemPreview['specification'] }}
-                    </div>
-                    <div class="flex justify-between mt-10">
-                        <button
-                            class="btn text-white bg-first border-none  font-bold"
-                            :disabled="x.currentIndex == 0 ? true : false"
-                            @click="prevItemPreview(x.itemPreview['id'])"
-                        >
-                            &lt; Sebelumnya
-                        </button>
-                        <!-- class="btn gap-2 bg-first border-none" -->
-                        <button
-                            class="btn text-white bg-first border-none  font-bold"
-                            :disabled="x.currentIndex == x.items.length-1 ? true : false"
-                            @click="nextItemPreview(x.itemPreview['id'])"       
-                        >
-                            Selanjutnya &gt;
-                        </button>
-                    </div>
+                <div class="flex" v-if="props.noRAB == 1" >
+                    <InfoDetail :items=x.itemPreview :status="1" />
+                    <slot :data=x.itemPreview :successVerification="verification" :loading="loading" />
+                </div>
+            </div>
+                <Container class="mt-10">
+                    <Header1 title="Daftar Item" :widthSize=60 />
+                    <EasyDataTable 
+                    :headers="headers" 
+                    :items="x.items" 
+                    sortBy="name"
+                    sortType="asc" 
+                    :rows-per-page="5"
+                    :maxPaginationNumber="10"
+                    table-class-name="customize-table"
+                    buttons-pagination 
+                    >
+                        <template #item-aksi="{ id }">
+                            <!-- <a :href="teamUrl">{{ teamName }}</a> -->
+                            <button @click="changePreview(id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</button>
+                        </template>
+                    </EasyDataTable>
                 </Container>
             </div>
-            <div class="flex" v-if="props.noRAB == 1" >
-                <InfoDetail :items=x.itemPreview :status="1" />
-                <slot :data=x.itemPreview :successVerification="verification" />
+            <div v-else>
+                <slot name="status" :loading="loading" />
             </div>
-        </div>
-            <Container class="mt-10">
-                <Header1 title="Daftar Item" :widthSize=60 />
-                <EasyDataTable :headers="headers" :items="x.items" buttons-pagination>
-                    <template #item-aksi="{ id }">
-                        <!-- <a :href="teamUrl">{{ teamName }}</a> -->
-                        <button @click="changePreview(id)">Lihat</button>
-                    </template>
-                    <template #item-status="{ image }">
-                        <div v-if="image"> terverifikasi </div>
-                        <div v-else> tertunda </div>
-                    </template>
-                </EasyDataTable>
-            </Container>
-        </div>
-        <div v-else>
-            <slot name="status" :cek="cek()" />
-        </div>
+        </template>
     </Master>
 </template>
 
@@ -86,10 +93,6 @@ const x = useForm({
     currentIndex: 0,
     errFunction : 0
 });
-
-const cek = () =>{
-    console.log(x.items == null)
-}
 
 const nextItemPreview = () => {
     x.itemPreview = x.items[++x.currentIndex];
@@ -134,9 +137,11 @@ function changePreview(id){
 }
 
 const headers = [
-    { text: "Nama", value: "name" },
-    { text: "Jumlah", value: "unit", sortable: true },
-    { text: "Status", value: "status", sortable: true },
-    { text: "Aksi", value: "aksi", sortable: true },
+    { text: "Nama"  , value: "name"     , sortable: true },
+    { text: "Jumlah", value: "quantity" , sortable: true },
+    { text: "Satuan", value: "unit"     , sortable: true },
+    { text: "Harga" , value: "price"    , sortable: true },
+    { text: "Total ", value: "total"    , sortable: true },
+    { text: "Aksi"  , value: "aksi"     },
 ];
 </script>

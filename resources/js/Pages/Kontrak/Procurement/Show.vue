@@ -33,61 +33,63 @@
             <Container v-if="procurement.suppliers.province">
                 <Header1 title="File Kontrak" widthSize="60" />
                 <div class="grid grid-rows-4 grid-flow-col gap-x-3">
-                    <!--SPPBJ-->
-                    <a v-if="procurement.contract.no_sppbj" :href="route('kontrak.document.sppbj',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">SPPBJ</a>
-                    <!-- The button to open modal -->
-                    <label v-else for="sppbj" class="btn w-full border-first modal-button bg-first">Buat SPPBJ</label>
-
-                        <!-- Put this part before </body> tag -->
-                        <input type="checkbox" id="sppbj" class="modal-toggle" v-model="sppbj.modal" />
-                        <label for="sppbj" class="modal cursor-pointer">
-                        <label class="modal-box relative" for="">
-                            <label for="sppbj" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
-                            <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
-                            <Header1 title="Surat Penunjukan Penyedia Barang/Jasa" :widthSize="100" />
-                            <Label value="Nomor SPPBJ" class="mt-10" />
-                            <Input
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="sppbj.no_sppbj"
-                            />
-                            <Label value="Prihal" />
-                            <Input
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="sppbj.purpose_sppbj"
-                            />
-                            <Label value="Nomor Penawaran" />
-                            <Input
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="sppbj.no_offer"
-                            />
-                            <Label value="Tanggal SPPBJ" />
-                            <Datepicker 
-                                v-model="sppbj.date_sppbj" 
-                                :enableTimePicker="false"  
-                                format='dd-MM-yyyy'
-                                selectText="Pilih"
-                                cancelText="Batal"
-                            />
-                            <Label value="Tanggal Penawaran" class="mt-3" />
-                            <Datepicker 
-                                v-model="sppbj.date_offer" 
-                                :enableTimePicker="false"  
-                                format='dd-MM-yyyy'
-                                selectText="Pilih"
-                                cancelText="Batal"
-                            />
-                            <div class="flex justify-center my-5">
-                                <button @click="createsppbj(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat SPK</button>
-                            </div>
+                    <div v-if="procurement.estimate.total >= 50000000">
+                        <!--SPPBJ-->
+                        <a v-if="procurement.contract.no_sppbj" :href="route('kontrak.document.sppbj',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">SPPBJ</a>
+                        <!-- The button to open modal -->
+                        <label v-else for="sppbj" class="btn w-full border-first modal-button bg-first">Buat SPPBJ</label>
+    
+                            <!-- Put this part before </body> tag -->
+                            <input type="checkbox" id="sppbj" class="modal-toggle" v-model="sppbj.modal" />
+                            <label for="sppbj" class="modal cursor-pointer">
+                            <label class="modal-box relative" for="">
+                                <label for="sppbj" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
+                                <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
+                                <Header1 title="Surat Penunjukan Penyedia Barang/Jasa" :widthSize="100" />
+                                <Label value="Nomor SPPBJ" class="mt-10" />
+                                <Input
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="sppbj.no_sppbj"
+                                />
+                                <Label value="Prihal" />
+                                <Input
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="sppbj.purpose_sppbj"
+                                />
+                                <Label value="Nomor Penawaran" />
+                                <Input
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="sppbj.no_offer"
+                                />
+                                <Label value="Tanggal SPPBJ" />
+                                <Datepicker 
+                                    v-model="sppbj.date_sppbj" 
+                                    :enableTimePicker="false"  
+                                    format='dd-MM-yyyy'
+                                    selectText="Pilih"
+                                    cancelText="Batal"
+                                />
+                                <Label value="Tanggal Penawaran" class="mt-3" />
+                                <Datepicker 
+                                    v-model="sppbj.date_offer" 
+                                    :enableTimePicker="false"  
+                                    format='dd-MM-yyyy'
+                                    selectText="Pilih"
+                                    cancelText="Batal"
+                                />
+                                <div class="flex justify-center my-5">
+                                    <button @click="createsppbj(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat SPK</button>
+                                </div>
+                            </label>
                         </label>
-                    </label>
-                    <!-- EndSPPBJ-->
+                        <!-- EndSPPBJ-->
+                    </div>
 
                     <!-- SPK -->
-                    <div v-if="procurement.contract.no_sppbj">
+                    <div v-if="procurement.contract.no_sppbj && procurement.estimate.total >= 50000000">
                         <a v-if="procurement.contract.no_spk" :href="route('kontrak.document.spk',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">SPK</a>
                         <!-- The button to open modal -->
                         <label v-else for="spk" class="btn w-full mt-3 border-first modal-button bg-first">Buat SPK</label>
@@ -146,8 +148,8 @@
                     <!-- End SPK -->
 
                     <!-- End SPP/SPMK -->
-                    <div v-if="procurement.contract.no_bastp">
-                        <a v-if="procurement.contract.no_bastp && procurement.contract.no_sp" :href="route('kontrak.document.sp',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">{{procurement.category == 'Barang' ? 'SPP' : 'SPMK'}}</a>
+                    <div v-if="procurement.contract.no_spk || procurement.estimate.total <= 50000000">
+                        <a v-if="procurement.contract.no_sp" :href="route('kontrak.document.sp',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">{{procurement.category == 'Barang' ? 'SPP' : 'SPMK'}}</a>
                         <!-- The button to open modal -->
                         <label v-else for="sp" class="btn w-full mt-3 border-first modal-button bg-first">Buat {{procurement.category == 'Barang' ? 'SPP' : 'SPMK'}}</label>
     
@@ -157,19 +159,19 @@
                             <label class="modal-box relative" for="">
                                 <label for="sp" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
                                 <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
-                                <Header1 title="Berita Acara Serah Terima Pekerjaan" :widthSize="100" />
+                                <Header1 :title="procurement.category == 'Barang' ? 'Surat Perintah Pengiriman' : 'Surat Perintah Mulai Kerja'"   :widthSize="100" />
                                 <Label value="Nomor" class="mt-10" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="sp.no_sp"
                                 />
-                                <Label value="Paket Pekerjaan" class="mt-3" />
+                                <!-- <Label value="Paket Pekerjaan" class="mt-3" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="sp.paket_sp"
-                                />
+                                /> -->
                                 <Label value="Tanggal" />
                                 <Datepicker 
                                     v-model="sp.date_sp" 
@@ -188,49 +190,14 @@
 
                 </div>
             </Container>
-            <Container v-if="procurement.contract.no_spk">
+            <Container v-if="procurement.contract.no_sp">
                 <Header1 title="Berita Acara" widthSize="60" />
                 <div class="grid grid-rows-4 grid-flow-col gap-x-3">
-                    <!-- BASTP -->
-                    <div v-if="procurement.contract.no_spk">
-                        <a v-if="procurement.contract.no_bastp" :href="route('kontrak.document.bastp',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BASTP</a>
+                    <!-- BAHP -->
+                    <div v-if="procurement.contract.no_sp">
+                        <a v-if="procurement.contract.no_bap" :href="route('kontrak.document.bap',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAHP</a>
                         <!-- The button to open modal -->
-                        <label v-else for="bastp" class="btn w-full mt-3 border-first modal-button bg-first">Buat BASTP</label>
-    
-                            <!-- Put this part before </body> tag -->
-                            <input type="checkbox" id="bastp" class="modal-toggle" v-model="bastp.modal" />
-                            <label for="bastp" class="modal cursor-pointer">
-                            <label class="modal-box relative" for="">
-                                <label for="bastp" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
-                                <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
-                                <Header1 title="Berita Acara Serah Terima Pekerjaan" :widthSize="100" />
-                                <Label value="Nomor" class="mt-10" />
-                                <Input
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="bastp.no_bastp"
-                                />
-                                <Label value="Tanggal" />
-                                <Datepicker 
-                                    v-model="bastp.date_bastp" 
-                                    :enableTimePicker="false"  
-                                    format='dd-MM-yyyy'
-                                    selectText="Pilih"
-                                    cancelText="Batal"
-                                />
-                                <div class="flex justify-center my-5">
-                                    <button @click="createbastp(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat BASTP</button>
-                                </div>
-                            </label>
-                        </label>
-                    </div>
-                    <!-- End BASTP -->
-
-                    <!-- BAP -->
-                    <div v-if="procurement.contract.no_bastp">
-                        <a v-if="procurement.contract.no_bap" :href="route('kontrak.document.bap',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAP</a>
-                        <!-- The button to open modal -->
-                        <label v-else for="bap" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAP</label>
+                        <label v-else for="bap" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAHP</label>
     
                             <!-- Put this part before </body> tag -->
                             <input type="checkbox" id="bap" class="modal-toggle" v-model="bap.modal" />
@@ -238,7 +205,7 @@
                             <label class="modal-box relative" for="">
                                 <label for="bap" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
                                 <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
-                                <Header1 title="Berita Acara Serah Terima Pekerjaan" :widthSize="100" />
+                                <Header1 title="Berita Acara Hasil Pemeriksaan" :widthSize="100" />
                                 <Label value="Nomor" class="mt-10" />
                                 <Input
                                 type="text"
@@ -260,6 +227,43 @@
                         </label>
                     </div>
                     <!-- End BAP -->
+
+                    <!-- BAST -->
+                    <div v-if="procurement.contract.no_bap">
+                        <a v-if="procurement.contract.no_bastp" :href="route('kontrak.document.bastp',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAST</a>
+                        <!-- The button to open modal -->
+                        <label v-else for="bastp" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAST</label>
+    
+                            <!-- Put this part before </body> tag -->
+                            <input type="checkbox" id="bastp" class="modal-toggle" v-model="bastp.modal" />
+                            <label for="bastp" class="modal cursor-pointer">
+                            <label class="modal-box relative" for="">
+                                <label for="bastp" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
+                                <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
+                                <Header1 title="Berita Acara Serah Terima" :widthSize="100" />
+                                <Label value="Nomor" class="mt-10" />
+                                <Input
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="bastp.no_bastp"
+                                />
+                                <Label value="Tanggal" />
+                                <Datepicker 
+                                    v-model="bastp.date_bastp" 
+                                    :enableTimePicker="false"  
+                                    format='dd-MM-yyyy'
+                                    selectText="Pilih"
+                                    cancelText="Batal"
+                                />
+                                <div class="flex justify-center my-5">
+                                    <button @click="createbastp(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat BASTP</button>
+                                </div>
+                            </label>
+                        </label>
+                    </div>
+                    <!-- End BAST -->
+
+                    
                 </div>
             </Container>
             </div>

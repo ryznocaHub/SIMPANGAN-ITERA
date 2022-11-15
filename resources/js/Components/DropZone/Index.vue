@@ -35,7 +35,7 @@ function setInactive() {
 
 function onDrop(e) {
     setInactive(); // add this line too
-    emit("files-dropped", [...e.dataTransfer.files]);
+    emit("files-dropped", e.dataTransfer.files, e.dataTransfer.files[0].name);
 }
 
 function preventDefaults(e) {

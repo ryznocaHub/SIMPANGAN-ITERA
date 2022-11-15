@@ -1,15 +1,15 @@
 <template>
     <Show :procurement=procurement >
-        <template #comment="{data}">
-            <div v-if="data.comment">
+        <template #comment>
+            <div v-if="procurement.comment">
                 <div class="divider"></div>
                 <div class="text-secondary font-bold ">
-                    Catatan Penolakan RAB: {{ data.comment }}
+                    Catatan Penolakan RAB: {{ procurement.comment }}
                 </div>
             </div>
         </template>
-        <template #file v-if="procurement.status == 3">
-            <Link :href="route('unit.procurement.reupload', procurement.id)" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Ajukan Ulang</Link>
+        <template #file="{loading}" v-if="procurement.status == 3">
+            <Link @click="loading()" :href="route('unit.procurement.reupload', procurement.id)" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Ajukan Ulang</Link>
 
             <!-- <button @click="newRequest()" class="btn text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Ajukan Ulang</button> -->
         </template>

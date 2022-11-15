@@ -1,9 +1,9 @@
 <template>
     <Show :items=items  >
-        <template v-slot="{ data, successVerification }">
-            <InfoHPS :items="data" @successVerification="successVerification" @editTotal="editTotal"/>
+        <template v-slot="{ data, successVerification, loading }">
+            <InfoHPS :items="data" @successVerification="successVerification" @editTotal="editTotal" @loading="loading" />
         </template>
-        <template #status>
+        <template #status="{ loading }">
             <StatusRedirect text="Semua RAB sudah dibuatkan HPS. Silahkan ajukan HPS">
                 <div class="flex mb-10 text-start">
                     <Container class="w-6/12">
@@ -63,7 +63,7 @@
                 </div>
                 <button
                     class="btn gap-2 bg-first border-none"
-                    @click="confirm()"       
+                    @click="confirm(loading)"       
                 >
                     Ajukan HPS
                 </button>
@@ -83,12 +83,14 @@ import Container from "@/Components/utils/Container.vue";
 import Header1 from "@/Components/utils/Header1.vue";
 import Label from "@/Components/utils/Label.vue";
 import Input from "@/Components/utils/Input.vue";
+import Notification from "@/Components/composables/Notification"
 
 const props = defineProps({
 	items       : { type: Object },
 	procurement : { type: Object },
 	id          : { type: Number },
 })
+const toast = Notification() 
 
 function Pembulatan(nilai){
     var hasil = (Math.ceil(parseInt(nilai))%parseInt(100) == 0) ? Math.ceil(parseInt(nilai)):
@@ -134,14 +136,12 @@ const emptyPPN = () => {
     hps.chooser = 0
 }
 
-const confirm = () => {
+const confirm = (loading) => {
     hps.post(route('hps.procurement.update',props.id),{
-        onSuccess : (e) => {
-            console.log("sukses ajukan HPS")
-        },
-        onError: (e) => {
-            console.log("gagal ajukan RAB",e)
-        }
+        onSuccess   : (e)   => toast('success', 'Berhasil ajukan HPS '+ props.procurement.name),
+        onError     : (e)   => toast('error', 'Gagal ajukan HPS '+ props.procurement.name),
+        onStart     : ()    => loading(),
+        onFinish    : ()    => loading(),
     });
 }
 
