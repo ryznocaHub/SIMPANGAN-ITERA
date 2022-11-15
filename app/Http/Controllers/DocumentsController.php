@@ -31,7 +31,7 @@ class DocumentsController extends Controller
         ]);      
     }
     public function bahp ($id) {
-        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk'])->find($id);
+        $procurement = ProcurementAccounts::with(['suppliers','contract', 'executor.ppk', 'estimate'])->find($id);
         return Inertia::render('Document/BAHP',[
             'procurement' => $procurement
         ]);      

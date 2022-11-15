@@ -77,7 +77,6 @@ Route::group(['middleware' => 'auth'], function (){
     Route::prefix('kontrak')->middleware('kontrak')->name('kontrak.')->group(function(){
         Route::get('/dashboard',                [DashboardController::class, 'kontrak'])->name('dashboard');
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update']);
-        Route::resource('supplier',             SupplierController::class);
         Route::get('boq/{id}',                  [DocumentsController::class, 'boq'])->name('document.boq');
         Route::get('spk/{id}',                  [DocumentsController::class, 'spk'])->name('document.spk');
         Route::get('sppbj/{id}',                [DocumentsController::class, 'sppbj'])->name('document.sppbj');
@@ -91,6 +90,7 @@ Route::group(['middleware' => 'auth'], function (){
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update']);
     });
     
+    Route::resource('supplier',                 SupplierController::class);
     Route::resource('item',                     ProcurementItemController::class)->only(['show']);
     Route::get('/dashboard/TimHPS',             [DashboardController::class, 'TimHPS'])->name('dashboard.TimHPS');
 });

@@ -164,7 +164,7 @@ const data = useForm({
 })
 
 const edit = (id,loading) =>{
-    data.post(route("kontrak.supplier.update", id),{
+    data.post(route("supplier.update", id),{
         onSuccess   :   (e) => toast('success', 'Berhasil ubah data supplier ' + data.name),
         onError     :   (e) => toast('error', 'Gagal ubah data supplier'),
         onStart     :   (e) => data.clearErrors(),

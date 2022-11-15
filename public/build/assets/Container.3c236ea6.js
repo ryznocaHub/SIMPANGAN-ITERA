@@ -1,1 +1,0 @@
-import{o as s,e as o,j as a}from"./app.cbadd5a6.js";const r={class:"card bg-base-100 shadow-md p-5"},_={__name:"Container",props:{},setup(t){return(e,n)=>(s(),o("div",r,[a(e.$slots,"default")]))}};export{_};

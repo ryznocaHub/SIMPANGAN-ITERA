@@ -130,7 +130,7 @@ const data = useForm({
 })
 
 const edit = (loading) =>{
-    data.post(route("kontrak.supplier.store"),{
+    data.post(route("supplier.store"),{
         onSuccess   :   (e) => toast('success', 'Berhasil menambah data supplier ' + data.name),
         onError     :   (e) => toast('error', 'Gagal menambah data supplier'),
         onStart     :   (e) => {

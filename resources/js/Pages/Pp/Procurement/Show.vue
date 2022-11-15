@@ -79,7 +79,7 @@
                         <!-- End offer -->
 
                          <!-- BAEP -->
-                        <div v-if="procurement.contract.no_offer">
+                        <div v-if="procurement.contract.no_offer && procurement.suppliers.province">
                             <a v-if="procurement.contract.no_baep" :href="route('pp.document.baep',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAE</a>
                             <!-- The button to open modal -->
                             <label v-else for="baep" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAE</label>
@@ -123,6 +123,8 @@
                             </label>
                         </div>
                         <!-- End BAeP -->
+
+                        <a v-else :href="route('supplier.edit', procurement.supplier_id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lengkapi Data Supplier</a>
                         
                         <!-- BAKN -->
                         <div v-if="procurement.contract.no_baep">

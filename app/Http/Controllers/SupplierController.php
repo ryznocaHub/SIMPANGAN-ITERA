@@ -68,7 +68,7 @@ class SupplierController extends Controller
             'account'       => $request->account,
         ]);
 
-        return Redirect::route('kontrak.supplier.index');
+        return Redirect::route('supplier.index');
     }
 
     public function edit ($id) 
@@ -105,6 +105,6 @@ class SupplierController extends Controller
             'account'       => $request->account,
         ]);
 
-        return Redirect::route('kontrak.supplier.show',$id);
+        return Redirect::route('supplier.show',$id);
     }
 }

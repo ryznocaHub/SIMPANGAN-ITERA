@@ -11,12 +11,50 @@
                         <div class=" text-center my-5 font-bold">{{procurement.name}}</div>
                         <div class=" text-center">Hari/Tanggal : {{getDate(procurement.contract.date_bahp)}}</div>
                         <div class=" text-center">Tempat : Institut Teknologi Sumatera</div>
-
                         <div class="indent-10 mt-10 text-justify">
-                            Berdasarkan Berita Acara Negosiasi Pejabat Pengadaan Institut Teknologi Sumatera
+                            Berdasarkan Berita Acara Negosiasi Pejabat Pengadaan Institut Teknologi Sumatera telah menyelenggarakan proses Pengadaan Langsung dengan metode evaluasi penawaran, dengan hasil ditetapkan penyedia barang pekerjaan diatas adalah sebagai berikut:
                         </div>
-
-                        <div class="indent-10 mt-3 text-justify">Demikian Berita Acara Hasil Evaluasi ini dibuat dengan tanggung jawab dam agar dapat digunakan sebagaimana mestinya.</div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">1.</div>
+                            <div class="ml-3 w-36 ">Nama Penyedia</div>
+                            <div class="pl-3">: {{procurement.suppliers.name}}</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">2.</div>
+                            <div class="ml-3 w-36 ">Alamat</div>
+                            <div class="pl-3">: {{procurement.suppliers.address + ', ' + procurement.suppliers.regency + ', ' + procurement.suppliers.province}}</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">3.</div>
+                            <div class="ml-3 w-36 ">NPWP</div>
+                            <div class="pl-3">: {{procurement.suppliers.NPWP}}</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">4.</div>
+                            <div class="ml-3 w-36 ">Jenis Pekerjaan</div>
+                            <div class="pl-3">: {{procurement.category}}</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">5.</div>
+                            <div class="ml-3 w-36 ">Lokasi Pekerjaan</div>
+                            <div class="pl-3">: Institut Teknologi Sumatera</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">6.</div>
+                            <div class="ml-3 w-36 ">Nilai HPS</div>
+                            <div class="pl-3">: {{convertToRupiah(procurement.estimate.total)}}</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">7.</div>
+                            <div class="ml-3 w-36 ">Harga Negoisasi</div>
+                            <div class="pl-3">: {{convertToRupiah(procurement.contract.offer)}}</div>
+                        </div>
+                        <div class="flex mt-2 ml-10">
+                            <div class="font-bold">8.</div>
+                            <div class="ml-3 w-36 ">Sumber Dana</div>
+                            <div class="pl-3">: PNPB {{procurement.year}}</div>
+                        </div>
+                        <div class="indent-10 mt-3 text-justify">Demikian Berita Acara Hasil Pengadaan Langsung ini dibuat dengan tanggung jawab dan agar dapat digunakan sebagaimana mestinya.</div>
                         <div class="flex flex-col text-center mb-10">
                             <div class="text-end">Pejabat Pembuat Komitmen</div>
                             <div class="text-end mt-14">{{procurement.executor.ppk.name}}</div>

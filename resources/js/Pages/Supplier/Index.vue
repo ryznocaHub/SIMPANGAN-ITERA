@@ -33,9 +33,10 @@
                         <div v-else class="text-secondary">Belum Lengkap</div>
                     </template>
                     <template #item-aksi="{ entity,id }">
-                        <Link @click="loading()" v-if="entity && user.role==1"  :href="route('admin.supplier.show', id)"    class="btn btn-xs btn-outline text-first font-bold" >Lihat</Link>
-                        <Link @click="loading()" v-else-if="entity"             :href="route('kontrak.supplier.show', id)"  class="btn btn-xs btn-outline text-first font-bold" >Lihat</Link>
-                        <Link @click="loading()" v-else                         :href="route('kontrak.supplier.edit', id)"  class="btn btn-xs text-white bg-first border-none font-bold" >Lengkapi Data</Link>
+                        <!-- <Link @click="loading()" v-if="entity && user.role==1"  :href="route('admin.supplier.show', id)"    class="btn btn-xs btn-outline text-first font-bold" >Lihat</Link> -->
+                        <!-- <Link @click="loading()" v-else-if="entity"             :href="route('kontrak.supplier.show', id)"  class="btn btn-xs btn-outline text-first font-bold" >Lihat</Link> -->
+                        <Link @click="loading()" v-if="entity"  :href="route('supplier.show', id)"  class="btn btn-xs btn-outline text-first font-bold" >Lihat</Link>
+                        <Link @click="loading()" v-else         :href="route('supplier.edit', id)"  class="btn btn-xs text-white bg-first border-none font-bold" >Lengkapi Data</Link>
                     </template>
                 </EasyDataTable>
             </Container>
