@@ -107,7 +107,7 @@ class ProcurementAccountController extends Controller
         else
         {
             $procurements = ProcurementAccounts::where('status','>=', $status)
-                -> with(['suppliers', 'estimate'])
+                -> with(['suppliers', 'estimate', 'contract'])
                 -> get();
             // dd($procurements);
             // $suppliers = Supplier::all()->sortBy('name');
@@ -696,14 +696,19 @@ class ProcurementAccountController extends Controller
             return Redirect::route('pp.procurement.show', $id);
         }
         else if(Auth::user()->role == User::ROLE_CONTRACT_TEAM){
+            // create sppbj
             if($request->status == 1)
             {
-                $validated = $request->validate([
+                $request->validate([
                     'no_sppbj'      => 'required|string|unique:contracts,no_sppbj',
                     'purpose_sppbj' => 'required|string',
-                    'no_offer'      => 'required|string|unique:contracts,no_offer',
-                    'date_offer'    => 'required|date',
                     'date_sppbj'    => 'required|date',
+                ],[
+                    'no_sppbj.required'     => 'Masukkan nomor SPPBJ',
+                    'no_sppbj.unique'       => 'Nomor SPPBJ sudah terpakai',
+                    'purpose_sppbj.required'=> 'Masukkan prihal',
+                    'date_bahp.required'    => 'Pilih tanggal SPPBJ',
+                    'date_bahp.date'        => 'Format tanggal tidak sesuai'
                 ]);
 
                 // dd($request);
@@ -714,8 +719,6 @@ class ProcurementAccountController extends Controller
                         -> update([
                             'no_sppbj'          => $request->no_sppbj,
                             'purpose_sppbj'     => $request->purpose_sppbj,
-                            'no_offer'          => $request->no_offer,     
-                            'date_offer'        => Carbon::parse($request->date_offer),
                             'date_sppbj'        => Carbon::parse($request->date_sppbj),
                         ]);
                     
@@ -731,14 +734,21 @@ class ProcurementAccountController extends Controller
                 },3);
 
             }
+            // create spk
             else if($request->status == 2)
             {
-                $validated = $request->validate([
+                $request->validate([
                     'no_spk'    => 'required|string|unique:contracts,no_spk',
                     'mak_code'  => 'required|string',
-                    'days'      => 'required|numeric|min:1',
                     'start'     => 'required|date',
                     'end'       => 'required|date',
+                ],[
+                    'no_spk.required'       => 'Masukkan nomor SPK',
+                    'no_spk.unique'         => 'Nomor SPK sudah terpakai',
+                    'mak_code.required'     => 'Masukkan Kode MAK',
+                    'mak_code.string'       => 'Kode MAK berupa huruf',
+                    'start.required'        => 'Pilih tanggal mulai kontrak',
+                    'start.required'        => 'Format tanggal tindak sesuai',
                 ]);
                 // dd($request);
                 DB::transaction(function () use($request,$id)
@@ -752,7 +762,6 @@ class ProcurementAccountController extends Controller
                             'pic_position'      => $supplier->pic_position,
                             'no_spk'            => $request->no_spk,
                             'mak_code'          => $request->mak_code,
-                            'days'              => $request->days,
                             'date_start_spk'    => Carbon::parse($request->start),
                             'date_end_spk'      => Carbon::parse($request->end),
                         ]);
@@ -764,11 +773,17 @@ class ProcurementAccountController extends Controller
                 },3);
 
             }
+            // create bast
             else if($request->status == 3)
             {
                 $validated = $request->validate([
                     'no_bastp'      => 'required|string|unique:contracts,no_bastp',
                     'date_bastp'    => 'required|date',
+                ],[
+                    'no_bastp.required'     => 'Masukkan nomor BAST',
+                    'no_bastp.unique'       => 'Nomor BAST sudah terpakai',
+                    'date_bahp.required'    => 'Pilih tanggal BAST',
+                    'date_bahp.date'        => 'Format tanggal tidak sesuai'
                 ]);
 
                 // dd($request);
@@ -788,11 +803,17 @@ class ProcurementAccountController extends Controller
                 },3);
 
             }
+            // create BAP
             else if($request->status == 4)
             {
-                $validated = $request->validate([
+                $request->validate([
                     'no_bap'      => 'required|string|unique:contracts,no_bap',
                     'date_bap'    => 'required|date',
+                ],[
+                    'no_bap.required'       => 'Masukkan nomor BAP',
+                    'no_bap.unique'         => 'Nomor BAP sudah terpakai',
+                    'date_bap.required'    => 'Pilih tanggal BAP',
+                    'date_bap.date'        => 'Format tanggal tidak sesuai'
                 ]);
 
                 // dd($request);
@@ -811,12 +832,17 @@ class ProcurementAccountController extends Controller
                         ]);
                 },3);
             }
+            // create SP
             else if($request->status == 5)
             {
-                $validated = $request->validate([
+                $request->validate([
                     'no_sp'      => 'required|string|unique:contracts,no_sp',
-                    // 'paket_sp'   => 'required|string',
                     'date_sp'    => 'required|date',
+                ],[
+                    'no_sp.required'      => 'Masukkan nomor SP',
+                    'no_sp.unique'        => 'Nomor sudah terpakai',
+                    'date_sp.required'    => 'Pilih tanggal',
+                    'date_sp.date'        => 'Format tanggal tidak sesuai'
                 ]);
 
                 // dd($request);
@@ -834,6 +860,40 @@ class ProcurementAccountController extends Controller
                         -> update ([
                             'spmk_or_spp_created'     => Carbon::now('Asia/Jakarta')
                         ]);
+                },3);
+            }
+            // create BP
+            else if($request->status == 6)
+            {
+                $request->validate([
+                    'no_bp'      => 'required|string|unique:contracts,no_bp',
+                    'date_bp'    => 'required|date',
+                ],[
+                    'no_bp.required'      => 'Masukkan nomor BP',
+                    'no_bp.unique'        => 'Nomor sudah terpakai',
+                    'date_bp.required'    => 'Pilih tanggal',
+                    'date_bp.date'        => 'Format tanggal tidak sesuai'
+                ]);
+
+                // dd($request);
+                DB::transaction(function () use($request,$id)
+                {
+                    $procurement    = ProcurementAccounts::find($id);
+                    Contract::find($procurement->contract_id)
+                        -> update([
+                            'no_bp'        => $request->no_bp,
+                            'no_bp'        => Carbon::parse($request->date_bp),
+                        ]);
+                    
+                    Timeline::find($procurement->timeline_id)
+                        -> update ([
+                            'bp_created'     => Carbon::now('Asia/Jakarta')
+                        ]);
+
+                    $procurement -> update([
+                        'status' => ProcurementAccounts::is_CheckingRealItems
+                    ]);
+
                 },3);
             }
             return Redirect::route('kontrak.procurement.show', $id);

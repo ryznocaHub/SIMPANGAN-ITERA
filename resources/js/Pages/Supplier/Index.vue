@@ -3,7 +3,7 @@
         <template v-slot="{ loading }" }>
             <Header1 v-if="suppliers.length != 0" title="Daftar Supplier" widthSize="100" />
             <Container v-if="suppliers.length != 0" >
-                <Link @click="loading()" v-if="user.role > 4" :href="route('kontrak.supplier.create')" class="btn btn-sm mt-5 mb-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first  font-bold" >Tambah Data Supplier</Link>
+                <Link @click="loading()" v-if="user.role > 4" :href="route('supplier.create')" class="btn btn-sm mt-5 mb-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first  font-bold" >Tambah Data Supplier</Link>
                 <EasyDataTable 
                 :headers="headers" 
                 :items="suppliers" 
@@ -25,9 +25,9 @@
                         <div v-if="npwp">{{npwp}}</div>
                         <div v-else class="text-secondary">---</div>
                     </template>
-                    <template #item-status="{ status }">
+                    <!-- <template #item-status="{ status }">
                         <StatusButton :status=status />
-                    </template>
+                    </template> -->
                     <template #item-complete="{ entity }">
                         <div v-if="entity">Lengkap</div>
                         <div v-else class="text-secondary">Belum Lengkap</div>

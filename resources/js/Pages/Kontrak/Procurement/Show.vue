@@ -3,11 +3,11 @@
         <template #file>
             <a v-show="procurement.hps_submitted" :href="route('kontrak.document.boq',procurement.id)" class="btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lihat BOQ</a>
         </template>
-        <template #comment>
+        <!-- <template #comment>
             <Link v-if="!procurement.suppliers.province" :href="route('kontrak.supplier.edit',procurement.suppliers.id)" class="btn btn-sm mt-10 text-first bg-slate-200 border-none hover:text-white hover:bg-first  font-bold" >Lengkapi Data Supplier</Link>
-        </template>
+        </template> -->
         <!-- <div class="divider"></div> -->
-        <template #extra-info>
+        <template #extra-info={loading}>
             <div class="flex gap-4 mt-10">
             <Container  v-if="procurement.suppliers.province">
                 <div >
@@ -46,24 +46,25 @@
                                 <label for="sppbj" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
                                 <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
                                 <Header1 title="Surat Penunjukan Penyedia Barang/Jasa" :widthSize="100" />
+                                
                                 <Label value="Nomor SPPBJ" class="mt-10" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="sppbj.no_sppbj"
+                                :status="sppbj.errors.no_sppbj"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="sppbj.errors.no_sppbj">{{ sppbj.errors.no_sppbj }}</div>
+                                
                                 <Label value="Prihal" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="sppbj.purpose_sppbj"
+                                :status="sppbj.errors.purpose_sppbj"
                                 />
-                                <Label value="Nomor Penawaran" />
-                                <Input
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="sppbj.no_offer"
-                                />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="sppbj.errors.purpose_sppbj">{{ sppbj.errors.purpose_sppbj }}</div>
+
                                 <Label value="Tanggal SPPBJ" />
                                 <Datepicker 
                                     v-model="sppbj.date_sppbj" 
@@ -72,16 +73,9 @@
                                     selectText="Pilih"
                                     cancelText="Batal"
                                 />
-                                <Label value="Tanggal Penawaran" class="mt-3" />
-                                <Datepicker 
-                                    v-model="sppbj.date_offer" 
-                                    :enableTimePicker="false"  
-                                    format='dd-MM-yyyy'
-                                    selectText="Pilih"
-                                    cancelText="Batal"
-                                />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="sppbj.errors.date_sppbj">{{ sppbj.errors.date_sppbj }}</div>
                                 <div class="flex justify-center my-5">
-                                    <button @click="createsppbj(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat SPK</button>
+                                    <button @click="createsppbj(procurement.id, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Buat</button>
                                 </div>
                             </label>
                         </label>
@@ -100,27 +94,34 @@
                             <label class="modal-box relative" for="">
                                 <label for="spk" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
                                 <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
-                                <Header1 title="Data Surat Perintah Kerja" :widthSize="100" />
+                                <Header1 title="Surat Perintah Kerja" :widthSize="100" />
                                 <Label value="Nomor SPK" class="mt-10" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="spk.no_spk"
+                                :status="spk.errors.no_spk"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="spk.errors.no_spk">{{ spk.errors.no_spk }}</div>
+
                                 <Label value="Kode MAK" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="spk.mak_code"
+                                :status="spk.errors.mak_code"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="spk.errors.mak_code">{{ spk.errors.mak_code }}</div>
+
                                 <!-- <div class="divider my-10"></div> -->
-                                <Label value="Jumlah Hari Kerja" class="mt-5" />
-                                <Input
+                                <Label value="Masa Kerja" class="mt-5" />
+                                <div class="font-bold mb-5">{{spk.days}} hari kalender</div>
+                                <!-- <Input
                                 type="number"
                                 class="mt-1 block w-full"
                                 v-model="spk.days"
                                 @input="e => convert(e.target.value)"
-                                />
+                                /> -->
                                 <!-- @input="e => workEnd(spk.start, e.target.value)" -->
                                 <div class="grid grid-flow-row-dense grid-cols-2 grid-rows-2 gap-x-4">
                                     <Label value="Tanggal Mulai" />
@@ -138,9 +139,10 @@
                                     />
                                     <div v-if="spk.end" >{{spk.end}}</div>
                                     <div v-else class="text-secondary font-bold" >Atur Tanggal Mulai</div>
+                                    <div class="text-sm text-error mt-1 mb-4" v-if="spk.errors.end">{{ spk.errors.end }}</div>
                                 </div>
                                 <div class="flex justify-center my-5">
-                                    <button @click="createspk(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat SPK</button>
+                                    <button @click="createspk(procurement.id, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Buat</button>
                                 </div>
                             </label>
                         </label>
@@ -165,7 +167,9 @@
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="sp.no_sp"
+                                :status="sp.errors.no_sp"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="sp.errors.no_sp">{{ sp.errors.no_sp }}</div>
                                 <!-- <Label value="Paket Pekerjaan" class="mt-3" />
                                 <Input
                                 type="text"
@@ -180,8 +184,9 @@
                                     selectText="Pilih"
                                     cancelText="Batal"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="sp.errors.date_sp">{{ sp.errors.date_sp }}</div>
                                 <div class="flex justify-center my-5">
-                                    <button @click="createsp(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat {{procurement.category == 'Barang' ? 'SPP' : 'SPMK'}}</button>
+                                    <button @click="createsp(procurement.id, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Buat {{procurement.category == 'Barang' ? 'SPP' : 'SPMK'}}</button>
                                 </div>
                             </label>
                         </label>
@@ -193,11 +198,11 @@
             <Container v-if="procurement.contract.no_sp">
                 <Header1 title="Berita Acara" widthSize="60" />
                 <div class="grid grid-rows-4 grid-flow-col gap-x-3">
-                    <!-- BAHP -->
+                    <!-- BAP -->
                     <div v-if="procurement.contract.no_sp">
-                        <a v-if="procurement.contract.no_bap" :href="route('kontrak.document.bap',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAHP</a>
+                        <a v-if="procurement.contract.no_bap" :href="route('kontrak.document.bap',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAP</a>
                         <!-- The button to open modal -->
-                        <label v-else for="bap" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAHP</label>
+                        <label v-else for="bap" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAP</label>
     
                             <!-- Put this part before </body> tag -->
                             <input type="checkbox" id="bap" class="modal-toggle" v-model="bap.modal" />
@@ -211,7 +216,10 @@
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="bap.no_bap"
+                                :status="bap.errors.no_bap"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="bap.errors.no_bap">{{ bap.errors.no_bap }}</div>
+                                
                                 <Label value="Tanggal" />
                                 <Datepicker 
                                     v-model="bap.date_bap" 
@@ -220,8 +228,10 @@
                                     selectText="Pilih"
                                     cancelText="Batal"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="bap.errors.date_bap">{{ bap.errors.date_bap }}</div>
+                                
                                 <div class="flex justify-center my-5">
-                                    <button @click="createbap(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat BAP</button>
+                                    <button @click="createbap(procurement.id, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Buat BAP</button>
                                 </div>
                             </label>
                         </label>
@@ -241,12 +251,16 @@
                                 <label for="bastp" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
                                 <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
                                 <Header1 title="Berita Acara Serah Terima" :widthSize="100" />
+                                
                                 <Label value="Nomor" class="mt-10" />
                                 <Input
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="bastp.no_bastp"
+                                :status="bastp.errors.no_bastp"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="bastp.errors.no_bastp">{{ bastp.errors.no_bastp }}</div>
+                                
                                 <Label value="Tanggal" />
                                 <Datepicker 
                                     v-model="bastp.date_bastp" 
@@ -255,15 +269,52 @@
                                     selectText="Pilih"
                                     cancelText="Batal"
                                 />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="bastp.errors.date_bastp">{{ bastp.errors.date_bastp }}</div>
                                 <div class="flex justify-center my-5">
-                                    <button @click="createbastp(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat BASTP</button>
+                                    <button @click="createbastp(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat</button>
                                 </div>
                             </label>
                         </label>
                     </div>
                     <!-- End BAST -->
 
-                    
+                    <!-- BP -->
+                    <div v-if="procurement.contract.no_bastp">
+                        <a v-if="procurement.contract.no_bp" :href="route('kontrak.document.bp',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BP</a>
+                        <!-- The button to open modal -->
+                        <label v-else for="bp" class="btn w-full mt-3 border-first modal-button bg-first">Buat BP</label>
+    
+                            <!-- Put this part before </body> tag -->
+                            <input type="checkbox" id="bp" class="modal-toggle" v-model="bp.modal" />
+                            <label for="bp" class="modal cursor-pointer">
+                            <label class="modal-box relative" for="">
+                                <label for="bp" class="btn btn-xs border-first bg-first btn-circle absolute right-2 top-2">✕</label>
+                                <!-- <Header1 title="Setujui HPS" class="my-12" :widhSize=50 /> -->
+                                <Header1 title="Berita Acara Pembayaran" :widthSize="100" />
+                                <Label value="Nomor" class="mt-10" />
+                                <Input
+                                type="text"
+                                class="mt-1 block w-full"
+                                v-model="bp.no_bp"
+                                :status="bp.errors.no_bp"
+                                />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="bp.errors.no_bp">{{ bp.errors.no_bp }}</div>
+                                <Label value="Tanggal" />
+                                <Datepicker 
+                                    v-model="bp.date_bp" 
+                                    :enableTimePicker="false"  
+                                    format='dd-MM-yyyy'
+                                    selectText="Pilih"
+                                    cancelText="Batal"
+                                />
+                                <div class="text-sm text-error mt-1 mb-4" v-if="bp.errors.date_bp">{{ bp.errors.date_bp }}</div>
+                                <div class="flex justify-center my-5">
+                                    <button @click="createbp(procurement.id)" class="btn border-first bg-first mt-5 tracking-wide" >Buat</button>
+                                </div>
+                            </label>
+                        </label>
+                    </div>
+                    <!-- End BAST -->
                 </div>
             </Container>
             </div>
@@ -282,7 +333,9 @@ import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import Container from "@/Components/utils/Container.vue";
 import moment from 'moment';
+import Notification from "@/Components/composables/Notification"
 
+const toast = Notification()
 const props = defineProps({
 	procurement: { type: Object, required: true },
 })
@@ -296,8 +349,6 @@ const sppbj = useForm({
     no_sppbj        : "",
     purpose_sppbj   : "",
     date_sppbj      : null,
-    date_offer      : null,
-    no_offer        : "",
     modal           : 0,
     _method         : 'patch',
 })
@@ -307,7 +358,7 @@ const spk = useForm({
     no_spk      : "",
     mak_code    : "",
     start       : null,
-    days        : 1,
+    days        : props.procurement.contract.days,
     end         : null,
     modal       : 0,
     _method     : 'patch',
@@ -338,53 +389,71 @@ const sp = useForm({
     _method     : 'patch',
 })
 
+const bp = useForm({
+    status      : 6,
+    no_bp    : "",
+    date_bp  : null,
+    modal       : 0,
+    _method     : 'patch',
+})
+
+const createbp = (id) =>{
+    bp.post(route("kontrak.procurement.update", id),{
+        onSuccess:  (e) => {
+            toast('success', 'Berhasil membuat BP')
+            bp.reset()
+        },
+        onError:    (e) => {console.log(e); toast('error', 'Gagal membuat BP')}
+    })
+}
+
 const createsppbj = (id) =>{
     sppbj.post(route("kontrak.procurement.update", id),{
         onSuccess:  (e) => {
-            console.log("sukses membuat SPPBJ",e)
+            toast('success', 'Berhasil membuat SPPBJ')
             sppbj.reset()
         },
-        onError:    (e) => {console.log(e)}
+        onError:    (e) => {console.log(e); toast('error', 'Gagal membuat BP')}
     })
 }
 
 const createspk = (id) =>{
     spk.post(route("kontrak.procurement.update", id),{
         onSuccess:  (e) => {
-            console.log("sukses membuat SPK",e)
+            toast('success', 'Berhasil membuat SPK')
             spk.reset()
         },
-        onError:    (e) => {console.log(e)}
+        onError:    (e) => {console.log(e); toast('error', 'Gagal membuat SPK')}
     })
 }
 
 const createbastp = (id) =>{
     bastp.post(route("kontrak.procurement.update", id),{
         onSuccess:  (e) => {
-            console.log("sukses membuat bastp",e)
+            toast('success', 'Berhasil membuat BAST')
             bastp.reset()
         },
-        onError:    (e) => {console.log(e)}
+        onError:    (e) => {console.log(e); toast('error', 'Gagal membuat BAST')}
     })
 }
 
 const createbap = (id) =>{
     bap.post(route("kontrak.procurement.update", id),{
         onSuccess:  (e) => {
-            console.log("sukses membuat bap",e)
+            toast('success', 'Berhasil membuat BAP')
             bap.reset()
         },
-        onError:    (e) => {console.log(e)}
+        onError:    (e) => {console.log(e); toast('error', 'Gagal membuat BAP')}
     })
 }
 
 const createsp = (id) =>{
         sp.post(route("kontrak.procurement.update", id),{
             onSuccess:  (e) => {
-                console.log("sukses membuat sp",e)
+                toast('success', 'Berhasil membuat SP')
                 sp.reset()
             },
-            onError:    (e) => {console.log(e)}
+            onError:    (e) => {console.log(e); toast('error', 'Gagal membuat SP')}
         })
 }
 
@@ -394,9 +463,4 @@ const convert = (days) => {
     spk.days    = days;
     spk.end     = x;
 }
-
-const textInputOptions = () => {
-          format: 'DD-MM-YYYY'
-        }
-
 </script>

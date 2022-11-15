@@ -12,31 +12,28 @@
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="formRAB.account"
-                                placeholder="Akun Pengadaan"
                                 :status="formRAB.errors.account"
                             />
-                            <div class="text-sm text-error mt-1 mb-4">{{ formRAB.errors.account }}</div>
+                            <div class="text-sm text-error mt-1 mb-4" v-if="formRAB.errors.account">{{ formRAB.errors.account }}</div>
                             <Label for="Description" value="Deskripsi Singkat" />
                             <Input
                                 id="Description"
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="formRAB.description"
-                                placeholder="Akun Pengadaan"
                                 :status="formRAB.errors.description"
                             />
-                            <div class="text-sm text-error mt-1 mb-4">{{ formRAB.errors.description }}</div>
+                            <div class="text-sm text-error mt-1 mb-4"  v-if="formRAB.errors.description">{{ formRAB.errors.description }}</div>
                             <Label for="category" value="Kategori Pengadaan" />
                             <Input
                                 id="category"
                                 type="search"
                                 class="mt-1 block w-full"
                                 v-model="formRAB.category"
-                                placeholder="Kategori Pengadaan"
                                 list="categoryList"
                                 :status="formRAB.errors.category"
                             />
-                            <div class="text-sm text-error mt-1 mb-4">{{ formRAB.errors.category }}</div>
+                            <div class="text-sm text-error mt-1 mb-4"  v-if="formRAB.errors.category">{{ formRAB.errors.category }}</div>
                             <datalist id="categoryList">
                                 <option value="Barang" />
                                 <option value="Pekerjaan Konstruksi" />

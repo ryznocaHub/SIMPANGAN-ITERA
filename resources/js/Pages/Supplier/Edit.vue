@@ -5,7 +5,6 @@
                 <Header1 title="Data Supplier" widthSize="100" />
                 <div class="flex mt-5">
                     <div class="mt-1 w-4/12 ">
-                
                         <Label value="Jenis Perusahaan" />
                         <Input
                             id="entity"
@@ -13,9 +12,11 @@
                             class="w-full"
                             v-model="data.entity"
                             :value="data.entity"
+                            :status="data.errors.entity"
                             list="categoryList"
                             required
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.entity">{{ data.errors.entity }}</div>
                         <datalist id="categoryList">
                             <option value="PT" />
                             <option value="CV" />
@@ -30,8 +31,10 @@
                             v-model="data.name"
                             placeholder="Nama Perusahaan"
                             :value="data.name"
+                            :status="data.errors.name"
                             required
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.name">{{ data.errors.name }}</div>
                     </div>
                 </div>
                 <div class="flex">
@@ -44,7 +47,9 @@
                             class="w-full"
                             v-model="data.pic_position"
                             :value="data.pic_position"
+                            :status="data.errors.pic_position"
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.pic_position">{{ data.errors.pic_position }}</div>
                     </div>
                     <div class="mt-1 w-full ml-10">
                         <Label value="Nama Penanggung Jawab" />
@@ -54,7 +59,9 @@
                             type="text"
                             v-model="data.pic"
                             :value="data.pic"
+                            :status="data.errors.pic"
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.pic">{{ data.errors.pic }}</div>
                     </div>
                 </div>
                 <Label value="NPWP" />
@@ -64,7 +71,9 @@
                     class="mt-1 block w-full"
                     v-model="data.npwp"
                     :value="data.npwp"
+                    :status="data.errors.npwp"
                 />
+                <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.npwp">{{ data.errors.npwp }}</div>
                 <Label value="Alamat" />
                 <Input
                     id="alamat"
@@ -72,8 +81,10 @@
                     class="mt-1 block w-full"
                     v-model="data.address"
                     :value="data.address"
+                    :status="data.errors.address"
                     required
                 />
+                <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.address">{{ data.errors.address }}</div>
                 <div class="flex">
                     <div class="w-4/12">
                         <Label value="Provinsi" />
@@ -83,8 +94,10 @@
                             class="mt-1 block w-full"
                             v-model="data.province"
                             :value="data.province"
+                            :status="data.errors.province"
                             required
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.province">{{ data.errors.province }}</div>
                     </div>
                     <div class="w-full ml-10">
                         <Label value="Kota / Kabupaten" />
@@ -94,8 +107,10 @@
                             class="mt-1 block w-full"
                             v-model="data.regency"
                             :value="data.regency"
+                            :status="data.errors.regency"
                             required
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.regency">{{ data.errors.regency }}</div>
                     </div>
                 </div>
                 <div class="flex">
@@ -107,9 +122,11 @@
                             class="mt-1 block w-full"
                             v-model="data.bank"
                             :value="data.bank"
+                            :status="data.errors.bank"
                             list="listBank"
                             required
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.bank">{{ data.errors.bank }}</div>
                         <datalist id="listBank">
                             <option v-for="bank in banks" :key=bank>{{bank}}</option>
                         </datalist>
@@ -122,8 +139,10 @@
                             class="mt-1 block w-full"
                             v-model="data.account"
                             :value="data.account"
+                            :status="data.errors.account"
                             required
                         />
+                        <div class="text-sm text-error mt-1 mb-4" v-if="data.errors.account">{{ data.errors.account }}</div>
                     </div>
                 </div>
                 <div class="flex justify-end mt-10">
@@ -166,7 +185,7 @@ const data = useForm({
 const edit = (id,loading) =>{
     data.post(route("supplier.update", id),{
         onSuccess   :   (e) => toast('success', 'Berhasil ubah data supplier ' + data.name),
-        onError     :   (e) => toast('error', 'Gagal ubah data supplier'),
+        onError     :   (e) => {toast('error', 'Gagal ubah data supplier'); console.log(e)},
         onStart     :   (e) => data.clearErrors(),
         onStart     :   ()  => loading(),
         onFinish    :   ()  => loading()

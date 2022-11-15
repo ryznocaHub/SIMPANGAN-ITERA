@@ -1,4 +1,5 @@
 <template>
+    <Admin      v-if="user.role == 1" :status="status"/>
     <Ppk        v-if="user.role == 2" :status="status"/>
     <Pp         v-if="user.role == 3" :status="status"/>
     <Hps        v-if="user.role == 4" :status="status"/>
@@ -8,6 +9,7 @@
 </template>
 
 <script setup>
+    import Admin from "./Admin.vue";
     import Ppk from "./Ppk.vue";
     import Hps from "./Hps.vue";
     import Pp from "./Pp.vue";

@@ -113,20 +113,22 @@
                             </div>
                             <button @click="filterObj()" class="btn btn-sm mt-8 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Filter</button>
                         </Container>
-                        <Container class="w-4/12">
-                            <div>Filter Berdasarkan Bulan</div>
-                            <Datepicker 
-                                v-model="data.month" 
-                                :enableTimePicker="false"  
-                                format="MMMM"
-                                :maxDate="new Date()"
-                                :monthChangeOnScroll="false"
-                                autoApply 
-                                monthPicker 
-                                monthNameFormat="long" 
-                                @update:modelValue="() => {data.year = null; data.start = null; data.end = null}"
-                            />
-                            <div class="mt-5">Filter Berdasarkan Tahun</div>
+                        <Container class="w-4/12 flex-col justify-between">
+                            <div>
+                                <div class="mb-3">Filter Berdasarkan Bulan</div>
+                                <Datepicker 
+                                    v-model="data.month" 
+                                    :enableTimePicker="false"  
+                                    format="MMMM"
+                                    :maxDate="new Date()"
+                                    :monthChangeOnScroll="false"
+                                    autoApply 
+                                    monthPicker 
+                                    monthNameFormat="long" 
+                                    @update:modelValue="() => {data.year = null; data.start = null; data.end = null}"
+                                />
+                            </div>
+                            <!-- <div class="mt-5">Filter Berdasarkan Tahun</div>
                             <Datepicker 
                                 v-model="data.year" 
                                 :enableTimePicker="false"  
@@ -136,7 +138,7 @@
                                 autoApply 
                                 yearPicker  
                                 @update:modelValue="() => {data.month = null; data.start = null; data.end = null}"
-                            />
+                            /> -->
                             <div class="text-error text-sm  mt-2" v-if="data.error2" >{{data.error2}}</div>
                             <button @click="filterObj2()" class="btn btn-sm mt-8 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold">Filter</button>
                         </Container>

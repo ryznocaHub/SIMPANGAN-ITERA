@@ -98,9 +98,8 @@ class DashboardController extends Controller
     {   
         $status = ProcurementAccounts::status[User::ROLE_CONTRACT_TEAM - 1];
 
-        $procurements   = ProcurementAccounts::select(['procurement_accounts.id', 'procurement_accounts.user_id', 'procurement_accounts.name', 'procurement_accounts.account', 'procurement_accounts.status', 'estimates.total as total', 'timelines.rab_submitted as date'])
-            -> join('estimates','procurement_accounts.estimate_id', '=', 'estimates.id')
-            -> join('timelines','procurement_accounts.timeline_id', '=', 'timelines.id')
+        $procurements   = ProcurementAccounts::select(['procurement_accounts.id', 'procurement_accounts.user_id', 'procurement_accounts.name', 'procurement_accounts.account', 'procurement_accounts.status', 'contracts.offer as total', 'contracts.days as days', 'contracts.date_start_spk as date'])
+            -> join('contracts','procurement_accounts.contract_id', '=', 'contracts.id')
             -> join('executors','procurement_accounts.executor_id', '=', 'executors.id')
             -> where('procurement_accounts.status','>=',$status)
             -> orderBy('procurement_accounts.status')

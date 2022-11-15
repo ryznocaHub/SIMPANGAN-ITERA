@@ -20,7 +20,8 @@
                         <div v-else class="text-center">---</div>
                     </template>
                     <template #item-days="{ contract }">
-                        {{contract.days}} hari
+                        <div class="text-center" v-if="contract.days">{{contract.days}} hari</div>
+                        <div class="text-center" v-else>---</div>
                     </template>
                     <template #item-end="{ contract }">
                         <div v-if="contract.date_end_spk">{{moment(contract.date_end_spk).format('DD-MM-yy')}}</div>
@@ -37,7 +38,7 @@
                         <div>{{ convertToRupiah(contract.offer)}}</div>
                     </template>
                     <template #item-aksi="{ id }">
-                        <Link @click="loading()" :href="route('kontrak.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
+                        <Link @click="loading()" :href="route('admin.procurement.show', id)" class="btn btn-xs text-white bg-first border-none font-bold" >Lihat</Link>
                     </template>
                 </EasyDataTable>
             </Container>

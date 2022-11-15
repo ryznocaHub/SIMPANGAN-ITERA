@@ -16,33 +16,33 @@
                 SURAT PERINTAH KERJA (SPK)
             </div>
             <div class="flex flex-col flex-grow">
-                <div class="border-l-2 border-b-2 px-2">
+                <div class="border-l-2 border-b-2 px-2 ">
                     <span>SATUAN KERJA:</span> 
-                    <div class="font-normal mt-2 mb-3 font-normal">
+                    <div class="mt-2 mb-3 text-sm font-normal">
                         677540-INSTITUT TEKNOLOGI SUMATERA
                     </div>
                 </div>
                 <div class="border-l-2 px-2">
                     <span >NOMOR DAN TANGGAL SPK:</span> 
-                    <div class=" mt-2 mb-3 font-normal ">
+                    <div class=" mt-2 mb-3 text-sm font-normal">
                         No. {{procurement.contract.no_spk}} Tanggal: {{moment(procurement.contract.date_start_spk, 'YYYY-MM-DD').format('DD-MM-YYYY')}}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="flex mx-10 border-2 font-bold items-center justify-items-center text-justify">
-            <div class="w-5/12 text-center ">
+        <div class="flex mx-10 border-2  items-center justify-items-center text-justify">
+            <div class="w-5/12 text-center font-bold">
                 Paket Pekerjaan:
             </div>
             <div class="flex flex-col w-7/12">
                 <div class="border-l-2 border-b-2 px-2 flex-1">
-                    <span>NOMOR DAN TANGGAL BERITA ACARA HASIL PENGADAAN LANGSUNG:</span> 
-                    <div class="mt-2 mb-3 font-normal  text-secondary">
-                        Nomor :  Tanggal :
+                    <span class="font-bold">NOMOR DAN TANGGAL BERITA ACARA HASIL PENGADAAN LANGSUNG:</span> 
+                    <div class="mt-2 mb-3 text-sm">
+                        Nomor :  {{procurement.contract.no_bahp}} Tanggal : {{moment(procurement.contract.date_bahp).format('DD-MM-yy')}}
                     </div>
                 </div>
                 <div class="border-l-2 px-2 flex-1" >
-                    <div class=" mt-2 mb-3">
+                    <div class=" mt-2 mb-3 text-sm">
                         SPK ini mulai berlaku efektif terhitung sejak tanggal diterbitkannya SPMK dan penyelesaian keseluruhan pekerjaan sebagaimana diatur dalam SPK ini.
                     </div>
                 </div>

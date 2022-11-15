@@ -36,8 +36,8 @@ Route::group(['middleware' => 'auth'], function (){
         Route::post('user/nonactiveuser/{id}',  [UserController::class, 'nonActiveUser'])  ->name('nonActiveUser');
         Route::post('user/activeuser/{id}',     [UserController::class, 'activeUser'])     ->name('activeUser');
         Route::resource('user',                 UserController::class);
-        Route::resource('supplier',             SupplierController::class)->only(['index', 'show']);
-        Route::resource('procurement',          ProcurementAccountController::class)->only(['show']);
+        // Route::resource('supplier',             SupplierController::class)->only(['index', 'show']);
+        Route::resource('procurement',          ProcurementAccountController::class)->only(['show','index']);
     });
 
     Route::prefix('unit')->middleware('unit')->name('unit.')->group(function(){
@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth'], function (){
         Route::get('sppbj/{id}',                [DocumentsController::class, 'sppbj'])->name('document.sppbj');
         Route::get('bastp/{id}',                [DocumentsController::class, 'bastp'])->name('document.bastp');
         Route::get('bap/{id}',                  [DocumentsController::class, 'bap'])->name('document.bap');
+        Route::get('bp/{id}',                   [DocumentsController::class, 'bp'])->name('document.bp');
         Route::get('sp/{id}',                   [DocumentsController::class, 'sp'])->name('document.sp');
     });
     

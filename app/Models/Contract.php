@@ -37,17 +37,21 @@ class Contract extends Model
         'no_report',
         'payment',
 
+        'no_bap',
+        'file_bap',
+        'date_bap',
+
         'no_bastp',
         'file_bastp',
         'date_bastp',
+        
+        'no_bp',
+        'file_bp',
+        'date_bp',
 
         'no_bahp',
         'file_bahp',
         'date_bahp',
-
-        'no_bap',
-        'file_bap',
-        'date_bap', 
 
         'no_bakn',
         'file_bakn',

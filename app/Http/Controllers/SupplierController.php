@@ -13,12 +13,12 @@ class SupplierController extends Controller
 {
     public function index ()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::get();
 
-        if(Auth::user()->role != User::ROLE_CONTRACT_TEAM){
-            $suppliers = $suppliers->whereNotNull('npwp');
-            // dd($suppliers);
-        }
+        // if(Auth::user()->role != User::ROLE_CONTRACT_TEAM || Auth::user()->role != User::ROLE_PP){
+            // $suppliers = $suppliers->whereNotNull('npwp');
+        // }
+        // dd($suppliers);
 
         return Inertia::render('Supplier/Index',[
             'suppliers' => $suppliers
@@ -83,13 +83,13 @@ class SupplierController extends Controller
             'name'          => 'required|string',
             'pic'           => 'required|string',
             'pic_position'  => 'required|string',
-            'npwp'          => 'required|string|regex:/^\d{15,16}$/',
+            'npwp'          => 'required|string',
             'entity'        => 'required|string',
             'address'       => 'required|string',
             'province'      => 'required|string',
             'regency'       => 'required|string',
             'bank'          => 'required|string',
-            'account'       => 'required|string|regex:/^\d{10,16}$/',
+            'account'       => 'required|string',
         ]);
 
         Supplier::find($id)->update([

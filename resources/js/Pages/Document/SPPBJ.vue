@@ -22,7 +22,7 @@
                         <div>di</div>
                         <div>{{procurement.suppliers.province}}</div>
                         <div class="indent-10 mt-10 text-justify">
-                            Dengan ini kami beritahukan bahwa penawaran Saudara nomor <span class="text-secondary">{{procurement.contract.no_offer}}</span> tanggal {{getDate(procurement.contract.date_offer)}} perihal penawaran pekerjaan {{procurement.name}} dengan hasil negosiasi harga sebesar {{convertToRupiah(procurement.contract.offer)}} kami nyatakan diterima/disetujui.
+                            Dengan ini kami beritahukan bahwa penawaran Saudara nomor {{procurement.contract.no_offer}} tanggal {{getDate(procurement.contract.date_offer)}} perihal penawaran pekerjaan {{procurement.name}} dengan hasil negosiasi harga sebesar {{convertToRupiah(procurement.contract.offer)}} kami nyatakan diterima/disetujui.
                         </div>
                         <div class="indent-10 mt-5 text-justify">
                             Sebagai tindak lanjut dari Surat Penunjukan Penyedia Barang/Jasa (SPPBJ) ini, Saudara diharuskan menandatangani Surat Perintah Kerja (SPK) paling lambat 14 (empat belas) hari kerja setelah diterbitkannya SPPBJ. Kegagalan Saudara untuk menerima penunjukan ini yang disusun berdasarkan evaluasi terhadap penawaran Saudara, akan dikenakan sanksi sesuai ketentuan dalam Peraturan Presiden nomor 12 tahun 2021 tentang Pengadaan Barang/Jasa Pemerintah.

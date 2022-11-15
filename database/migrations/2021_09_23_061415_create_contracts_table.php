@@ -46,6 +46,10 @@ return new class extends Migration
             $table->string('file_bastp')->nullable()->unique();
             $table->timestamp('date_bastp', 6)->nullable();
 
+            $table->string('no_bp')->nullable()->unique();
+            $table->string('file_bp')->nullable()->unique();
+            $table->timestamp('date_bp', 6)->nullable();
+
             $table->string('no_bahp')->nullable()->unique();
             $table->string('file_bahp')->nullable()->unique();
             $table->timestamp('date_bahp', 6)->nullable();

@@ -19,7 +19,7 @@
                 <div v-if="data.preview.length > 0" class="w-6/12  ml-5  ">
                     <div class="flex justify-between">
                         <Header1 title="Daftar Pengadaan" width-size="100" />
-                        <button @click="() => data.preview = null" class="btn btn-sm  text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >X</button>
+                        <button @click="() => data.preview = []" class="btn btn-sm  text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >X</button>
                     </div>
                     <Container  >
                         <!-- <button @click="all()"  class=" w-3/12 btn btn-sm mb-3 text-first bg-slate-200 border-none hover:text-white hover:bg-first font-bold" >Lihat Semua</button> -->
@@ -34,6 +34,9 @@
                         buttons-pagination>
                             <template #item-date="{ date }">
                                 {{moment(date).format('DD-MM-yy')}}
+                            </template>
+                            <template #item-days="{ days }">
+                                {{days}} hari
                             </template>
                             <template #item-total="{ total }">
                                 {{convertToRupiah(total)}}
@@ -222,7 +225,7 @@ const chartOptions = {
         xAxisKey: 'id',
     },
     onClick: (event, array) => {
-        data.preview = null
+        data.preview = []
         if(array[0].index + 9 >= 10){
             for (let i = 10; i < 11; i++) {
                 if(props.groupedProc[i]) {
@@ -238,10 +241,10 @@ const chartOptions = {
 }
 
 const headers = [
-    { text: "Tanggal",          value: "date"       , sortable: true },
+    { text: "Mulai Kontrak",    value: "date"       , sortable: true },
+    { text: "Masa Kontrak",     value: "days"       , sortable: true },
     { text: "Nama",             value: "name"       , sortable: true },
-    { text: "Nomor Akun",       value: "account"    , sortable: true },
-    { text: "Nilai HPS",        value: "total"      , sortable: true },
+    { text: "Nilai Penawaran",  value: "total"      , sortable: true },
     { text: "aksi",             value: "aksi"},
 ];
 </script>

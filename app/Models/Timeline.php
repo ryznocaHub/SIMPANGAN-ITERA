@@ -28,6 +28,7 @@ class Timeline extends Model
         'bastp_created',
         'bap_created',
         'spmk_or_spp_created',
+        'bp_created',
         'technical_checked',
     ];
 }

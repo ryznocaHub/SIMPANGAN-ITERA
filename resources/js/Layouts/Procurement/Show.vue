@@ -76,9 +76,10 @@
                         <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.contract.offer) }}</p>
                     </Container>
                 </div>
+
                 <slot/>
             </div>
-            <div class="flex mt-10 w-10/12" v-if="user.role < 3">
+            <div class="flex mt-10 w-12/12" v-if="user.role < 3">
                 <Container class="flex flex-col w-4/12 " >
                     <Header1 title="Tim UKPBJ" widthSize="50" class="mb-5" />
                     
@@ -103,48 +104,56 @@
                         <p class="font-bold text-lg tracking-wider">{{ procurement.executor.contract.name }}</p>
                     </div>
                 </Container>
-                <Container class="flex flex-col justify-between w-3/12 ml-5" >
-                    <div>
-                        <Header1 title="Nilai RAB" widthSize="50" class="mb-5" />
-                        
-                        <div class="mt-5">
-                            <Label value="Sub total" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.sub_total) }}</p>
-                        </div>
-                        <div class="mt-5" v-if="procurement.budget_plan.ppn">
-                            <Label value="PPN 11%" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.ppn) }}</p>
-                        </div>
-                        <div class="mt-5" v-if="procurement.budget_plan.overheat">
-                            <Label value="overheat" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.overheat) }}</p>
-                        </div>
-                        <div class="mt-5">
-                            <Label value="Total" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.total) }}</p>
-                        </div>
+                <Container class="flex flex-col w-3/12 ml-5" >
+                    <Header1 title="Nilai RAB" widthSize="50" class="mb-5" />
+                    
+                    <div class="">
+                        <Label value="Sub total" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.sub_total) }}</p>
+                    </div>
+                    <div class="mt-5" v-if="procurement.budget_plan.ppn">
+                        <Label value="PPN 11%" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.ppn) }}</p>
+                    </div>
+                    <div class="mt-5" v-if="procurement.budget_plan.overheat">
+                        <Label value="overheat" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.overheat) }}</p>
+                    </div>
+                    <div class="mt-5">
+                        <Label value="Total" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.total) }}</p>
                     </div>
                 </Container>
-                <Container class="flex flex-col justify-between w-3/12 ml-5" v-if="procurement.status > 5" >
-                    <div v-if="procurement.status >= 6">
-                        <Header1 title="Nilai HPS" widthSize="50" class="mb-5" />
-                        
-                        <div class="mt-5">
-                            <Label value="Sub Total" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.sub_total) }}</p>
-                        </div>
-                        <div class="mt-5" v-if="procurement.estimate.ppn">
-                            <Label value="PPN 11%" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.ppn) }}</p>
-                        </div>
-                        <div class="mt-5" v-if="procurement.estimate.overheat">
-                            <Label :value="'Overheat (' + procurement.estimate.overheat_percentage + '%)'" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.overheat) }}</p>
-                        </div>
-                        <div class="mt-5" >
-                            <Label value="Total" />
-                            <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.total) }}</p>
-                        </div>
+                <Container class="flex flex-col w-3/12 ml-5" v-if="procurement.status > 5" >
+                    <Header1 title="Nilai HPS" widthSize="50" class="mb-5" />
+                    
+                    <div class="">
+                        <Label value="Sub Total" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.sub_total) }}</p>
+                    </div>
+                    <div class="mt-5" v-if="procurement.estimate.ppn">
+                        <Label value="PPN 11%" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.ppn) }}</p>
+                    </div>
+                    <div class="mt-5" v-if="procurement.estimate.overheat">
+                        <Label :value="'Overheat (' + procurement.estimate.overheat_percentage + '%)'" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.overheat) }}</p>
+                    </div>
+                    <div class="mt-5" >
+                        <Label value="Total" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.total) }}</p>
+                    </div>
+                </Container>
+                <Container class="flex flex-col w-3/12 ml-5" v-if="procurement.contract" >
+                    <Header1 title="Data Kontrak" widthSize="50" class="mb-5" />
+                    
+                    <div class="">
+                        <Label value="Nilai Penawaran" />
+                        <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.contract.offer) }}</p>
+                    </div>
+                    <div class="mt-5" v-if="procurement.contract.days">
+                        <Label value="Masa Pengerjaan" />
+                        <p class="font-bold text-lg tracking-wider">{{ procurement.contract.days }} hari</p>
                     </div>
                 </Container>
             </div>

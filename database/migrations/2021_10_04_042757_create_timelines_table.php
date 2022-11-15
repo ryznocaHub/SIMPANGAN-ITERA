@@ -33,10 +33,12 @@ return new class extends Migration
             $table->timestamp('bastp_created', 6)->nullable();
             $table->timestamp('bap_created', 6)->nullable();
             $table->timestamp('spmk_or_spp_created', 6)->nullable();
+            $table->timestamp('bp_created', 6)->nullable();
             $table->timestamp('technical_checked', 6)->nullable();
             $table->timestamps();
         });
     }
+    
 
     /**
      * Reverse the migrations.

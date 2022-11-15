@@ -31,7 +31,6 @@
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="formRAB.description"
-                                placeholder="Akun Pengadaan"
                                 :status="formRAB.errors.description"
                             />
                             <div class="text-sm text-error mt-1 mb-4">{{ formRAB.errors.description }}</div>
