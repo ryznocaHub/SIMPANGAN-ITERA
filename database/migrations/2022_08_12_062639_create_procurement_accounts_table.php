@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignId('estimate_id')->nullable()->references('id')->on('estimates')->onDelete('cascade');
             $table->foreignId('realized_id')->nullable()->references('id')->on('realizeds')->onDelete('cascade');
             $table->string('name');
+            $table->longText('description');
             $table->string('account');
             $table->string('rup_code')->nullable();
             $table->integer('year');

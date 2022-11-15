@@ -25,6 +25,9 @@ return new class extends Migration
             $table->timestamp('hps_rejected', 6)->nullable();
             $table->timestamp('hps_approved', 6)->nullable();
             $table->timestamp('supplier_selected', 6)->nullable();
+            $table->timestamp('bakn_created', 6)->nullable();
+            $table->timestamp('bahp_created', 6)->nullable();
+            $table->timestamp('baep_created', 6)->nullable();
             $table->timestamp('sppbj_created', 6)->nullable();
             $table->timestamp('spk_created', 6)->nullable();
             $table->timestamp('bastp_created', 6)->nullable();
