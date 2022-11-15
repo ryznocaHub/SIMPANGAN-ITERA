@@ -27,7 +27,7 @@ class ProcurementItemController extends Controller
 
     public function update(Request $request, $id){
         $validated = $request->validate([
-            'image' => 'image|max:5120',
+            'image' => 'max:5120',
         ]);
 
         $item = ProcurementItem::find($id);
