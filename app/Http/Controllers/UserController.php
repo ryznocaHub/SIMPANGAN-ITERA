@@ -44,7 +44,7 @@ class UserController extends Controller
     }
 
     public function show ($id){
-        if(Auth::user()->role != User::ROLE_Head_UKPBJ && Auth::id() != $id) return abort(403);
+        if(Auth::id() != $id) return abort(403);
 
         $user = User::with('units')->find($id);
 
@@ -105,6 +105,7 @@ class UserController extends Controller
     }
 
     public function edit ($id) {
+        if(Auth::user()->role != User::ROLE_Head_UKPBJ && Auth::id() != $id) return abort(403);
         $user   = User::find($id);
         $units  = Unit::all();
 

@@ -69,8 +69,8 @@ class ProcurementAccountController extends Controller
                 ->get();
 
             // if(!$procurements) return abort(404);
-            $hpsTeams   = User::where('role',User::ROLE_HPS_TEAM)->get();
-            $ppList     = User::where('role',User::ROLE_PP)->get();
+            $hpsTeams   = User::where(['role'=> User::ROLE_HPS_TEAM, 'status' => 1])->get();
+            $ppList     = User::where(['role'=> User::ROLE_PP, 'status' => 1])->get();
             return Inertia::render($url, [
                 'procurements'  => $procurements,
                 'hpsteams'      => $hpsTeams,
@@ -109,7 +109,6 @@ class ProcurementAccountController extends Controller
             $procurements = ProcurementAccounts::where('status','>=', $status)
                 -> with(['suppliers', 'estimate', 'contract'])
                 -> get();
-            // dd($procurements);
             // $suppliers = Supplier::all()->sortBy('name');
             // dd($suppliers);
             return Inertia::render($url, [
@@ -130,9 +129,10 @@ class ProcurementAccountController extends Controller
         if(!$procurement) return abort(404);
         if(Auth::user()->role == User::ROLE_UNIT && $procurement -> user_id != Auth::id()) return abort(403);
         else if (Auth::user()->role == User::ROLE_HPS_TEAM && $procurement -> executor -> hps != Auth::id()) return abort(403);
+        else if (Auth::user()->role == User::ROLE_PP && $procurement -> executor -> pp != Auth::id()) return abort(403);
+        else if (Auth::user()->role == User::ROLE_PPK && $procurement -> executor -> ppk != Auth::id()) return abort(403);
 
         $url = User::StringRole[Auth::user()->role -1] . '/Procurement/Show';
-
 
         $suppliers = Supplier::all();
         // dd($procurement);
@@ -385,10 +385,12 @@ class ProcurementAccountController extends Controller
 
                 DB::transaction(function () use($request, $procurement)
                 {
+
                     $hps_executor = User::where('name', $request->hps)
                         ->where('role',User::ROLE_HPS_TEAM)
-                        ->firstOrFail();
-                        
+                        // ->where('status',1)
+                        ->firstOrFail();    
+
                     Executor::find($procurement->executor_id)
                         -> update([
                             'hps'   => $hps_executor->id
@@ -501,6 +503,7 @@ class ProcurementAccountController extends Controller
             // }
         }
         else if(Auth::user()->role == User::ROLE_PP){
+
             //create BAKN
             if($request->status == 1){
                 $request->validate([
@@ -529,12 +532,17 @@ class ProcurementAccountController extends Controller
                                 'bakn_created'      => Carbon::now('Asia/Jakarta')
                             ]);
         
+                        $supplier       = Supplier::find($procurement->supplier_id);
+        
                         $procurement->contract
                         ->update([
                             'no_bakn'   => $request->no_bakn,
                             'days'      => $request->days,
-                            'date_bakn' => Carbon::parse($request->date_bakn)
+                            'date_bakn' => Carbon::parse($request->date_bakn),
+                            'pic'               => $supplier->pic,
+                            'pic_position'      => $supplier->pic_position,
                         ]);
+    
                     }
                 });
             }
@@ -670,9 +678,9 @@ class ProcurementAccountController extends Controller
 
             }
             else {
-                $status = ['','','','','BAKN','BAHP','BAE'];
+                $status = ['','','','','','BAHP','BAE','BAKN'];
                 $procurement = ProcurementAccounts::find($id);
-                if      ($request->status == 4) $file       = $request->file('file_bakn');
+                if      ($request->status == 7) $file       = $request->file('file_bakn');
                 else if ($request->status == 5) $file       = $request->file('file_bahp');
                 else if ($request->status == 6) $file       = $request->file('file_baep');
                 
@@ -688,7 +696,7 @@ class ProcurementAccountController extends Controller
                 $file       = $request->root() . $file;
                 $file       = $link;
                 
-                if      ($request->status == 4) Contract::find($procurement->contract_id) -> update (['file_bakn' => $file]);
+                if      ($request->status == 7) Contract::find($procurement->contract_id) -> update (['file_bakn' => $file]);
                 else if ($request->status == 5) Contract::find($procurement->contract_id) -> update (['file_bahp' => $file]);
                 else if ($request->status == 6) Contract::find($procurement->contract_id) -> update (['file_baep' => $file]);
             }
@@ -845,14 +853,32 @@ class ProcurementAccountController extends Controller
                     'date_sp.date'        => 'Format tanggal tidak sesuai'
                 ]);
 
+                $procurement    = ProcurementAccounts::find($id);
+                $estimate       = Estimate::find($procurement->estimate_id);
+
+                if ($estimate->total <= 50000000) {
+                    $request->validate([
+                        'start'     => 'required|date',
+                        'end'       => 'required|date',
+                    ],[
+                        'start.required'        => 'Pilih tanggal mulai kontrak',
+                        'start.required'        => 'Format tanggal tindak sesuai',
+                    ]);
+                };
                 // dd($request);
-                DB::transaction(function () use($request,$id)
+                DB::transaction(function () use($request,$procurement,$estimate)
                 {
-                    $procurement    = ProcurementAccounts::find($id);
+                    if ($estimate->total <= 50000000) {
+                        Contract::find($procurement->contract_id)
+                            -> update([
+                                'date_start_spk'    => Carbon::parse($request->start),
+                                'date_end_spk'      => Carbon::parse($request->end),
+                            ]);
+                    };
+
                     Contract::find($procurement->contract_id)
                         -> update([
                             'no_sp'          => $request->no_sp,
-                            // 'paket_sp'          => $request->paket_sp,
                             'date_sp'        => Carbon::parse($request->date_sp),
                         ]);
                     
@@ -882,7 +908,7 @@ class ProcurementAccountController extends Controller
                     Contract::find($procurement->contract_id)
                         -> update([
                             'no_bp'        => $request->no_bp,
-                            'no_bp'        => Carbon::parse($request->date_bp),
+                            'date_bp'      => Carbon::parse($request->date_bp),
                         ]);
                     
                     Timeline::find($procurement->timeline_id)
@@ -896,6 +922,37 @@ class ProcurementAccountController extends Controller
 
                 },3);
             }
+            else 
+            {
+                $request->validate([
+                    'file'      => 'required',
+                ],[
+                    'file.required'      => 'Pilih File',
+                ]);
+                $status = ['','','','','','','','SPPBJ','SPK','SP','BAP','BAST','BP'];
+                // dd($status[$request->status]);
+                $procurement = ProcurementAccounts::find($id);
+                $file       = $request->file('file');
+                
+                if($file[0]->clientExtension() != 'pdf') throw ValidationException::withMessages([
+                    'file'  => "Format file berupa pdf",
+                ]);
+                $path       = 'public/file/' . $id . '/' . 'Kontrak/';
+                $file_name  = $procurement->name . '_' . $status[$request->status] .'.' . $file[0]->clientExtension();
+                $store      = $file[0]->storeAs($path, $file_name);
+                $link       = $request->root() . '/storage/file/' . $id . '/' . 'Kontrak/' . $file_name;
+                $file       = Storage::url($store);
+                $file       = $request->root() . $file;
+                $file       = $link;
+                
+                if      ($request->status == 7) Contract::find($procurement->contract_id) -> update (['file_sppbj' => $file]);
+                else if ($request->status == 8) Contract::find($procurement->contract_id) -> update (['file_spk' => $file]);
+                else if ($request->status == 9) Contract::find($procurement->contract_id) -> update (['file_sp' => $file]);
+                else if ($request->status == 10) Contract::find($procurement->contract_id) -> update (['file_bap' => $file]);
+                else if ($request->status == 11) Contract::find($procurement->contract_id) -> update (['file_bastp' => $file]);
+                else if ($request->status == 12) Contract::find($procurement->contract_id) -> update (['file_bp' => $file]);
+            }
+            
             return Redirect::route('kontrak.procurement.show', $id);
         }
     }

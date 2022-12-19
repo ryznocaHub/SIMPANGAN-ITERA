@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
             $table->string('no_offer')->nullable()->unique();
-            $table->integer('offer')->nullable();
+            $table->bigInteger('offer')->nullable();
             $table->timestamp('date_offer', 6)->nullable();
             $table->string('file_offer')->nullable()->unique();
 
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('mak_code')->nullable()->unique();
             $table->string('pic')->nullable();
             $table->string('pic_position')->nullable();
-            $table->integer('value_spk')->nullable();
+            $table->bigInteger('value_spk')->nullable();
             $table->integer('days')->nullable();
             $table->timestamp('date_start_spk', 6)->nullable();
             $table->timestamp('date_end_spk', 6)->nullable();
@@ -65,7 +65,7 @@ return new class extends Migration
             $table->string('no_baep')->nullable()->unique();
             $table->string('file_baep')->nullable()->unique();
             $table->timestamp('date_baep', 6)->nullable();
-            $table->integer('correction')->nullable();
+            $table->bigInteger('correction')->nullable();
             
             $table->timestamps();
         });

@@ -51,7 +51,8 @@ const cek = () =>{
     console.log(props.suppliers[0].name)
 }
 const headers = [
-    { text: "Nama",             value: "name", sortable: true },
+    { text: "Judul Paket",      value: "name", sortable: true },
+    { text: "Unit Kerja",       value: "name", sortable: true },
     { text: "Kategori",         value: "category", sortable: true },
     { text: "Status",           value: "status", sortable: true },
     { text: "Supplier",         value: "supplier", sortable: true },

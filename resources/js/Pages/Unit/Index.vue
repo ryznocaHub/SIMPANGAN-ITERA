@@ -132,10 +132,10 @@ const data = useForm({
     show    : 0,
 })
 
-const label = ['Unggah Gambar', 'Mengajukan RAB', 'RAB Ditolak', 'RAB Disetujui', 'Pembuatan HPS', 'Penetapan HPS', 'Proses PP', 'Proses Kontrak', 'Pengadaan Selesai']
+const label = ['Unggah Gambar', 'Mengajukan RAB', 'RAB Ditolak', 'RAB Disetujui', 'Pembuatan HPS', 'Penetapan HPS','Perubahan HPS', 'Proses PP', 'Proses Kontrak', 'Pengadaan Selesai']
 
 const chartData = {
-    labels: [1,2,3,4,5,6,7,8,9],
+    labels: [1,2,3,4,5,6,7,8,9,10],
     datasets: [
     {
         label: 'Total',

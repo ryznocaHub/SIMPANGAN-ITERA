@@ -28,8 +28,8 @@
                         </div>
 
                         <div class="mt-3">Selanjutnya disebut sebagai Pejabat Pembuat Komitmen </div>
-                        <div v-if="procurement.estimate.total > 50000000" class="mt-3 text-justify">berdasarkan Surat Perintah Kerja (SPK) nomor: {{procurement.contract.no_spk}} <span class="text-secondary">tanggal  {{getDate(procurement.contract.date_start_spk)}}</span>, bersama ini memerintahkan: </div>
-                        <div v-else class="mt-3 text-justify">berdasarkan Berita Acara Hasil Pengadaan Langsung (BAHPL) nomor: {{procurement.contract.no_bahp}} <span class="text-secondary">tanggal  {{getDate(procurement.contract.date_bahp)}}</span>, bersama ini memerintahkan: </div>
+                        <div v-if="procurement.estimate.total > 50000000" class="mt-3 text-justify">berdasarkan Surat Perintah Kerja (SPK) nomor: {{procurement.contract.no_spk}} <span class="">tanggal  {{getDate(procurement.contract.date_start_spk)}}</span>, bersama ini memerintahkan: </div>
+                        <div v-else class="mt-3 text-justify">berdasarkan Berita Acara Hasil Pengadaan Langsung (BAHPL) nomor: {{procurement.contract.no_bahp}} <span class="">tanggal  {{getDate(procurement.contract.date_bahp)}}</span>, bersama ini memerintahkan: </div>
                         
                         <div class="flex mt-3">
                             <div class="w-36">Nama Penyedia</div>

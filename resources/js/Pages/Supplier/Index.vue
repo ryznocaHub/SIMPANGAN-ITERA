@@ -3,7 +3,7 @@
         <template v-slot="{ loading }" }>
             <Header1 v-if="suppliers.length != 0" title="Daftar Supplier" widthSize="100" />
             <Container v-if="suppliers.length != 0" >
-                <Link @click="loading()" v-if="user.role > 4" :href="route('supplier.create')" class="btn btn-sm mt-5 mb-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first  font-bold" >Tambah Data Supplier</Link>
+                <Link @click="loading()" v-if="user.role == 4 || user.role == 3" :href="route('supplier.create')" class="btn btn-sm mt-5 mb-5 text-first bg-slate-200 border-none hover:text-white hover:bg-first  font-bold" >Tambah Data Supplier</Link>
                 <EasyDataTable 
                 :headers="headers" 
                 :items="suppliers" 

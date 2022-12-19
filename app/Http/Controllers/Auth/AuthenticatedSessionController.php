@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class AuthenticatedSessionController extends Controller
@@ -34,6 +35,15 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $request->authenticate();
+
+        if(Auth::user()->status == 0) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+
+            throw ValidationException::withMessages([
+                'email'  => "Akun anda sudah tidak aktif, silahkan hubungi pihak pengadaan",
+            ]);
+        }
 
         $request->session()->regenerate();
 

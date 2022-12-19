@@ -114,7 +114,7 @@
 
                         <div class="indent-10 mt-3 text-justify">Demikian Berita Acara Hasil Evaluasi ini dibuat dengan tanggung jawab dan agar dapat digunakan sebagaimana mestinya.</div>
                         <div class="flex flex-col text-center my-10">
-                            <div class="text-end">Pejabat Pembuat Komitmen</div>
+                            <div class="text-end">Pejabat Pengadaan</div>
                             <div class="text-end mt-14">{{procurement.executor.pp.name}}</div>
                             <div class="text-end ">{{procurement.executor.pp.identity_type}}. {{procurement.executor.pp.identity_number}}</div>
                         </div>

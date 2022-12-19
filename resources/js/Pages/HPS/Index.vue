@@ -115,7 +115,7 @@ function filterLength (datas) {
     var arr = []
     const lastIndex = 3
     const firstLoop = 5
-    const lastLoop  = 7
+    const lastLoop  = 8
     //looping count by minimum status (5)
     //first looping must be 5
     for (let i = firstLoop; i < 11; i++) {

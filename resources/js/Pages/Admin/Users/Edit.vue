@@ -139,7 +139,7 @@ const Ubah = (id, loading) =>{
     }
     data.role = role + 1
 
-    data.post(route("admin.user.update", id),{
+    data.post(route("actor.update", id),{
 
         onSuccess:  (e) => toast('success', 'Berhasil edit data user ' + data.name),
         onError:    (e) => toast('error', 'Gagal edit data user'),

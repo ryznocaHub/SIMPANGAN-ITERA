@@ -126,4 +126,8 @@ class ProcurementItemController extends Controller
             // }
         });
     }
+
+    public function list($name) {
+        ProcurementItem::query()->where('name', 'LIKE',"%{$name}%")->get()->dd();
+    }
 }

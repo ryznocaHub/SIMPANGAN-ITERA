@@ -20,10 +20,10 @@ return new class extends Migration
             $table->longText('specification')->nullable();
             $table->string('unit');
             $table->integer('quantity');
-            $table->integer('price');
-            $table->integer('estimate_price')->nullable();
-            $table->integer('total');
-            $table->integer('estimate_total')->nullable();
+            $table->bigInteger('price');
+            $table->bigInteger('estimate_price')->nullable();
+            $table->bigInteger('total');
+            $table->bigInteger('estimate_total')->nullable();
             $table->string('allocation');
             $table->string('source');
             $table->string('estimate_source')->nullable();

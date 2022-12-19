@@ -1,5 +1,6 @@
 <template>
     <li><Link @click="emit('loading')"  :href="route('pp.procurement.index')" >Daftar Pengadaan</Link></li>
+    <li><Link @click="emit('loading')"  :href="route('supplier.index')" >Daftar Supplier</Link></li>
 </template>
 
 <script setup>

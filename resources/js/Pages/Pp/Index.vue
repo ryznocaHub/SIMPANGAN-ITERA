@@ -113,8 +113,8 @@ function convertToRupiah (angka) {
 
 function filterLength (datas) {
     var arr = []
-    const lastIndex = 2
-    const firstLoop = 4
+    const lastIndex = 1
+    const firstLoop = 7
     const lastLoop  = 7
     //looping count by minimum status (5)
     //first looping must be 5
@@ -126,6 +126,7 @@ function filterLength (datas) {
             
         else if(datas[i]) arr.push(datas[i].length)
         else arr.push(0)
+        console.log(i,arr)
     }
     return arr
 }
@@ -143,7 +144,7 @@ const data = useForm({
 const label = ['Penunjukan Supplier', 'Supplier Terpilih']
 
 const chartData = {
-    labels: [1,2,3,4,5],
+    labels: [1,2],
     datasets: [
     {
         label: 'Total',
@@ -222,14 +223,14 @@ const chartOptions = {
     },
     onClick: (event, array) => {
         data.preview = []
-        if(array[0].index + 4 >= 8){
+        if(array[0].index + 7 >= 8){
             for (let i = 8; i < 11; i++) {
                 if(props.groupedProc[i]) {
                     props.groupedProc[i].forEach(item => data.preview.push(item))
                 }
             }
         }else{
-            data.preview = props.groupedProc[array[0].index+4]
+            data.preview = props.groupedProc[array[0].index+7]
         }
         data.show       = 1
     }

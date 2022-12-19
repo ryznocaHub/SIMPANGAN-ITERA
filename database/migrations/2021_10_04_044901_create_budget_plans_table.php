@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('budget_plans', function (Blueprint $table) {
             $table->id();
-            $table->integer('sub_total');
-            $table->integer('ppn')->default(0);
+            $table->bigInteger('sub_total');
+            $table->bigInteger('ppn')->default(0);
             $table->integer('overheat')->default(0);
-            $table->integer('total');
+            $table->bigInteger('total');
             $table->timestamps();
         });
     }

@@ -18,13 +18,13 @@
                                     <div class="text-sm text-gray-400">{{units[user.unit_id-1].full_name}}</div>
                                     <div class="divider"></div>
                                     <div class="flex justify-between ">
-                                        <label :for=user.id class="btn btn-xs text-error  border-none hover:text-error hover:bg-slate-100 bg-white underline underline-offset-2 font-bold">Non Aktif</label>
+                                        <label :for=user.id class="btn btn-xs text-error  border-none hover:text-error hover:bg-slate-100 bg-white underline underline-offset-2 font-bold">{{ user.status == 1 ? "Non Aktif" : "Aktifkan"}}</label>
                         
                                         <input type="checkbox" :id=user.id class="modal-toggle" />
                                         <label :for=user.id class="modal cursor-pointer">
                                         <label class="modal-box relative border-error border-1" for="">
                                             <label :for=user.id class="btn btn-xs border-error bg-error btn-circle absolute right-2 top-2">✕</label>
-                                            <div class="text-center font-bold text-2xl mt-3">Apakah anda yakin ingin Non Aktif <span class="text-first font-bold underline underline-offset-8 capitalize">{{user.name}}</span>  ?</div>
+                                            <div class="text-center font-bold text-2xl mt-3">Apakah anda yakin ingin merubah status <span class="text-first font-bold underline underline-offset-8 capitalize">{{user.name}}</span>  ?</div>
                                             <div class="flex justify-center">
                                                 <button v-if="user.status == 1" @click="nonActive(user.id, user.name  ,loading)" class="btn text-error border-none bg-slate-100 hover:text-white hover:bg-error bg-white font-bold mt-5 tracking-wide">Non Aktif</button>
                                                 <button v-else                  @click="activeUser(user.id, user.name ,loading)" class="btn text-error border-none bg-slate-100 hover:text-white hover:bg-error bg-white font-bold mt-5 tracking-wide">Aktifkan</button>

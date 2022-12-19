@@ -14,6 +14,7 @@ class Estimate extends Model
         'overheat',
         'overheat_percentage',
         'ppn',
+        'file',
         'total',
     ];
 }

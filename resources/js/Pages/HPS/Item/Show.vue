@@ -1,6 +1,6 @@
 <template>
     <Show :items=items v-slot="slotProps">
-        <InfoDetail :items="slotProps.data" :status="2" class="ml-5"/>
+        <InfoDetail :items="slotProps.data" :status="2" class="ml-5" v-if="slotProps.data.estimate_price" />
     </Show>
 </template>
 

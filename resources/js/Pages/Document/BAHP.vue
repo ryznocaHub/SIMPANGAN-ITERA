@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center  ">
         <div id="app" ref="document" class="w-1/2 ">
-            <button class="btn bg-first border-none w-full text-white mb-5" @click="exportToPDF(procurement.name)">Download BAHP</button>
+            <button class="btn bg-first border-none w-full text-white mb-5" @click="exportToPDF(procurement.name)">Download BAHPL</button>
             <div class="border-2 border-black">
                 <div id="element-to-convert" >
                     <Kop/>
@@ -56,7 +56,7 @@
                         </div>
                         <div class="indent-10 mt-3 text-justify">Demikian Berita Acara Hasil Pengadaan Langsung ini dibuat dengan tanggung jawab dan agar dapat digunakan sebagaimana mestinya.</div>
                         <div class="flex flex-col text-center my-10">
-                            <div class="text-end">Pejabat Pembuat Komitmen</div>
+                            <div class="text-end">Pejabat Pengadaan</div>
                             <div class="text-end mt-14">{{procurement.executor.pp.name}}</div>
                             <div class="text-end ">{{procurement.executor.pp.identity_type}}. {{procurement.executor.pp.identity_number}}</div>
                         </div>

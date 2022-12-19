@@ -28,8 +28,9 @@
                         <div v-else class="text-center">---</div>
                     </template>
                     <template #item-remaining="{ contract }">
-                        <div v-if="contract.days > 0" class="text-center">{{contract.days}} hari</div>
-                        <div v-else class="text-center">Selesai</div>
+                        <div v-if="!contract.date_end_spk" class="text-center">---</div>
+                        <div v-else-if="contract.no_bp" class="text-center">{{ bpCreated(contract.date_bp,contract.date_end_spk) }}</div>
+                        <div v-else class="text-center">{{ bpUnCreated(contract.date_end_spk) }}</div>
                     </template>
                     <template #item-supplier="{ suppliers }">
                         <div>{{suppliers.name}}</div>
@@ -73,9 +74,26 @@ function convertToRupiah (angka) {
     );
 }
 
+function bpCreated(start, end){
+    if(moment(start) > moment(end)) return "Tepat Waktu"
+    else return "Terlambat"
+}
+
+function bpUnCreated(end){
+    if(moment() > moment(end)){
+        var days = moment().diff(moment(end),'days')
+        return days == 0 ? "hari terakhir" : days + " hari lalu"
+    }
+    else {
+        var days = moment(end).diff(moment(),'days')
+        console.log()
+        return days + " hari";
+    }
+}
+
 const headers = [
     { text: "Judul Paket",      value: "name"       , sortable: true },
-    { text: "Status",           value: "status"     , sortable: true , width:150},
+    { text: "Status",           value: "status"     , sortable: true , width:200},
     { text: "Mulai Kontrak",    value: "start"      , sortable: true },
     { text: "Masa Kontrak",     value: "days"       , sortable: true },
     { text: "Selesai Kontrak",  value: "end"        , sortable: true },

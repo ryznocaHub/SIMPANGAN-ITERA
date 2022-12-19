@@ -221,7 +221,6 @@ function convertToRupiah (angka) {
 const headers = [
     { text: "Judul Paket",      value: "name"       , sortable: true },
     { text: "Kode Akun",        value: "account"    , sortable: true },
-    { text: "Kategori",         value: "category"   , sortable: true },
     { text: "Unit Kerja",       value: "unit"       , sortable: true },
     { text: "Status",           value: "status"     , sortable: true },
     { text: "Nilai RAB",        value: "rab"        , sortable: true },

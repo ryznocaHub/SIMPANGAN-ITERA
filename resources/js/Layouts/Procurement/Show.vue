@@ -26,12 +26,9 @@
                             <Label :value='"diajukan pada " + getNowDate(procurement.timeline.rab_submitted)' />
                         </div>
                         <div class="flex">
-                            <Link @click="loading()" v-if       ="procurement.status == 1"                      :href="route('unit.procurement.edit', procurement.id)"  class="btn bg-first border-first" >Unggah Gambar</Link>
-                            <Link @click="loading()" v-else-if  ="procurement.status == 5 && user.role == 4"    :href="route('hps.procurement.edit', procurement.id)"   class="btn bg-first border-first" >Buat HPS</Link>
-                            <Link @click="loading()" v-else-if  ="procurement.status >= 2"                      :href="route('item.show', procurement.id)"              class="btn bg-first border-first" >Lihat Item</Link>
-                            <div class="ml-5">
-                                <slot name="file" :loading="loading" />
-                            </div>
+                            <!-- <Link @click="loading()" v-if       ="procurement.status == 1"                      :href="route('unit.procurement.edit', procurement.id)"  class="btn bg-first border-first" >Unggah Gambar</Link> -->
+                            <Link @click="loading()" v-if  ="procurement.status >= 2"                      :href="route('item.show', procurement.id)"              class="btn bg-first border-first" >Lihat Item</Link>
+                            <slot name="file" :loading="loading" />
                         </div>
                     </div>
                     
@@ -63,7 +60,8 @@
                 </Container>
 
                 <div v-if="user.role > 2" class="flex-auto flex flex-col ml-5" >
-                    <Container v-if="user.role != 3 && user.role != 5" class="mb-5">
+                    <slot name="amount" />
+                    <!-- <Container v-if="user.role != 3 && user.role != 5" class="mb-5">
                         <Label value="Nilai RAB" />
                         <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.budget_plan.total) }}</p>
                     </Container>
@@ -71,16 +69,16 @@
                         <Label value="Nilai HPS" />
                         <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.total) }}</p>
                     </Container>
-                    <Container  v-if="procurement.contract && user.role < 6 && user.role != 4">
+                    <Container  v-if="procurement.contract && user.role < 6 && user.role != 4 && procurement.statu > 8">
                         <Label value="Nilai Penawaran" />
                         <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.contract.offer) }}</p>
-                    </Container>
+                    </Container> -->
                 </div>
 
                 <slot/>
             </div>
             <div class="flex mt-10 w-12/12" v-if="user.role < 3">
-                <Container class="flex flex-col w-4/12 " >
+                <Container class="flex flex-col w-3/12 " >
                     <Header1 title="Tim UKPBJ" widthSize="50" class="mb-5" />
                     
                     <div class="" v-if="procurement.executor.siren_approval">
@@ -144,7 +142,7 @@
                         <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.total) }}</p>
                     </div>
                 </Container>
-                <Container class="flex flex-col w-3/12 ml-5" v-if="procurement.contract" >
+                <Container class="flex flex-col w-3/12 ml-5" v-if="procurement.contract && procurement.status > 8" >
                     <Header1 title="Data Kontrak" widthSize="50" class="mb-5" />
                     
                     <div class="">

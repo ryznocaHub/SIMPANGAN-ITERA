@@ -15,11 +15,12 @@ return new class extends Migration
     {
         Schema::create('estimates', function (Blueprint $table) {
             $table->id();
-            $table->integer('sub_total');
-            $table->integer('ppn')->nullable();
-            $table->integer('overheat')->default(0);
+            $table->bigInteger('sub_total');
+            $table->bigInteger('ppn')->nullable();
+            $table->bigInteger('overheat')->default(0);
             $table->float('overheat_percentage', 4, 2)->default(0);
-            $table->integer('total')->default(0);
+            $table->string('file')->nullable();
+            $table->bigInteger('total')->default(0);
             $table->timestamps();
         });
     }

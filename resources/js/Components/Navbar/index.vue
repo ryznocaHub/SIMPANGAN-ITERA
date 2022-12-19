@@ -76,6 +76,7 @@
                         </a>
                     </li>
                     <li><a>Settings</a></li> -->
+                    <li><Link @click="emit('loading')" :href="route('actor.show',user.id)" as="button">Profil</Link></li>
                     <li><Link @click="emit('loading')" :href="route('logout')" method="post" as="button">Logout</Link></li>
                 </ul>
             </div>

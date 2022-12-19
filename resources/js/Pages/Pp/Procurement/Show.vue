@@ -1,7 +1,17 @@
 <template>
     <Show :procurement=procurement >
         <template #file>
-            <a v-show="procurement.timeline.hps_approved" :href="route('pp.document.boq',procurement.id)" class="btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lihat BOQ</a>
+            <a v-show="procurement.timeline.hps_approved" :href="route('pp.document.boq',procurement.id)" class="ml-5 btn text-first btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lihat BOQ</a>
+        </template>
+        <template #amount>
+            <Container class="mb-5">
+                <Label value="Nilai HPS" />
+                <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.estimate.total) }}</p>
+            </Container>
+            <Container  v-if="procurement.contract.offer">
+                <Label value="Nilai Penawaran" />
+                <p class="font-bold text-lg tracking-wider">{{ convertToRupiah(procurement.contract.offer) }}</p>
+            </Container>
         </template>
         <template #extra-info="{loading}">
             <div class="flex mt-10">
@@ -9,7 +19,7 @@
                     <Header1 title="Format Berkas" widthSize="60" />
                     <div class="grid grid-rows-4 grid-flow-col gap-x-3">
                          <!-- offer -->
-                        <div v-if="!procurement.contract.no_offer">
+                        <div v-if="procurement.contract.offer <= 0">
                             <!-- The button to open modal -->
                             <label   for="offer" class="btn w-full mt-3 border-first modal-button bg-first">Unggah Penawaran</label>
         
@@ -69,7 +79,7 @@
                                             @input="(e) => onInputChangeFile(e,4)"
                                         />
                                     </label>
-                                    <div class="text-sm text-error mt-1 mb-5">{{ offer.errors.file_offer }}</div>
+                                    <div class="text-sm text-error mt-1 mb-5">{{ offer.errors.file }}</div>
                                     <div class="flex justify-center my-5">
                                         <button @click="createoffer(procurement.id, procurement.name ,loading)" class="btn border-first bg-first mt-5 tracking-wide" >Unggah</button>
                                     </div>
@@ -79,10 +89,13 @@
                         <!-- End offer -->
 
                          <!-- BAEP -->
-                        <div v-if="procurement.contract.no_offer && procurement.suppliers.province">
+                        <!-- <div v-if="procurement.contract.no_offer && procurement.suppliers.province"> -->
+                        <div v-if="procurement.contract.no_offer ">
                             <a v-if="procurement.contract.no_baep" :href="route('pp.document.baep',procurement.id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">BAE</a>
+                            <a v-else-if="procurement.suppliers.province == null" :href="route('supplier.edit', procurement.supplier_id)" class="btn w-full mt-3 border-first modal-button bg-first">Lengkapi Data Supplier</a>
                             <!-- The button to open modal -->
                             <label v-else for="baep" class="btn w-full mt-3 border-first modal-button bg-first">Buat BAE</label>
+                            <div v-if="!procurement.suppliers.province" class="text-error text-sm" >*lengkapi data supplier untuk melanjutkan pembuatan dokumen</div>
         
                                 <!-- Put this part before </body> tag -->
                                 <input type="checkbox" id="baep" class="modal-toggle" v-model="baep.modal" />
@@ -124,7 +137,6 @@
                         </div>
                         <!-- End BAeP -->
 
-                        <a v-else :href="route('supplier.edit', procurement.supplier_id)" class="mt-3 btn text-first w-full btn-outline font-bold hover:bg-first hover:text-white hover:border-none" target="_blank">Lengkapi Data Supplier</a>
                         
                         <!-- BAKN -->
                         <div v-if="procurement.contract.no_baep">
@@ -145,7 +157,7 @@
                                     class="mt-1 block w-full"
                                     v-model="bakn.no_bakn"
                                     />
-                                    <Label value="Masa Pekerjaan" class="mt-5" />
+                                    <Label value="Masa Pekerjaan (hari)" class="mt-5" />
                                     <Input 
                                         type="text"
                                         class="block w-full"
@@ -242,7 +254,8 @@
                                         accept=".pdf"
                                         @input="(e) => onInputChangeFile(e,3)"
                                     />
-                                    </label>
+                                </label>
+                                <div class="text-sm text-error mt-1 mb-5">{{ file.errors.file }}</div>
                                     <div class="flex justify-center my-5">
                                         <button @click="uploadFile(procurement.id, procurement.name, 6, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Unggah</button>
                                     </div>
@@ -277,8 +290,9 @@
                                         @input="(e) => onInputChangeFile(e,1)"
                                     />
                                     </label>
+                                    <div class="text-sm text-error mt-1 mb-5">{{ file.errors.file }}</div>
                                     <div class="flex justify-center my-5">
-                                        <button @click="uploadFile(procurement.id, procurement.name, 4, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Unggah</button>
+                                        <button @click="uploadFile(procurement.id, procurement.name, 7, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Unggah</button>
                                     </div>
                                 </label>
                             </label>
@@ -311,6 +325,7 @@
                                         @input="(e) => onInputChangeFile(e,2)"
                                     />
                                     </label>
+                                    <div class="text-sm text-error mt-1 mb-5">{{ file.errors.file }}</div>
                                     <div class="flex justify-center my-5">
                                         <button @click="uploadFile(procurement.id, procurement.name, 5, loading)" class="btn border-first bg-first mt-5 tracking-wide" >Unggah</button>
                                     </div>
@@ -398,7 +413,7 @@ const createoffer = (id, name, loading) =>{
             toast('success', 'Berhasil Mengunggah Penawaran '+ name),
             offer.reset()
         },
-        onError:    (e) => toast('error', 'Gagal Mengunggah Penawaran '+ name),
+        onError:    (e) => {toast('error', 'Gagal Mengunggah Penawaran '+ name); console.log(e)},
         onStart     :   ()  => loading(),
         onFinish    :   ()  => loading(),
     })
@@ -453,7 +468,7 @@ const uploadFile = (id, name, status, loading) =>{
             toast('success', 'Berhasil unggah file '+ type[status] +" "+  name),
             file.reset()
         },
-        onError:    (e) => toast('error', 'Gagal unggah file '+ type[status] +" "+  name),
+        onError:    (e) => {toast('error', 'Gagal unggah file '+ type[status] +" "+  name); console.log(e)},
         onStart     :   ()  => loading(),
         onFinish    :   ()  => loading(),
     })
@@ -466,5 +481,17 @@ function onInputChangeFile(e,status) {
     else if(status ==4 ) offer.file_offer = e.target.files
 }
 
-
+function convertToRupiah (angka) {
+    var rupiah = "";
+    var angkarev = angka.toString().split("").reverse().join("");
+    for (var i = 0; i < angkarev.length; i++)
+        if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + ".";
+    return (
+        "Rp. " +
+        rupiah
+            .split("", rupiah.length - 1)
+            .reverse()
+            .join("")
+    );
+}
 </script>

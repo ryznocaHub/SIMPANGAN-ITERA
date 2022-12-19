@@ -35,7 +35,7 @@ Route::group(['middleware' => 'auth'], function (){
         Route::get('user/nonactive',            [UserController::class, 'usersNonActive']) ->name('usersNonActive');
         Route::post('user/nonactiveuser/{id}',  [UserController::class, 'nonActiveUser'])  ->name('nonActiveUser');
         Route::post('user/activeuser/{id}',     [UserController::class, 'activeUser'])     ->name('activeUser');
-        Route::resource('user',                 UserController::class);
+        Route::resource('user',                 UserController::class)->except(['show']);
         // Route::resource('supplier',             SupplierController::class)->only(['index', 'show']);
         Route::resource('procurement',          ProcurementAccountController::class)->only(['show','index']);
     });
@@ -54,7 +54,9 @@ Route::group(['middleware' => 'auth'], function (){
         Route::resource('procurement',          ProcurementAccountController::class)->only(['index', 'show', 'update', 'edit']);
         Route::post('updatehps/{id}',           [ProcurementItemController::class, 'updateHPS'])->name('item.updateHPS');
         Route::get('boq/{id}',                  [DocumentsController::class, 'boq'])->name('document.boq');
+        Route::patch('document/hps/{id}',       [DocumentsController::class, 'fisikhps'])->name('fisik.hps');
         Route::get('hps/{id}',                  [DocumentsController::class, 'hps'])->name('document.hps');
+        Route::get('item/{name}',               [ProcurementItemController::class, 'list'])->name('item.list');
     });
     
     Route::prefix('ppk')->middleware('ppk')->name('ppk.')->group(function(){
@@ -94,6 +96,7 @@ Route::group(['middleware' => 'auth'], function (){
     Route::resource('supplier',                 SupplierController::class);
     Route::resource('item',                     ProcurementItemController::class)->only(['show']);
     Route::get('/dashboard/TimHPS',             [DashboardController::class, 'TimHPS'])->name('dashboard.TimHPS');
+    Route::resource('actor',                    UserController::class)->only(['show','edit','update']);
 });
 
 

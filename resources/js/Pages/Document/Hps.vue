@@ -22,7 +22,7 @@
                         <div class="text-center font-bold italic mt-3">{{convertToRupiah(procurement.estimate.total)}}</div>
                         <div class="text-center font-bold italic mb-5">({{angkaTerbilang(procurement.estimate.total)}} rupiah)</div>
                         <div class="indent-10">
-                            Harga tersebut telah memperhitungkan Pajak Pertambahan Nilai (PPN) sesuai dengan peraturan perundang-undangan yang berlaku dan keuntungan yang wajar bagi penyedia barang/jasa. Pekerjaan ini dilaksanakan dengan jangka waktu pelaksanaan selama <span class="text-secondary">14 Hari</span>  Kalender.
+                            Harga tersebut telah memperhitungkan Pajak Pertambahan Nilai (PPN) sesuai dengan peraturan perundang-undangan yang berlaku dan keuntungan yang wajar bagi penyedia barang/jasa. Pekerjaan ini dilaksanakan dengan jangka waktu pelaksanaan selama <span class="">14 Hari</span>  Kalender.
                         </div>
                         <div class="grid place-items-end mt-14" id="signature">
                             <div class="w-6/12 flex flex-col align-end text-end">
